@@ -3,13 +3,13 @@ package com.snehee.ganpati.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.snehee.ganpati.entity.User;
+import com.snehee.ganpati.entity.Idol;
 
 /**
- * The interface User repository.
+ * The interface Idol repository.
  *
  * @author Girish
  */
 @Repository
-public interface UserRepository extends JpaRepository<User, Integer> {
+public interface IdolRepository extends JpaRepository<Idol, Integer> {
 }
