@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.validation.Valid;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -37,7 +38,7 @@ public class IdolController {
 	 * @return the list
 	 */
 	@GetMapping("/idols")
-	public List<Idol> getAllUsers() {
+	public List<Idol> getAllIdols() {
 		return idolRepository.findAll();
 	}
 
@@ -49,10 +50,10 @@ public class IdolController {
 	 * @throws ResourceNotFoundException the resource not found exception
 	 */
 	@GetMapping("/idols/{id}")
-	public ResponseEntity<Idol> getUsersById(@PathVariable(value = "id") Integer idolId)
+	public ResponseEntity<Idol> getIdolsById(@PathVariable(value = "id") Integer idolId)
 			throws ResourceNotFoundException {
 		Idol idol = idolRepository.findById(idolId)
-				.orElseThrow(() -> new ResourceNotFoundException("Idol not found on :: " + idolId));
+				.orElseThrow(() -> new ResourceNotFoundException("Idol not found with idol id :: " + idolId));
 		return ResponseEntity.ok().body(idol);
 	}
 
@@ -63,7 +64,7 @@ public class IdolController {
 	 * @return the idol
 	 */
 	@PostMapping("/idols")
-	public Idol createUser(@Valid @RequestBody Idol idol) {
+	public Idol createIdol(@Valid @RequestBody Idol idol) {
 		return idolRepository.save(idol);
 	}
 
@@ -80,22 +81,19 @@ public class IdolController {
 			@Valid @RequestBody Idol idolDetails) throws ResourceNotFoundException {
 
 		Idol idol = idolRepository.findById(idolId)
-				.orElseThrow(() -> new ResourceNotFoundException("Idol not found on :: " + idolId));
+				.orElseThrow(() -> new ResourceNotFoundException("Idol not found with idol id :: " + idolId));
 
-		idol.setName(idolDetails.getName());
-		idol.setType(idolDetails.getType());
-		idol.setPrice(idolDetails.getPrice());
-		idol.setCost(idolDetails.getCost());
-		idol.setQuantity(idolDetails.getQuantity());
-		idol.setReparable_qty(idolDetails.getReparable_qty());
-		idol.setDamaged_qty(idolDetails.getDamaged_qty());
-		idol.setSize(idolDetails.getSize());
-		idol.setType(idolDetails.getType());
+		BeanUtils.copyProperties(idol, idolDetails);
 		/*
-		 * idol.setUsername(idolDetails.getUsername());
-		 * idol.setEmail(idolDetails.getEmail());
-		 * idol.setPassword(idolDetails.getPassword());
+		 * idol.setName(idolDetails.getName()); idol.setType(idolDetails.getType());
+		 * idol.setSpecs(idolDetails.getSpecs()); idol.setSize(idolDetails.getSize());
+		 * idol.setCost(idolDetails.getCost()); idol.setPrice(idolDetails.getPrice());
+		 * idol.setQuantity(idolDetails.getQuantity());
+		 * idol.setReparable_qty(idolDetails.getReparable_qty());
+		 * idol.setDamaged_qty(idolDetails.getDamaged_qty());
+		 * idol.setComments(idolDetails.getComments());
 		 */
+
 		final Idol updatedIdol = idolRepository.save(idol);
 		return ResponseEntity.ok(updatedIdol);
 	}
@@ -110,7 +108,7 @@ public class IdolController {
 	@DeleteMapping("/idol/{id}")
 	public Map<String, Boolean> deleteIdol(@PathVariable(value = "id") Integer idolId) throws Exception {
 		Idol idol = idolRepository.findById(idolId)
-				.orElseThrow(() -> new ResourceNotFoundException("Idol not found on :: " + idolId));
+				.orElseThrow(() -> new ResourceNotFoundException("Idol not found with idol id  :: " + idolId));
 
 		idolRepository.delete(idol);
 		Map<String, Boolean> response = new HashMap<>();
