@@ -1,5 +1,6 @@
 package com.snehee.ganpati.controller;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.snehee.ganpati.entity.Idol;
+import com.snehee.ganpati.entity.Size;
+import com.snehee.ganpati.exception.InvalidInputException;
 import com.snehee.ganpati.exception.ResourceNotFoundException;
 import com.snehee.ganpati.repository.IdolRepository;
 import com.snehee.ganpati.util.Constants;
@@ -56,7 +59,7 @@ public class IdolController {
 	public ResponseEntity<Idol> getIdolsById(@PathVariable(value = "id") final Integer idolId)
 			throws ResourceNotFoundException {
 		final Idol idol = this.idolRepository.findById(idolId)
-				.orElseThrow(() -> new ResourceNotFoundException("Idol not found with idol id :: " + idolId));
+				.orElseThrow(() -> new ResourceNotFoundException("Idol not found with idol id : " + idolId));
 		return ResponseEntity.ok().body(idol);
 	}
 
@@ -71,30 +74,42 @@ public class IdolController {
 	public ResponseEntity<List<Idol>> getIdolsByAttribute(
 			@PathVariable(value = "attributeName") @NotBlank final String attributeName,
 			@PathVariable(value = "attributeValue", required = true) @NotBlank final String attributeValue)
-			throws ResourceNotFoundException {
+			throws Exception {
 		List<Idol> idolListByType = new ArrayList<>();
-		if (attributeName.equalsIgnoreCase(Constants.NAME)) {
-			idolListByType = this.idolRepository.findByNameContaining(attributeValue);
-		} else if (attributeName.equalsIgnoreCase(Constants.TYPE)) {
-			idolListByType = this.idolRepository.findByTypeContaining(attributeValue);
-		} else if (attributeName.equalsIgnoreCase(Constants.SPECS)) {
-			idolListByType = this.idolRepository.findBySpecsContaining(attributeValue);
-		} else if (attributeName.equalsIgnoreCase(Constants.SIZE)) {
-			idolListByType = this.idolRepository.findBySizeContaining(attributeValue);
-		} else if (attributeName.equalsIgnoreCase(Constants.COST)) {
-			idolListByType = this.idolRepository.findByCostGreaterThanEqual(attributeValue);
-		} else if (attributeName.equalsIgnoreCase(Constants.PRICE)) {
-			idolListByType = this.idolRepository.findByPriceGreaterThanEqual(attributeValue);
-		} else if (attributeName.equalsIgnoreCase(Constants.QUANTITY)) {
-			idolListByType = this.idolRepository.findByQuantityGreaterThanEqual(attributeValue);
-		} else if (attributeName.equalsIgnoreCase(Constants.REPARABLE_QTY)) {
-			idolListByType = this.idolRepository.findByReparableQtyGreaterThanEqual(attributeValue);
-		} else if (attributeName.equalsIgnoreCase(Constants.DAMAGED_QTY)) {
-			idolListByType = this.idolRepository.findByDamagedQtyGreaterThanEqual(attributeValue);
-		} else if (attributeName.equalsIgnoreCase(Constants.COMMENTS)) {
-			idolListByType = this.idolRepository.findByCommentsContaining(attributeValue);
+		try {
+			if (attributeName.equalsIgnoreCase(Constants.NAME)) {
+				idolListByType = this.idolRepository.findByNameContaining(attributeValue);
+			} else if (attributeName.equalsIgnoreCase(Constants.TYPE)) {
+				idolListByType = this.idolRepository.findByTypeContaining(attributeValue);
+			} else if (attributeName.equalsIgnoreCase(Constants.SPECS)) {
+				idolListByType = this.idolRepository.findBySpecsContaining(attributeValue);
+			} else if (attributeName.equalsIgnoreCase(Constants.SIZE)) {
+				idolListByType = this.idolRepository.findBySizeLike(Size.valueOf(attributeValue.toUpperCase()));
+			} else if (attributeName.equalsIgnoreCase(Constants.COST)) {
+				idolListByType = this.idolRepository.findByCostGreaterThanEqual(new BigDecimal(attributeValue));
+			} else if (attributeName.equalsIgnoreCase(Constants.PRICE)) {
+				idolListByType = this.idolRepository.findByPriceGreaterThanEqual(new BigDecimal(attributeValue));
+			} else if (attributeName.equalsIgnoreCase(Constants.QUANTITY)) {
+				idolListByType = this.idolRepository
+						.findByQuantityGreaterThanEqual(Integer.valueOf(attributeValue).intValue());
+			} else if (attributeName.equalsIgnoreCase(Constants.REPARABLE_QTY)) {
+				idolListByType = this.idolRepository
+						.findByReparableQtyGreaterThanEqual(Integer.valueOf(attributeValue).intValue());
+			} else if (attributeName.equalsIgnoreCase(Constants.DAMAGED_QTY)) {
+				idolListByType = this.idolRepository
+						.findByDamagedQtyGreaterThanEqual(Integer.valueOf(attributeValue).intValue());
+			} else if (attributeName.equalsIgnoreCase(Constants.COMMENTS)) {
+				idolListByType = this.idolRepository.findByCommentsContaining(attributeValue);
+			} else {
+				throw new InvalidInputException("Invalid attributeName:" + attributeName);
+			}
+		} catch (final InvalidInputException e) {
+			throw new InvalidInputException(
+					"Invalid attributeName:" + attributeName + " or attributeValue:" + attributeValue);
+		} catch (final Exception e) {
+			throw new Exception(
+					"API called with attributeName:\" + attributeName + \" and attributeValue:\" + attributeValue");
 		}
-
 		return ResponseEntity.ok().body(idolListByType);
 	}
 

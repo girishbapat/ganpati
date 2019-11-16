@@ -22,9 +22,9 @@ public interface Constants {
 	String SIZE = "size";
 	String COST = "cost";
 	String PRICE = "price";
-	String QUANTITY = "quantitiy";
-	String REPARABLE_QTY = "reparable_qty";
-	String DAMAGED_QTY = "damaged_qty";
+	String QUANTITY = "quantity";
+	String REPARABLE_QTY = "reparableQty";
+	String DAMAGED_QTY = "damagedQty";
 
 	/*
 	 * Customer Constants

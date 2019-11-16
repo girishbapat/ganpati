@@ -1,11 +1,13 @@
 package com.snehee.ganpati.repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import com.snehee.ganpati.entity.Idol;
+import com.snehee.ganpati.entity.Size;
 
 /**
  * The interface Idol repository.
@@ -21,17 +23,17 @@ public interface IdolRepository extends JpaRepository<Idol, Integer> {
 
 	List<Idol> findBySpecsContaining(String specsOfIdol);
 
-	List<Idol> findBySizeContaining(String sizeOfIdol);
+	List<Idol> findBySizeLike(Size sizeOfIdol);
 
-	List<Idol> findByCostGreaterThanEqual(String costOfIdol);
+	List<Idol> findByCostGreaterThanEqual(BigDecimal costOfIdol);
 
-	List<Idol> findByPriceGreaterThanEqual(String priceOfIdol);
+	List<Idol> findByPriceGreaterThanEqual(BigDecimal priceOfIdol);
 
-	List<Idol> findByQuantityGreaterThanEqual(String quantityOfIdol);
+	List<Idol> findByQuantityGreaterThanEqual(int quantityOfIdol);
 
-	List<Idol> findByReparableQtyGreaterThanEqual(String reparableQtyOfIdol);
+	List<Idol> findByReparableQtyGreaterThanEqual(int reparableQtyOfIdol);
 
-	List<Idol> findByDamagedQtyGreaterThanEqual(String damagedQtyOfIdol);
+	List<Idol> findByDamagedQtyGreaterThanEqual(int damagedQtyOfIdol);
 
 	List<Idol> findByCommentsContaining(String commentsOfIdol);
 }
