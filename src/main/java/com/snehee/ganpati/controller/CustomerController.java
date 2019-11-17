@@ -8,7 +8,6 @@ import java.util.Map;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -22,18 +21,18 @@ import org.springframework.web.bind.annotation.RestController;
 import com.snehee.ganpati.entity.Customer;
 import com.snehee.ganpati.exception.InvalidInputException;
 import com.snehee.ganpati.exception.ResourceNotFoundException;
-import com.snehee.ganpati.repository.CustomerRepository;
+import com.snehee.ganpati.service.CustomerService;
 import com.snehee.ganpati.util.Constants;
 
 @RestController
 class CustomerController {
 
 	@Autowired
-	private CustomerRepository repository;
+	private CustomerService customerService;
 
 	@GetMapping("/customers")
 	List<Customer> getAllCustomers() {
-		return this.repository.findAll();
+		return this.customerService.getAllCustomers();
 	}
 
 	/**
@@ -46,39 +45,38 @@ class CustomerController {
 	@GetMapping("/customers/{id}")
 	public ResponseEntity<Customer> getCustomersById(@PathVariable(value = "id") final Integer customerId)
 			throws ResourceNotFoundException {
-		final Customer customer = this.repository.findById(customerId).orElseThrow(
-				() -> new ResourceNotFoundException("Customer not found with customer id : " + customerId));
+		final Customer customer = this.customerService.getCustomersById(customerId);
 		return ResponseEntity.ok().body(customer);
 	}
 
-	@GetMapping("/getCustomersByName/{name}")
+	@GetMapping("/getCustomersWithNameLike/{name}")
 	public ResponseEntity<List<Customer>> getCustomersByName(@PathVariable(value = "name") final String nameOfCustomer)
 			throws ResourceNotFoundException {
-		final List<Customer> customerListByName = this.repository.findByNameContaining(nameOfCustomer);
+		final List<Customer> customerListByName = this.customerService.getCustomersWithNameLike(nameOfCustomer);
 		return ResponseEntity.ok().body(customerListByName);
 	}
 
-	@GetMapping("/getCustomersByAttribute/{attributeName}/{attributeValue}")
-	public ResponseEntity<List<Customer>> getCustomersByAttribute(
+	@GetMapping("/getCustomersWithAttributeLike/{attributeName}/{attributeValue}")
+	public ResponseEntity<List<Customer>> getCustomersWithAttributeLike(
 			@PathVariable(value = "attributeName") @NotBlank final String attributeName,
 			@PathVariable(value = "attributeValue", required = true) @NotBlank final String attributeValue)
 			throws Exception {
 		List<Customer> customerListByType = new ArrayList<>();
 		try {
 			if (attributeName.equalsIgnoreCase(Constants.NAME)) {
-				customerListByType = this.repository.findByNameContaining(attributeValue);
-			} else if (attributeName.equalsIgnoreCase(Constants.MOBILE1)) {
-				customerListByType = this.repository.findByMobile1Containing(attributeValue);
-			} else if (attributeName.equalsIgnoreCase(Constants.MOBILE2)) {
-				customerListByType = this.repository.findByMobile2Containing(attributeValue);
+				customerListByType = this.customerService.getCustomersWithNameLike(attributeValue);
+			} else if (attributeName.equalsIgnoreCase(Constants.PRIMARY_MOBILE)) {
+				customerListByType = this.customerService.getCustomersWithPrimaryMobileLike(attributeValue);
+			} else if (attributeName.equalsIgnoreCase(Constants.SECONDARY_MOBILE)) {
+				customerListByType = this.customerService.getCustomersWithSecondaryMobileLike(attributeValue);
 			} else if (attributeName.equalsIgnoreCase(Constants.LANDLINE)) {
-				customerListByType = this.repository.findByLandlineContaining(attributeValue);
+				customerListByType = this.customerService.getCustomersWithLandlineLike(attributeValue);
 			} else if (attributeName.equalsIgnoreCase(Constants.ADDRESS)) {
-				customerListByType = this.repository.findByAddressContaining(attributeValue);
+				customerListByType = this.customerService.getCustomersWithAddressLike(attributeValue);
 			} else if (attributeName.equalsIgnoreCase(Constants.INFO)) {
-				customerListByType = this.repository.findByInfoContaining(attributeValue);
+				customerListByType = this.customerService.getCustomersWithInfoLike(attributeValue);
 			} else if (attributeName.equalsIgnoreCase(Constants.COMMENTS)) {
-				customerListByType = this.repository.findByCommentsContaining(attributeValue);
+				customerListByType = this.customerService.getCustomersWithCommentsLike(attributeValue);
 			} else {
 				throw new InvalidInputException("Invalid attributeName:" + attributeName);
 			}
@@ -92,21 +90,21 @@ class CustomerController {
 		return ResponseEntity.ok().body(customerListByType);
 	}
 
-	@GetMapping("/getCustomersStartsWithAttribute/{attributeName}/{attributeValue}")
-	public ResponseEntity<List<Customer>> getCustomersStartsWithAttribute(
+	@GetMapping("/getCustomersStartingWithAttribute/{attributeName}/{attributeValue}")
+	public ResponseEntity<List<Customer>> getCustomersStartingWithAttribute(
 			@PathVariable(value = "attributeName") @NotBlank final String attributeName,
 			@PathVariable(value = "attributeValue", required = true) @NotBlank final String attributeValue)
 			throws Exception {
-		List<Customer> customerListByType = new ArrayList<>();
+		List<Customer> customerList = new ArrayList<>();
 		try {
 			if (attributeName.equalsIgnoreCase(Constants.NAME)) {
-				customerListByType = this.repository.findByNameStartsWith(attributeValue);
-			} else if (attributeName.equalsIgnoreCase(Constants.MOBILE1)) {
-				customerListByType = this.repository.findByMobile1StartsWith(attributeValue);
-			} else if (attributeName.equalsIgnoreCase(Constants.MOBILE2)) {
-				customerListByType = this.repository.findByMobile2StartsWith(attributeValue);
+				customerList = this.customerService.getCustomersStartingWithCustomerName(attributeValue);
+			} else if (attributeName.equalsIgnoreCase(Constants.PRIMARY_MOBILE)) {
+				customerList = this.customerService.getCustomersStartingWithPrimaryMobile(attributeValue);
+			} else if (attributeName.equalsIgnoreCase(Constants.SECONDARY_MOBILE)) {
+				customerList = this.customerService.getCustomersStartingWithSecondaryMobile(attributeValue);
 			} else if (attributeName.equalsIgnoreCase(Constants.LANDLINE)) {
-				customerListByType = this.repository.findByLandlineStartsWith(attributeValue);
+				customerList = this.customerService.getCustomersStartingWithLandline(attributeValue);
 			} else {
 				throw new InvalidInputException("Invalid attributeName:" + attributeName);
 			}
@@ -117,7 +115,7 @@ class CustomerController {
 			throw new Exception(
 					"API called with attributeName:\" + attributeName + \" and attributeValue:\" + attributeValue");
 		}
-		return ResponseEntity.ok().body(customerListByType);
+		return ResponseEntity.ok().body(customerList);
 	}
 
 	/**
@@ -128,7 +126,7 @@ class CustomerController {
 	 */
 	@PostMapping("/customers")
 	public Customer createCustomer(@Valid @RequestBody final Customer customer) {
-		return this.repository.save(customer);
+		return this.customerService.createCustomer(customer);
 	}
 
 	/**
@@ -143,12 +141,7 @@ class CustomerController {
 	@PutMapping("/customers/{id}")
 	public ResponseEntity<Customer> updateCustomer(@PathVariable(value = "id") final Integer customerId,
 			@Valid @RequestBody final Customer customerDetailsTobeUpdated) throws ResourceNotFoundException {
-
-		final Customer currentCustomerDetailsFromDb = this.repository.findById(customerId).orElseThrow(
-				() -> new ResourceNotFoundException("Customer not found with customer id :: " + customerId));
-
-		BeanUtils.copyProperties(customerDetailsTobeUpdated, currentCustomerDetailsFromDb);
-		final Customer updatedCustomer = this.repository.save(currentCustomerDetailsFromDb);
+		final Customer updatedCustomer = this.customerService.updateCustomer(customerId, customerDetailsTobeUpdated);
 		return ResponseEntity.ok(updatedCustomer);
 	}
 
@@ -161,12 +154,10 @@ class CustomerController {
 	 */
 	@DeleteMapping("/customers/{id}")
 	public Map<String, Boolean> deleteCustomer(@PathVariable(value = "id") final Integer customerId) throws Exception {
-		final Customer customer = this.repository.findById(customerId).orElseThrow(
-				() -> new ResourceNotFoundException("Customer not found with customer id  :: " + customerId));
 
-		this.repository.delete(customer);
+		final Boolean isCustomerDeleted = this.customerService.deleteCustomer(customerId);
 		final Map<String, Boolean> response = new HashMap<>();
-		response.put("deleted", Boolean.TRUE);
+		response.put("deleted", isCustomerDeleted);
 		return response;
 	}
 }

@@ -12,13 +12,13 @@ public interface CustomerRepository extends JpaRepository<Customer, Integer> {
 
 	List<Customer> findByNameStartsWith(String nameOfCustomer);
 
-	List<Customer> findByMobile1Containing(String primaryMobileNoOfCustomer);
+	List<Customer> findByPrimaryMobileContaining(String primaryMobileNoOfCustomer);
 
-	List<Customer> findByMobile1StartsWith(String primaryMobileNoOfCustomer);
+	List<Customer> findByPrimaryMobileStartsWith(String primaryMobileNoOfCustomer);
 
-	List<Customer> findByMobile2Containing(String secondaryMobileNoIfAnyOfCustomer);
+	List<Customer> findBySecondaryMobileContaining(String secondaryMobileNoIfAnyOfCustomer);
 
-	List<Customer> findByMobile2StartsWith(String secondaryMobileNoIfAnyOfCustomer);
+	List<Customer> findBySecondaryMobileStartsWith(String secondaryMobileNoIfAnyOfCustomer);
 
 	List<Customer> findByLandlineContaining(String landlineIfAnyOfCustomer);
 

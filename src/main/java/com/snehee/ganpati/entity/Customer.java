@@ -1,5 +1,6 @@
 package com.snehee.ganpati.entity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -16,8 +17,10 @@ public class Customer {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	private String name;
-	private String mobile1;
-	private String mobile2;
+	@Column(name ="primary_mobile")
+	private String primaryMobile;
+	@Column(name ="secondary_mobile")
+	private String secondaryMobile;
 	private String landline;
 	private String address;
 	private String info;
