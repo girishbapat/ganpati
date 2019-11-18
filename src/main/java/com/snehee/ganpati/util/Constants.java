@@ -1,6 +1,27 @@
 package com.snehee.ganpati.util;
 
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
+import com.snehee.ganpati.entity.Customer;
+import com.snehee.ganpati.entity.Idol;
+
 public interface Constants {
+
+	List<Customer> CUSTOMER_LIST = new CopyOnWriteArrayList<>();
+
+	List<Idol> IDOL_LIST = new CopyOnWriteArrayList<>();
+
+	static void refreshCustomerList(final List<Customer> customerListTobeUpdated) {
+		Constants.CUSTOMER_LIST.clear();
+		Constants.CUSTOMER_LIST.addAll(customerListTobeUpdated);
+	}
+
+	static void refreshIdolList(final List<Idol> idolListTobeUpdated) {
+		Constants.IDOL_LIST.clear();
+		Constants.IDOL_LIST.addAll(idolListTobeUpdated);
+	}
+
 	/*
 	 * Common constants
 	 */
@@ -35,7 +56,7 @@ public interface Constants {
 	String ADDRESS = "address";
 
 	/*
-	 * Sale Constants
+	 * Booking Constants
 	 */
 	String BOOKING_DATE = "bookingDate";
 
@@ -57,8 +78,8 @@ public interface Constants {
 	 * Customer perspective constants
 	 */
 	String CUSTOMER_NAME = "customerName";
-	String CUSTOMER_MOBILE1 = "customerPrimaryMobile";
-	String CUSTOMER_MOBILE2 = "customeSecondaryMobile";
+	String CUSTOMER_PRIMARY_MOBILE = "customerPrimaryMobile";
+	String CUSTOMER_SECONDARY_MOBILE = "customeSecondaryMobile";
 	String CUSTOMER_LANDLINE = "customerLandline";
 
 	/*

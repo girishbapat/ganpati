@@ -2,8 +2,6 @@ package com.snehee.ganpati.serviceimpl;
 
 import java.util.List;
 
-import javax.validation.Valid;
-
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,6 +10,7 @@ import com.snehee.ganpati.entity.Customer;
 import com.snehee.ganpati.exception.ResourceNotFoundException;
 import com.snehee.ganpati.repository.CustomerRepository;
 import com.snehee.ganpati.service.CustomerService;
+import com.snehee.ganpati.util.Constants;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
@@ -98,8 +97,10 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-	public Customer createCustomer(@Valid final Customer customer) {
-		return this.customerRespository.save(customer);
+	public Customer createCustomer(final Customer customer) {
+		final Customer customerSaved = this.customerRespository.save(customer);
+		this.getAllCustomers();
+		return customerSaved;
 	}
 
 	@Override
@@ -110,6 +111,7 @@ public class CustomerServiceImpl implements CustomerService {
 
 		BeanUtils.copyProperties(customerDetailsTobeUpdated, currentCustomerDetailsFromDb);
 		final Customer updatedCustomer = this.customerRespository.save(currentCustomerDetailsFromDb);
+		this.getAllCustomers();
 		return updatedCustomer;
 	}
 
@@ -118,12 +120,16 @@ public class CustomerServiceImpl implements CustomerService {
 		final Customer currentCustomerDetailsFromDb = this.customerRespository.findById(customerId).orElseThrow(
 				() -> new ResourceNotFoundException("Customer not found with customer id :: " + customerId));
 		this.customerRespository.delete(currentCustomerDetailsFromDb);
+		this.getAllCustomers();
 		return true;
 	}
 
 	@Override
 	public List<Customer> getAllCustomers() {
-		return this.customerRespository.findAll();
+		final List<Customer> findAll = this.customerRespository.findAll();
+		Constants.refreshCustomerList(findAll);
+		return findAll;
+
 	}
 
 }

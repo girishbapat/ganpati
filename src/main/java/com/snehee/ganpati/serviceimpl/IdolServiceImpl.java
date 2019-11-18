@@ -12,6 +12,7 @@ import com.snehee.ganpati.entity.Size;
 import com.snehee.ganpati.exception.ResourceNotFoundException;
 import com.snehee.ganpati.repository.IdolRepository;
 import com.snehee.ganpati.service.IdolService;
+import com.snehee.ganpati.util.Constants;
 
 @Service
 public class IdolServiceImpl implements IdolService {
@@ -21,7 +22,9 @@ public class IdolServiceImpl implements IdolService {
 
 	@Override
 	public List<Idol> getAllIdols() {
-		return this.idolRespository.findAll();
+		final List<Idol> allIdols = this.idolRespository.findAll();
+		Constants.refreshIdolList(allIdols);
+		return allIdols;
 	}
 
 	@Override
@@ -99,7 +102,9 @@ public class IdolServiceImpl implements IdolService {
 
 	@Override
 	public Idol createIdol(final Idol idol) {
-		return this.idolRespository.save(idol);
+		final Idol savedIdol = this.idolRespository.save(idol);
+		this.getAllIdols();
+		return savedIdol;
 	}
 
 	@Override
@@ -109,6 +114,7 @@ public class IdolServiceImpl implements IdolService {
 
 		BeanUtils.copyProperties(idolDetailsTobeUpdated, currentIdolDetailsFromDb);
 		final Idol updatedIdol = this.idolRespository.save(currentIdolDetailsFromDb);
+		this.getAllIdols();
 		return updatedIdol;
 	}
 
@@ -117,6 +123,7 @@ public class IdolServiceImpl implements IdolService {
 		final Idol currentIdolDetailsFromDb = this.idolRespository.findById(idolId)
 				.orElseThrow(() -> new ResourceNotFoundException("Idol not found with idol id :: " + idolId));
 		this.idolRespository.delete(currentIdolDetailsFromDb);
+		this.getAllIdols();
 		return true;
 	}
 
