@@ -150,7 +150,7 @@ public class IdolController {
 	}
 
 	/**
-	 * Delete idol map.
+	 * Delete idol api.
 	 *
 	 * @param idolId the idol id
 	 * @return the map

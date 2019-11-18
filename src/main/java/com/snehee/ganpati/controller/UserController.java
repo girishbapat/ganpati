@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.snehee.ganpati.entity.User;
 import com.snehee.ganpati.exception.ResourceNotFoundException;
-import com.snehee.ganpati.repository.UserRepository;
+import com.snehee.ganpati.service.UserService;
 
 /**
  * The type User controller.
@@ -29,7 +29,7 @@ import com.snehee.ganpati.repository.UserRepository;
 public class UserController {
 
 	@Autowired
-	private UserRepository userRepository;
+	private UserService userService;
 
 	/**
 	 * Get all users list.
@@ -38,21 +38,20 @@ public class UserController {
 	 */
 	@GetMapping("/users")
 	public List<User> getAllUsers() {
-		return userRepository.findAll();
+		return this.userService.getAllUsers();
 	}
 
 	/**
-	 * Gets users by id.
+	 * Gets user by id.
 	 *
 	 * @param userId the user id
 	 * @return the users by id
 	 * @throws ResourceNotFoundException the resource not found exception
 	 */
 	@GetMapping("/users/{id}")
-	public ResponseEntity<User> getUsersById(@PathVariable(value = "id") Integer userId)
+	public ResponseEntity<User> getUserById(@PathVariable(value = "id") final Integer userId)
 			throws ResourceNotFoundException {
-		User user = userRepository.findById(userId)
-				.orElseThrow(() -> new ResourceNotFoundException("User not found on :: " + userId));
+		final User user = this.userService.getUserById(userId);
 		return ResponseEntity.ok().body(user);
 	}
 
@@ -63,8 +62,8 @@ public class UserController {
 	 * @return the user
 	 */
 	@PostMapping("/users")
-	public User createUser(@Valid @RequestBody User user) {
-		return userRepository.save(user);
+	public User createUser(@Valid @RequestBody final User user) {
+		return this.userService.createUser(user);
 	}
 
 	/**
@@ -76,16 +75,9 @@ public class UserController {
 	 * @throws ResourceNotFoundException the resource not found exception
 	 */
 	@PutMapping("/users/{id}")
-	public ResponseEntity<User> updateUser(@PathVariable(value = "id") Integer userId,
-			@Valid @RequestBody User userDetails) throws ResourceNotFoundException {
-
-		User user = userRepository.findById(userId)
-				.orElseThrow(() -> new ResourceNotFoundException("User not found on :: " + userId));
-
-		user.setUsername(userDetails.getUsername());
-		user.setEmail(userDetails.getEmail());
-		user.setPassword(userDetails.getPassword());
-		final User updatedUser = userRepository.save(user);
+	public ResponseEntity<User> updateUser(@PathVariable(value = "id") final Integer userId,
+			@Valid @RequestBody final User userDetails) throws ResourceNotFoundException {
+		final User updatedUser = this.userService.updateUser(userId, userDetails);
 		return ResponseEntity.ok(updatedUser);
 	}
 
@@ -96,14 +88,11 @@ public class UserController {
 	 * @return the map
 	 * @throws Exception the exception
 	 */
-	@DeleteMapping("/user/{id}")
-	public Map<String, Boolean> deleteUser(@PathVariable(value = "id") Integer userId) throws Exception {
-		User user = userRepository.findById(userId)
-				.orElseThrow(() -> new ResourceNotFoundException("User not found on :: " + userId));
-
-		userRepository.delete(user);
-		Map<String, Boolean> response = new HashMap<>();
-		response.put("deleted", Boolean.TRUE);
+	@DeleteMapping("/users/{id}")
+	public Map<String, Boolean> deleteUser(@PathVariable(value = "id") final Integer userId) throws Exception {
+		final Boolean ifcurrentUserGotDeleted = this.userService.deleteUser(userId);
+		final Map<String, Boolean> response = new HashMap<>();
+		response.put("deleted", ifcurrentUserGotDeleted);
 		return response;
 	}
 }
