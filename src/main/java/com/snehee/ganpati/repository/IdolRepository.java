@@ -36,4 +36,6 @@ public interface IdolRepository extends JpaRepository<Idol, Integer> {
 	List<Idol> findByDamagedQtyGreaterThanEqual(int damagedQtyOfIdol);
 
 	List<Idol> findByCommentsContaining(String commentsOfIdol);
+
+	List<Idol> findByNameStartsWith(String nameOfIdol);
 }

@@ -24,7 +24,7 @@ import com.snehee.ganpati.entity.Idol;
 import com.snehee.ganpati.entity.Size;
 import com.snehee.ganpati.exception.InvalidInputException;
 import com.snehee.ganpati.exception.ResourceNotFoundException;
-import com.snehee.ganpati.repository.IdolRepository;
+import com.snehee.ganpati.service.IdolService;
 import com.snehee.ganpati.util.Constants;
 
 /**
@@ -36,7 +36,7 @@ import com.snehee.ganpati.util.Constants;
 public class IdolController {
 
 	@Autowired
-	private IdolRepository idolRepository;
+	private IdolService idolService;
 
 	/**
 	 * Get all idols list.
@@ -45,7 +45,7 @@ public class IdolController {
 	 */
 	@GetMapping("/idols")
 	public List<Idol> getAllIdols() {
-		return this.idolRepository.findAll();
+		return this.idolService.getAllIdols();
 	}
 
 	/**
@@ -58,15 +58,21 @@ public class IdolController {
 	@GetMapping("/idols/{id}")
 	public ResponseEntity<Idol> getIdolsById(@PathVariable(value = "id") final Integer idolId)
 			throws ResourceNotFoundException {
-		final Idol idol = this.idolRepository.findById(idolId)
-				.orElseThrow(() -> new ResourceNotFoundException("Idol not found with idol id : " + idolId));
+		final Idol idol = this.idolService.getIdolsById(idolId);
 		return ResponseEntity.ok().body(idol);
+	}
+
+	@GetMapping("/getIdolsByNameStartingWith/{name}")
+	public ResponseEntity<List<Idol>> getIdolsByNameStartingWith(@PathVariable(value = "name") final String nameOfIdol)
+			throws ResourceNotFoundException {
+		final List<Idol> idolListByName = this.idolService.getIdolsStartingWithIdolName(nameOfIdol);
+		return ResponseEntity.ok().body(idolListByName);
 	}
 
 	@GetMapping("/getIdolsByName/{name}")
 	public ResponseEntity<List<Idol>> getIdolsByName(@PathVariable(value = "name") final String nameOfIdol)
 			throws ResourceNotFoundException {
-		final List<Idol> idolListByName = this.idolRepository.findByNameContaining(nameOfIdol);
+		final List<Idol> idolListByName = this.idolService.getIdolsWithNameLike(nameOfIdol);
 		return ResponseEntity.ok().body(idolListByName);
 	}
 
@@ -78,28 +84,28 @@ public class IdolController {
 		List<Idol> idolListByType = new ArrayList<>();
 		try {
 			if (attributeName.equalsIgnoreCase(Constants.NAME)) {
-				idolListByType = this.idolRepository.findByNameContaining(attributeValue);
+				idolListByType = this.idolService.getIdolsWithNameLike(attributeValue);
 			} else if (attributeName.equalsIgnoreCase(Constants.TYPE)) {
-				idolListByType = this.idolRepository.findByTypeContaining(attributeValue);
+				idolListByType = this.idolService.getIdolsWithTypeLike(attributeValue);
 			} else if (attributeName.equalsIgnoreCase(Constants.SPECS)) {
-				idolListByType = this.idolRepository.findBySpecsContaining(attributeValue);
+				idolListByType = this.idolService.getIdolsWithSpecsLike(attributeValue);
 			} else if (attributeName.equalsIgnoreCase(Constants.SIZE)) {
-				idolListByType = this.idolRepository.findBySizeLike(Size.valueOf(attributeValue.toUpperCase()));
+				idolListByType = this.idolService.getIdolsWithSizeLike(Size.valueOf(attributeValue.toUpperCase()));
 			} else if (attributeName.equalsIgnoreCase(Constants.COST)) {
-				idolListByType = this.idolRepository.findByCostGreaterThanEqual(new BigDecimal(attributeValue));
+				idolListByType = this.idolService.getIdolsWithCostGreaterThanEqual(new BigDecimal(attributeValue));
 			} else if (attributeName.equalsIgnoreCase(Constants.PRICE)) {
-				idolListByType = this.idolRepository.findByPriceGreaterThanEqual(new BigDecimal(attributeValue));
+				idolListByType = this.idolService.getIdolsWithPriceGreaterThanEqual(new BigDecimal(attributeValue));
 			} else if (attributeName.equalsIgnoreCase(Constants.QUANTITY)) {
-				idolListByType = this.idolRepository
-						.findByQuantityGreaterThanEqual(Integer.valueOf(attributeValue).intValue());
+				idolListByType = this.idolService
+						.getIdolsWithQuantityGreaterThanEqual(Integer.valueOf(attributeValue).intValue());
 			} else if (attributeName.equalsIgnoreCase(Constants.REPARABLE_QTY)) {
-				idolListByType = this.idolRepository
-						.findByReparableQtyGreaterThanEqual(Integer.valueOf(attributeValue).intValue());
+				idolListByType = this.idolService
+						.getIdolsWithReparableQtyGreaterThanEqual(Integer.valueOf(attributeValue).intValue());
 			} else if (attributeName.equalsIgnoreCase(Constants.DAMAGED_QTY)) {
-				idolListByType = this.idolRepository
-						.findByDamagedQtyGreaterThanEqual(Integer.valueOf(attributeValue).intValue());
+				idolListByType = this.idolService
+						.getIdolsWithDamagedQtyGreaterThanEqual(Integer.valueOf(attributeValue).intValue());
 			} else if (attributeName.equalsIgnoreCase(Constants.COMMENTS)) {
-				idolListByType = this.idolRepository.findByCommentsContaining(attributeValue);
+				idolListByType = this.idolService.getIdolsWithCommentsLike(attributeValue);
 			} else {
 				throw new InvalidInputException("Invalid attributeName:" + attributeName);
 			}
@@ -121,7 +127,7 @@ public class IdolController {
 	 */
 	@PostMapping("/idols")
 	public Idol createIdol(@Valid @RequestBody final Idol idol) {
-		return this.idolRepository.save(idol);
+		return this.idolService.createIdol(idol);
 	}
 
 	/**
@@ -136,11 +142,10 @@ public class IdolController {
 	public ResponseEntity<Idol> updateIdol(@PathVariable(value = "id") final Integer idolId,
 			@Valid @RequestBody final Idol idolDetailsTobeUpdated) throws ResourceNotFoundException {
 
-		final Idol currentIdolFromDb = this.idolRepository.findById(idolId)
-				.orElseThrow(() -> new ResourceNotFoundException("Idol not found with idol id :: " + idolId));
+		final Idol currentIdolFromDb = this.idolService.getIdolsById(idolId);
 
 		BeanUtils.copyProperties(idolDetailsTobeUpdated, currentIdolFromDb);
-		final Idol updatedIdol = this.idolRepository.save(currentIdolFromDb);
+		final Idol updatedIdol = this.idolService.createIdol(currentIdolFromDb);
 		return ResponseEntity.ok(updatedIdol);
 	}
 
@@ -153,12 +158,9 @@ public class IdolController {
 	 */
 	@DeleteMapping("/idols/{id}")
 	public Map<String, Boolean> deleteIdol(@PathVariable(value = "id") final Integer idolId) throws Exception {
-		final Idol idol = this.idolRepository.findById(idolId)
-				.orElseThrow(() -> new ResourceNotFoundException("Idol not found with idol id  :: " + idolId));
-
-		this.idolRepository.delete(idol);
+		final Boolean isIdolDeleted = this.idolService.deleteIdol(idolId);
 		final Map<String, Boolean> response = new HashMap<>();
-		response.put("deleted", Boolean.TRUE);
+		response.put("deleted", isIdolDeleted);
 		return response;
 	}
 }

@@ -1,4 +1,4 @@
-package com.snehee.ganpati.service;
+package com.snehee.ganpati.serviceimpl;
 
 import java.util.List;
 
@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.snehee.ganpati.entity.Customer;
 import com.snehee.ganpati.exception.ResourceNotFoundException;
 import com.snehee.ganpati.repository.CustomerRepository;
+import com.snehee.ganpati.service.CustomerService;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
