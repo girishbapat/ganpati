@@ -3,6 +3,7 @@
  */
 package com.snehee.ganpati.service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import com.snehee.ganpati.dto.BookingDTO;
@@ -16,20 +17,22 @@ import com.snehee.ganpati.exception.ResourceNotFoundException;
 public interface BookingService {
 	List<Booking> getAllBookings();
 
-	Booking getBookingByBookingId(final Integer bookingId) throws ResourceNotFoundException;
+	Booking getBookingById(final Integer bookingId) throws ResourceNotFoundException;
 
 	List<BookingDTO> getBookingsWithCustomerNameLike(String attributeValue);
 
-	List<BookingDTO> getBookingsWithCustomerPrimaryMobileLike(String attributeValue);
+	List<BookingDTO> getBookingsWithPrimaryMobileLike(String attributeValue);
 
-	List<BookingDTO> getBookingsWithCustomerSecondaryMobileLike(String attributeValue);
+	List<BookingDTO> getBookingsWithSecondaryMobileLike(String attributeValue);
 
-	List<BookingDTO> getBookingsWithCustomerLandlineLike(String attributeValue);
+	List<BookingDTO> getBookingsWithLandlineLike(String attributeValue);
 
-	List<BookingDTO> getBookingsWithCustomerAddressLike(String attributeValue);
+	List<BookingDTO> getBookingsWithAddressLike(String attributeValue);
 
-	List<BookingDTO> getBookingsWithCustomerInfoLike(String attributeValue);
+	List<BookingDTO> getBookingsWithInfoLike(String attributeValue);
 
 	List<BookingDTO> getBookingssWithCustomerCommentsLike(String attributeValue);
+
+	List<Booking> getBookingsByBookingDate(LocalDate bookingDate);
 
 }

@@ -78,9 +78,7 @@ public interface Constants {
 	 * Customer perspective constants
 	 */
 	String CUSTOMER_NAME = "customerName";
-	String CUSTOMER_PRIMARY_MOBILE = "customerPrimaryMobile";
-	String CUSTOMER_SECONDARY_MOBILE = "customeSecondaryMobile";
-	String CUSTOMER_LANDLINE = "customerLandline";
+	String CUSTOMER_COMMENTS = "customerComments";
 
 	/*
 	 * Idol perspective constants

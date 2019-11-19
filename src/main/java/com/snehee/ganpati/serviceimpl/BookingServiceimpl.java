@@ -3,6 +3,7 @@
  */
 package com.snehee.ganpati.serviceimpl;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -14,7 +15,6 @@ import org.springframework.stereotype.Service;
 import com.snehee.ganpati.dto.BookingDTO;
 import com.snehee.ganpati.entity.Booking;
 import com.snehee.ganpati.entity.Customer;
-import com.snehee.ganpati.entity.Idol;
 import com.snehee.ganpati.exception.ResourceNotFoundException;
 import com.snehee.ganpati.repository.BookingRepository;
 import com.snehee.ganpati.service.BookingService;
@@ -37,34 +37,20 @@ public class BookingServiceimpl implements BookingService {
 	@Autowired
 	IdolService idolService;
 
-	@Override
-	public List<Booking> getAllBookings() {
-		return this.bookingRepository.findAll();
-	}
-
-	@Override
-	public Booking getBookingByBookingId(final Integer bookingId) throws ResourceNotFoundException {
-		final Booking booking = this.bookingRepository.findById(bookingId)
-				.orElseThrow(() -> new ResourceNotFoundException("Booking not found with booking id : " + bookingId));
-		return booking;
-	}
-
-	@Override
-	public List<BookingDTO> getBookingsWithCustomerNameLike(final String nameOfCustomer) {
-		final List<Customer> allCustomers = this.customerService.getAllCustomers();
-		final List<Idol> allIdols = this.idolService.getAllIdols();
-		/*
-		 * First get list of customers with Name like given name
-		 */
-		final List<Customer> customersWithNameLike = this.customerService.getCustomersWithNameLike(nameOfCustomer);
-
+	/**
+	 * @param customers
+	 * @return
+	 */
+	private List<BookingDTO> getBookingsForCustomers(final List<Customer> customers) {
 		final List<Booking> bookingsForCustomersWithNameLike = new ArrayList<>();
+		this.customerService.getAllCustomers();
+		this.idolService.getAllIdols();
 
 		/*
 		 * Now for each of that customer retrieve the bookings and Add Bookings in new
 		 * array list of bookings for customer
 		 */
-		customersWithNameLike.forEach(customer -> {
+		customers.forEach(customer -> {
 			final List<Booking> bookingList = this.bookingRepository.findByCustomerId(customer.getId());
 			bookingsForCustomersWithNameLike.addAll(bookingList);
 		});
@@ -74,54 +60,113 @@ public class BookingServiceimpl implements BookingService {
 		 */
 		final List<BookingDTO> bookingListofAllCustomers = bookingsForCustomersWithNameLike.stream()
 				.map(bookingForSpecificCustomer -> {
-					final BookingDTO booking = new BookingDTO();
-					BeanUtils.copyProperties(bookingForSpecificCustomer, booking,
-							new String[] { "customerName", "idolName" });
-					final String customerName = Constants.CUSTOMER_LIST
-							.get(bookingForSpecificCustomer.getCustomerId() - 1).getName();
-					booking.setCustomerName(customerName);
+					final BookingDTO bookingDTO = new BookingDTO();
+					BeanUtils.copyProperties(bookingForSpecificCustomer, bookingDTO,
+							new String[] { "customerName", "primaryMobile", "idolName" });
+					final Customer customer = Constants.CUSTOMER_LIST
+							.get(bookingForSpecificCustomer.getCustomerId() - 1);
+					bookingDTO.setCustomerName(customer.getName());
+					bookingDTO.setPrimaryMobile(customer.getPrimaryMobile());
 					final String IdolName = Constants.IDOL_LIST.get(bookingForSpecificCustomer.getIdolId() - 1)
 							.getName();
-					booking.setIdolName(IdolName);//
-					return booking;
+					bookingDTO.setIdolName(IdolName);//
+					return bookingDTO;
 				}).collect(Collectors.toList());
+		return bookingListofAllCustomers;
+	}
+
+	/*
+	 * Apis related to customers
+	 */
+
+	@Override
+	public List<BookingDTO> getBookingsWithCustomerNameLike(final String nameOfCustomer) {
+
+		/*
+		 * First get list of customers with Name like given name
+		 */
+		final List<Customer> customersWithNameLike = this.customerService.getCustomersWithNameLike(nameOfCustomer);
+
+		final List<BookingDTO> bookingListofAllCustomers = this.getBookingsForCustomers(customersWithNameLike);
 
 		return bookingListofAllCustomers;
 	}
 
 	@Override
-	public List<BookingDTO> getBookingsWithCustomerPrimaryMobileLike(final String attributeValue) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<BookingDTO> getBookingsWithPrimaryMobileLike(final String primaryMobileNoOfCustomer) {
+		final List<Customer> customersWithNameLike = this.customerService
+				.getCustomersWithPrimaryMobileLike(primaryMobileNoOfCustomer);
+
+		final List<BookingDTO> bookingListofAllCustomers = this.getBookingsForCustomers(customersWithNameLike);
+
+		return bookingListofAllCustomers;
 	}
 
 	@Override
-	public List<BookingDTO> getBookingsWithCustomerSecondaryMobileLike(final String attributeValue) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<BookingDTO> getBookingsWithSecondaryMobileLike(final String secondaryMobileNoOfCustomer) {
+		final List<Customer> customersWithNameLike = this.customerService
+				.getCustomersWithSecondaryMobileLike(secondaryMobileNoOfCustomer);
+
+		final List<BookingDTO> bookingListofAllCustomers = this.getBookingsForCustomers(customersWithNameLike);
+
+		return bookingListofAllCustomers;
 	}
 
 	@Override
-	public List<BookingDTO> getBookingsWithCustomerLandlineLike(final String attributeValue) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<BookingDTO> getBookingsWithLandlineLike(final String landlineNoOfCustomer) {
+		final List<Customer> customersWithNameLike = this.customerService
+				.getCustomersWithLandlineLike(landlineNoOfCustomer);
+
+		final List<BookingDTO> bookingListofAllCustomers = this.getBookingsForCustomers(customersWithNameLike);
+
+		return bookingListofAllCustomers;
 	}
 
 	@Override
-	public List<BookingDTO> getBookingsWithCustomerAddressLike(final String attributeValue) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<BookingDTO> getBookingsWithAddressLike(final String addressOfCustomer) {
+		final List<Customer> customersWithNameLike = this.customerService
+				.getCustomersWithAddressLike(addressOfCustomer);
+
+		final List<BookingDTO> bookingListofAllCustomers = this.getBookingsForCustomers(customersWithNameLike);
+
+		return bookingListofAllCustomers;
 	}
 
 	@Override
-	public List<BookingDTO> getBookingsWithCustomerInfoLike(final String attributeValue) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<BookingDTO> getBookingsWithInfoLike(final String infoAboutCustomerOrIdolsHePurchases) {
+		final List<Customer> customersWithNameLike = this.customerService
+				.getCustomersWithInfoLike(infoAboutCustomerOrIdolsHePurchases);
+
+		final List<BookingDTO> bookingListofAllCustomers = this.getBookingsForCustomers(customersWithNameLike);
+
+		return bookingListofAllCustomers;
 	}
 
 	@Override
-	public List<BookingDTO> getBookingssWithCustomerCommentsLike(final String attributeValue) {
-		// TODO Auto-generated method stub
+	public List<BookingDTO> getBookingssWithCustomerCommentsLike(final String commentsAboutCustomer) {
+		final List<Customer> customersWithNameLike = this.customerService
+				.getCustomersWithCommentsLike(commentsAboutCustomer);
+
+		final List<BookingDTO> bookingListofAllCustomers = this.getBookingsForCustomers(customersWithNameLike);
+
+		return bookingListofAllCustomers;
+	}
+
+	@Override
+	public List<Booking> getAllBookings() {
+		return this.bookingRepository.findAll();
+	}
+
+	@Override
+	public Booking getBookingById(final Integer bookingId) throws ResourceNotFoundException {
+		final Booking booking = this.bookingRepository.findById(bookingId)
+				.orElseThrow(() -> new ResourceNotFoundException("Booking not found with booking id : " + bookingId));
+		return booking;
+	}
+
+	@Override
+	public List<Booking> getBookingsByBookingDate(final LocalDate bookingDate) {
+		final List<Booking> findAllByBookingDate = this.bookingRepository.findAllByBookingDate(bookingDate);
 		return null;
 	}
 

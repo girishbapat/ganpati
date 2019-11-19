@@ -1,5 +1,7 @@
 package com.snehee.ganpati.controller;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,8 +41,20 @@ class BookingController {
 	@GetMapping("/bookings/{id}")
 	public ResponseEntity<Booking> getBookingByBookingId(@PathVariable(value = "id") final Integer bookingId)
 			throws ResourceNotFoundException {
-		final Booking booking = this.bookingService.getBookingByBookingId(bookingId);
+		final Booking booking = this.bookingService.getBookingById(bookingId);
 		return ResponseEntity.ok().body(booking);
+	}
+
+	@GetMapping("/getBookingsByBookingDate/{bookingDate}")
+	public ResponseEntity<List<Booking>> getBookingsByBookingDate(
+			@PathVariable(value = "bookingDate") final String strBookingDate) throws ResourceNotFoundException {
+		// final DateTimeFormatter formatter =
+		// DateTimeFormatter.ofPattern("d-MMM-yyyy");
+		final DateTimeFormatter formatter = DateTimeFormatter.BASIC_ISO_DATE;
+		// convert String to LocalDate
+		final LocalDate bookingDate = LocalDate.parse(strBookingDate, formatter);
+		final List<Booking> listOfBookingsDTO = this.bookingService.getBookingsByBookingDate(bookingDate);
+		return ResponseEntity.ok().body(listOfBookingsDTO);
 	}
 
 	/**
@@ -51,36 +65,36 @@ class BookingController {
 	 * @return
 	 * @throws Exception
 	 */
-	@GetMapping("/getBookingsWithAttributeLike/{attributeName}/{attributeValue}")
+	@GetMapping("/getBookingsWithCustomerAttributeLike/{attributeName}/{attributeValue}")
 	public ResponseEntity<List<BookingDTO>> getBookingsWithAttributeLike(
 			@PathVariable(value = "attributeName") @NotBlank final String attributeName,
 			@PathVariable(value = "attributeValue", required = true) @NotBlank final String attributeValue)
 			throws Exception {
 		List<BookingDTO> bookingsListByType = new ArrayList<>();
 		try {
-			if (attributeName.equalsIgnoreCase(Constants.CUSTOMER_NAME)) {
+			if (attributeName.equalsIgnoreCase(Constants.NAME)) {
 				bookingsListByType = this.bookingService.getBookingsWithCustomerNameLike(attributeValue);
-			} else if (attributeName.equalsIgnoreCase(Constants.CUSTOMER_PRIMARY_MOBILE)) {
-				bookingsListByType = this.bookingService.getBookingsWithCustomerPrimaryMobileLike(attributeValue);
-			} else if (attributeName.equalsIgnoreCase(Constants.CUSTOMER_SECONDARY_MOBILE)) {
-				bookingsListByType = this.bookingService.getBookingsWithCustomerSecondaryMobileLike(attributeValue);
+			} else if (attributeName.equalsIgnoreCase(Constants.PRIMARY_MOBILE)) {
+				bookingsListByType = this.bookingService.getBookingsWithPrimaryMobileLike(attributeValue);
+			} else if (attributeName.equalsIgnoreCase(Constants.SECONDARY_MOBILE)) {
+				bookingsListByType = this.bookingService.getBookingsWithSecondaryMobileLike(attributeValue);
 			} else if (attributeName.equalsIgnoreCase(Constants.LANDLINE)) {
-				bookingsListByType = this.bookingService.getBookingsWithCustomerLandlineLike(attributeValue);
+				bookingsListByType = this.bookingService.getBookingsWithLandlineLike(attributeValue);
 			} else if (attributeName.equalsIgnoreCase(Constants.ADDRESS)) {
-				bookingsListByType = this.bookingService.getBookingsWithCustomerAddressLike(attributeValue);
+				bookingsListByType = this.bookingService.getBookingsWithAddressLike(attributeValue);
 			} else if (attributeName.equalsIgnoreCase(Constants.INFO)) {
-				bookingsListByType = this.bookingService.getBookingsWithCustomerInfoLike(attributeValue);
+				bookingsListByType = this.bookingService.getBookingsWithInfoLike(attributeValue);
 			} else if (attributeName.equalsIgnoreCase(Constants.COMMENTS)) {
 				bookingsListByType = this.bookingService.getBookingssWithCustomerCommentsLike(attributeValue);
 			} else {
-				throw new InvalidInputException("Invalid attributeName:" + attributeName);
+				throw new InvalidInputException("Invalid customer attributeName:" + attributeName);
 			}
 		} catch (final InvalidInputException e) {
-			throw new InvalidInputException(
-					"Invalid attributeName:" + attributeName + " or attributeValue:" + attributeValue);
+			throw new InvalidInputException("Invalid inputs for customer attributeName:" + attributeName
+					+ " or attributeValue:" + attributeValue);
 		} catch (final Exception e) {
 			throw new Exception(
-					"API called with attributeName:\" + attributeName + \" and attributeValue:\" + attributeValue");
+					"API called with customer attributeName:" + attributeName + " or attributeValue:" + attributeValue);
 		}
 		return ResponseEntity.ok().body(bookingsListByType);
 	}
