@@ -3,7 +3,7 @@
  */
 package com.snehee.ganpati.service;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import com.snehee.ganpati.dto.BookingDTO;
@@ -33,6 +33,6 @@ public interface BookingService {
 
 	List<BookingDTO> getBookingssWithCustomerCommentsLike(String attributeValue);
 
-	List<Booking> getBookingsByBookingDate(LocalDate bookingDate);
+	List<Booking> getBookingsByBookingDate(LocalDateTime bookingDate);
 
 }

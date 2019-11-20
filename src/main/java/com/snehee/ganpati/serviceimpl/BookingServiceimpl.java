@@ -3,7 +3,7 @@
  */
 package com.snehee.ganpati.serviceimpl;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -165,9 +165,9 @@ public class BookingServiceimpl implements BookingService {
 	}
 
 	@Override
-	public List<Booking> getBookingsByBookingDate(final LocalDate bookingDate) {
+	public List<Booking> getBookingsByBookingDate(final LocalDateTime bookingDate) {
 		final List<Booking> findAllByBookingDate = this.bookingRepository.findAllByBookingDate(bookingDate);
-		return null;
+		return findAllByBookingDate;
 	}
 
 }

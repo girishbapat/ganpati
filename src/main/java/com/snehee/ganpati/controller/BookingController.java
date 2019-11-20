@@ -1,7 +1,6 @@
 package com.snehee.ganpati.controller;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,9 +49,15 @@ class BookingController {
 			@PathVariable(value = "bookingDate") final String strBookingDate) throws ResourceNotFoundException {
 		// final DateTimeFormatter formatter =
 		// DateTimeFormatter.ofPattern("d-MMM-yyyy");
-		final DateTimeFormatter formatter = DateTimeFormatter.BASIC_ISO_DATE;
+		// final String dateString = "2018-07-14"; // ISO date
+
+		// string to date
+		/*
+		 * final LocalDate localDate = LocalDate.parse(dateString); // 2018-07-14 final
+		 * DateTimeFormatter formatter = DateTimeFormatter.BASIC_ISO_DATE;
+		 */
 		// convert String to LocalDate
-		final LocalDate bookingDate = LocalDate.parse(strBookingDate, formatter);
+		final LocalDateTime bookingDate = LocalDateTime.parse(strBookingDate);
 		final List<Booking> listOfBookingsDTO = this.bookingService.getBookingsByBookingDate(bookingDate);
 		return ResponseEntity.ok().body(listOfBookingsDTO);
 	}
