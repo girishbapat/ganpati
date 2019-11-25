@@ -1,6 +1,8 @@
 package com.snehee.ganpati.controller;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.snehee.ganpati.dto.BookingDTO;
 import com.snehee.ganpati.entity.Booking;
+import com.snehee.ganpati.entity.WorkShift;
 import com.snehee.ganpati.exception.InvalidInputException;
 import com.snehee.ganpati.exception.ResourceNotFoundException;
 import com.snehee.ganpati.service.BookingService;
@@ -26,7 +29,7 @@ class BookingController {
 	private BookingService bookingService;
 
 	@GetMapping("/bookings")
-	List<Booking> getAllBookings() {
+	List<BookingDTO> getAllBookings() {
 		return this.bookingService.getAllBookings();
 	}
 
@@ -44,21 +47,25 @@ class BookingController {
 		return ResponseEntity.ok().body(booking);
 	}
 
-	@GetMapping("/getBookingsByBookingDate/{bookingDate}")
-	public ResponseEntity<List<Booking>> getBookingsByBookingDate(
-			@PathVariable(value = "bookingDate") final String strBookingDate) throws ResourceNotFoundException {
-		// final DateTimeFormatter formatter =
-		// DateTimeFormatter.ofPattern("d-MMM-yyyy");
-		// final String dateString = "2018-07-14"; // ISO date
+	@GetMapping("/getBookingsByBookingDate/{bookingDate}/WorkShift/{workShift}")
+	public ResponseEntity<List<BookingDTO>> getBookingsByBookingDateAndWorkShift(
+			@PathVariable(value = "bookingDate") final String strBookingDate,
+			@PathVariable(value = "workShift") final WorkShift workShift) throws ResourceNotFoundException {
+		final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d-MMM-yyyy");
 
-		// string to date
-		/*
-		 * final LocalDate localDate = LocalDate.parse(dateString); // 2018-07-14 final
-		 * DateTimeFormatter formatter = DateTimeFormatter.BASIC_ISO_DATE;
-		 */
-		// convert String to LocalDate
-		final LocalDateTime bookingDate = LocalDateTime.parse(strBookingDate);
-		final List<Booking> listOfBookingsDTO = this.bookingService.getBookingsByBookingDate(bookingDate);
+		final LocalDate localDate = LocalDate.parse(strBookingDate, formatter);
+		final LocalDateTime bookingDateAndTime = localDate.atTime(workShift.getHours(), 0);
+		final List<BookingDTO> listOfBookingsDTO = null;
+		// this.bookingService.getBookingsByBookingDate(bookingDateAndTime);
+		return ResponseEntity.ok().body(listOfBookingsDTO);
+	}
+
+	@GetMapping("/getBookingsForParticularBookingDate/{bookingDate}")
+	public ResponseEntity<List<BookingDTO>> getBookingsForParticularBookingDate(
+			@PathVariable(value = "bookingDate") final String strBookingDate) throws ResourceNotFoundException {
+
+		final List<BookingDTO> listOfBookingsDTO = null;
+		// this.bookingService.getBookingsForParticularBookingDate(strBookingDate);
 		return ResponseEntity.ok().body(listOfBookingsDTO);
 	}
 

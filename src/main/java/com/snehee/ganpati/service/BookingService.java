@@ -8,6 +8,7 @@ import java.util.List;
 
 import com.snehee.ganpati.dto.BookingDTO;
 import com.snehee.ganpati.entity.Booking;
+import com.snehee.ganpati.entity.WorkShift;
 import com.snehee.ganpati.exception.ResourceNotFoundException;
 
 /**
@@ -15,7 +16,7 @@ import com.snehee.ganpati.exception.ResourceNotFoundException;
  *
  */
 public interface BookingService {
-	List<Booking> getAllBookings();
+	List<BookingDTO> getAllBookings();
 
 	Booking getBookingById(final Integer bookingId) throws ResourceNotFoundException;
 
@@ -33,6 +34,10 @@ public interface BookingService {
 
 	List<BookingDTO> getBookingssWithCustomerCommentsLike(String attributeValue);
 
-	List<Booking> getBookingsByBookingDate(LocalDateTime bookingDate);
+	List<BookingDTO> getBookingsByBookingDateBetween(LocalDateTime fromBookingDate, LocalDateTime toBookingDate);
+
+	List<BookingDTO> getBookingsForParticularBookingDate(String particularBookingDate);
+
+	List<BookingDTO> getBookingsForParticularBookingDateAndShift(LocalDateTime fromBookingDate, WorkShift workShift);
 
 }

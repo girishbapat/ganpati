@@ -17,5 +17,6 @@ import com.snehee.ganpati.entity.Booking;
 public interface BookingRepository extends JpaRepository<Booking, Integer> {
 	List<Booking> findByCustomerId(int customerId);
 
-	List<Booking> findAllByBookingDate(LocalDateTime bookingDate);
+	List<Booking> findAllByBookingDateBetween(LocalDateTime fromBookingDate, LocalDateTime toBookingDate);
+
 }

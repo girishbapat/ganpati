@@ -3,7 +3,9 @@
  */
 package com.snehee.ganpati.serviceimpl;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
 import com.snehee.ganpati.dto.BookingDTO;
 import com.snehee.ganpati.entity.Booking;
 import com.snehee.ganpati.entity.Customer;
+import com.snehee.ganpati.entity.WorkShift;
 import com.snehee.ganpati.exception.ResourceNotFoundException;
 import com.snehee.ganpati.repository.BookingRepository;
 import com.snehee.ganpati.service.BookingService;
@@ -38,23 +41,10 @@ public class BookingServiceimpl implements BookingService {
 	IdolService idolService;
 
 	/**
-	 * @param customers
+	 * @param bookingsForCustomersWithNameLike
 	 * @return
 	 */
-	private List<BookingDTO> getBookingsForCustomers(final List<Customer> customers) {
-		final List<Booking> bookingsForCustomersWithNameLike = new ArrayList<>();
-		this.customerService.getAllCustomers();
-		this.idolService.getAllIdols();
-
-		/*
-		 * Now for each of that customer retrieve the bookings and Add Bookings in new
-		 * array list of bookings for customer
-		 */
-		customers.forEach(customer -> {
-			final List<Booking> bookingList = this.bookingRepository.findByCustomerId(customer.getId());
-			bookingsForCustomersWithNameLike.addAll(bookingList);
-		});
-
+	private List<BookingDTO> getBookingDTOForBookings(final List<Booking> bookingsForCustomersWithNameLike) {
 		/*
 		 * Now we can update customer name and Idol name while traversing.
 		 */
@@ -72,6 +62,29 @@ public class BookingServiceimpl implements BookingService {
 					bookingDTO.setIdolName(IdolName);//
 					return bookingDTO;
 				}).collect(Collectors.toList());
+		return bookingListofAllCustomers;
+	}
+
+	/**
+	 * @param customers
+	 * @return
+	 */
+	private List<BookingDTO> getBookingsForCustomers(final List<Customer> customers) {
+		final List<Booking> bookingsForCustomersWithNameLike = new ArrayList<>();
+		this.customerService.getAllCustomers();
+		this.idolService.getAllIdols();
+
+		/*
+		 * Now for each of that customer retrieve the bookings and Add Bookings in new
+		 * array list of bookings for customer
+		 */
+		customers.forEach(customer -> {
+			final List<Booking> bookingList = this.bookingRepository.findByCustomerId(customer.getId());
+			bookingsForCustomersWithNameLike.addAll(bookingList);
+		});
+
+		final List<BookingDTO> bookingListofAllCustomers = this
+				.getBookingDTOForBookings(bookingsForCustomersWithNameLike);
 		return bookingListofAllCustomers;
 	}
 
@@ -153,8 +166,8 @@ public class BookingServiceimpl implements BookingService {
 	}
 
 	@Override
-	public List<Booking> getAllBookings() {
-		return this.bookingRepository.findAll();
+	public List<BookingDTO> getAllBookings() {
+		return this.getBookingDTOForBookings(this.bookingRepository.findAll());
 	}
 
 	@Override
@@ -165,9 +178,32 @@ public class BookingServiceimpl implements BookingService {
 	}
 
 	@Override
-	public List<Booking> getBookingsByBookingDate(final LocalDateTime bookingDate) {
-		final List<Booking> findAllByBookingDate = this.bookingRepository.findAllByBookingDate(bookingDate);
-		return findAllByBookingDate;
+	public List<BookingDTO> getBookingsByBookingDateBetween(final LocalDateTime fromBookingDate,
+			final LocalDateTime toBookingDate) {
+
+		final List<Booking> findAllByBookingDate = this.bookingRepository.findAllByBookingDateBetween(fromBookingDate,
+				toBookingDate);
+		final List<BookingDTO> bookingDTOForBookings = this.getBookingDTOForBookings(findAllByBookingDate);
+		return bookingDTOForBookings;
+	}
+
+	@Override
+	public List<BookingDTO> getBookingsForParticularBookingDate(final String strParticularBookingDate) {
+		final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d-MMM-yyyy");
+		final LocalDate particularDate = LocalDate.parse(strParticularBookingDate, formatter);
+		final LocalDateTime particularBookingDate = particularDate.atTime(WorkShift.MORNING.getHours(), 0);
+		final LocalDateTime nextBookingDate = particularBookingDate.plusDays(1);
+		final List<Booking> findAllByBookingDate = this.bookingRepository
+				.findAllByBookingDateBetween(particularBookingDate, nextBookingDate);
+		final List<BookingDTO> bookingDTOForBookings = this.getBookingDTOForBookings(findAllByBookingDate);
+		return bookingDTOForBookings;
+	}
+
+	@Override
+	public List<BookingDTO> getBookingsForParticularBookingDateAndShift(final LocalDateTime fromBookingDate,
+			final WorkShift workShift) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
