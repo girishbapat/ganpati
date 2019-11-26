@@ -1,8 +1,5 @@
 package com.snehee.ganpati.controller;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,25 +44,43 @@ class BookingController {
 		return ResponseEntity.ok().body(booking);
 	}
 
-	@GetMapping("/getBookingsByBookingDate/{bookingDate}/WorkShift/{workShift}")
-	public ResponseEntity<List<BookingDTO>> getBookingsByBookingDateAndWorkShift(
-			@PathVariable(value = "bookingDate") final String strBookingDate,
-			@PathVariable(value = "workShift") final WorkShift workShift) throws ResourceNotFoundException {
-		final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d-MMM-yyyy");
+	@GetMapping("/getBookingsForParticularBookingDate/{strBookingDate}")
+	public ResponseEntity<List<BookingDTO>> getBookingsForParticularBookingDate(
+			@PathVariable(value = "strBookingDate") final String strBookingDate) throws ResourceNotFoundException {
 
-		final LocalDate localDate = LocalDate.parse(strBookingDate, formatter);
-		final LocalDateTime bookingDateAndTime = localDate.atTime(workShift.getHours(), 0);
-		final List<BookingDTO> listOfBookingsDTO = null;
-		// this.bookingService.getBookingsByBookingDate(bookingDateAndTime);
+		final List<BookingDTO> listOfBookingsDTO = this.bookingService
+				.getBookingsForParticularBookingDate(strBookingDate);
 		return ResponseEntity.ok().body(listOfBookingsDTO);
 	}
 
-	@GetMapping("/getBookingsForParticularBookingDate/{bookingDate}")
-	public ResponseEntity<List<BookingDTO>> getBookingsForParticularBookingDate(
-			@PathVariable(value = "bookingDate") final String strBookingDate) throws ResourceNotFoundException {
+	@GetMapping("/getBookingsForParticularBookingDate/{strBookingDate}/workShift/{workShift}")
+	public ResponseEntity<List<BookingDTO>> getBookingsForParticularBookingDateAndShift(
+			@PathVariable(value = "strBookingDate") final String strBookingDate,
+			@PathVariable(value = "workShift") final WorkShift workShift) throws ResourceNotFoundException {
 
-		final List<BookingDTO> listOfBookingsDTO = null;
-		// this.bookingService.getBookingsForParticularBookingDate(strBookingDate);
+		final List<BookingDTO> listOfBookingsDTO = this.bookingService
+				.getBookingsForParticularBookingDateAndShift(strBookingDate, workShift);
+		return ResponseEntity.ok().body(listOfBookingsDTO);
+	}
+
+	@GetMapping("/getBookingsByBookingDate/fromBookingDate/{strFromBookingDate}/toBookingDate/{strToBookingDate}")
+	public ResponseEntity<List<BookingDTO>> getBookingsByBookingDateBetween(
+			@PathVariable(value = "strFromBookingDate") final String strFromBookingDate,
+			@PathVariable(value = "strToBookingDate") final String strToBookingDate) throws ResourceNotFoundException {
+
+		final List<BookingDTO> listOfBookingsDTO = this.bookingService
+				.getBookingsByBookingDateBetween(strFromBookingDate, strToBookingDate);
+		return ResponseEntity.ok().body(listOfBookingsDTO);
+	}
+
+	@GetMapping("/getBookingsByBookingDate/fromBookingDate/{strFromBookingDate}/fromWorkShift/{fromWorkShift}/toBookingDate/{strToBookingDate}/toWorkShift/{toWorkShift}")
+	public ResponseEntity<List<BookingDTO>> getBookingsByBookingDateAndWorkShift(
+			@PathVariable(value = "strFromBookingDate") final String strFromBookingDate,
+			@PathVariable(value = "fromWorkShift") final WorkShift fromWorkShift,
+			@PathVariable(value = "strToBookingDate") final String strToBookingDate,
+			@PathVariable(value = "toWorkShift") final WorkShift toWorkShift) throws ResourceNotFoundException {
+		final List<BookingDTO> listOfBookingsDTO = this.bookingService
+				.getBookingsByBookingDateBetween(strFromBookingDate, fromWorkShift, strToBookingDate, toWorkShift);
 		return ResponseEntity.ok().body(listOfBookingsDTO);
 	}
 

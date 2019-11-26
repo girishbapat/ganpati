@@ -3,7 +3,6 @@
  */
 package com.snehee.ganpati.service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import com.snehee.ganpati.dto.BookingDTO;
@@ -34,10 +33,29 @@ public interface BookingService {
 
 	List<BookingDTO> getBookingssWithCustomerCommentsLike(String attributeValue);
 
-	List<BookingDTO> getBookingsByBookingDateBetween(LocalDateTime fromBookingDate, LocalDateTime toBookingDate);
+	List<BookingDTO> getBookingsByBookingDateBetween(String strFromBookingDate, String strToBookingDate);
 
+	List<BookingDTO> getBookingsByBookingDateBetween(String strFromBookingDate, WorkShift fromWorkShift,
+			String strToBookingDate, WorkShift toWorkShift);
+
+	/**
+	 * Get Bookings for Particular date from Morning Shift 8 AM to next date by
+	 * default add 24 hours
+	 *
+	 *
+	 * @param particularBookingDate
+	 * @return
+	 */
 	List<BookingDTO> getBookingsForParticularBookingDate(String particularBookingDate);
 
-	List<BookingDTO> getBookingsForParticularBookingDateAndShift(LocalDateTime fromBookingDate, WorkShift workShift);
+	/**
+	 * Get Bookings for Particular date and particular shift by default shift is
+	 * considered for 8 hours
+	 *
+	 * @param particularBookingDate
+	 * @param workShift
+	 * @return
+	 */
+	List<BookingDTO> getBookingsForParticularBookingDateAndShift(String particularBookingDate, WorkShift workShift);
 
 }

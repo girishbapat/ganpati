@@ -41,10 +41,45 @@ public class BookingServiceimpl implements BookingService {
 	IdolService idolService;
 
 	/**
+	 * This method will get the booking details for particular date with Workshift
+	 * and difference of number of hours for next date
+	 *
+	 * @param strParticularBookingDate
+	 * @return
+	 */
+	private List<Booking> getBookingsWithBookingDateWorkShiftAndDiffrence(final String strParticularBookingDate,
+			final WorkShift workshift, final long addHours) {
+		final LocalDateTime particularBookingDate = this
+				.getLocalDateTimeForStrBookingDateAndWorkshift(strParticularBookingDate, workshift);
+		final LocalDateTime nextBookingDate = particularBookingDate.plusHours(addHours);
+		final List<Booking> findAllByBookingDate = this.bookingRepository
+				.findAllByBookingDateBetween(particularBookingDate, nextBookingDate);
+		return findAllByBookingDate;
+	}
+
+	/**
+	 * @param strParticularBookingDate
+	 * @param workshift
+	 * @return
+	 */
+	private LocalDateTime getLocalDateTimeForStrBookingDateAndWorkshift(final String strParticularBookingDate,
+			final WorkShift workshift) {
+		final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d-MMM-yyyy");
+		final LocalDate particularDate = LocalDate.parse(strParticularBookingDate, formatter);
+		final LocalDateTime particularBookingDate = particularDate.atTime(workshift.getHours(), 0);
+		return particularBookingDate;
+	}
+
+	/**
+	 * Convert from Bookings to BookingDTO
+	 *
 	 * @param bookingsForCustomersWithNameLike
 	 * @return
 	 */
 	private List<BookingDTO> getBookingDTOForBookings(final List<Booking> bookingsForCustomersWithNameLike) {
+		this.customerService.getAllCustomers();
+		this.idolService.getAllIdols();
+
 		/*
 		 * Now we can update customer name and Idol name while traversing.
 		 */
@@ -178,9 +213,33 @@ public class BookingServiceimpl implements BookingService {
 	}
 
 	@Override
-	public List<BookingDTO> getBookingsByBookingDateBetween(final LocalDateTime fromBookingDate,
-			final LocalDateTime toBookingDate) {
+	public List<BookingDTO> getBookingsForParticularBookingDate(final String strParticularBookingDate) {
+		// we will always consider booking starts 8 AM and all bookings till next 24
+		// hours will be considered as for this date.
+		final List<Booking> findAllByBookingDate = this
+				.getBookingsWithBookingDateWorkShiftAndDiffrence(strParticularBookingDate, WorkShift.MORNING, 24);
+		final List<BookingDTO> bookingDTOForBookings = this.getBookingDTOForBookings(findAllByBookingDate);
+		return bookingDTOForBookings;
+	}
 
+	@Override
+	public List<BookingDTO> getBookingsForParticularBookingDateAndShift(final String strParticularBookingDate,
+			final WorkShift workShift) {
+		// here we are considering shift of 8 hours
+		final List<Booking> findAllByBookingDate = this
+				.getBookingsWithBookingDateWorkShiftAndDiffrence(strParticularBookingDate, workShift, 8);
+		final List<BookingDTO> bookingDTOForBookings = this.getBookingDTOForBookings(findAllByBookingDate);
+		return bookingDTOForBookings;
+	}
+
+	@Override
+	public List<BookingDTO> getBookingsByBookingDateBetween(final String strFromBookingDate,
+			final String strToBookingDate) {
+
+		final LocalDateTime fromBookingDate = this.getLocalDateTimeForStrBookingDateAndWorkshift(strFromBookingDate,
+				WorkShift.MORNING);
+		final LocalDateTime toBookingDate = this.getLocalDateTimeForStrBookingDateAndWorkshift(strToBookingDate,
+				WorkShift.MORNING);
 		final List<Booking> findAllByBookingDate = this.bookingRepository.findAllByBookingDateBetween(fromBookingDate,
 				toBookingDate);
 		final List<BookingDTO> bookingDTOForBookings = this.getBookingDTOForBookings(findAllByBookingDate);
@@ -188,22 +247,16 @@ public class BookingServiceimpl implements BookingService {
 	}
 
 	@Override
-	public List<BookingDTO> getBookingsForParticularBookingDate(final String strParticularBookingDate) {
-		final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d-MMM-yyyy");
-		final LocalDate particularDate = LocalDate.parse(strParticularBookingDate, formatter);
-		final LocalDateTime particularBookingDate = particularDate.atTime(WorkShift.MORNING.getHours(), 0);
-		final LocalDateTime nextBookingDate = particularBookingDate.plusDays(1);
-		final List<Booking> findAllByBookingDate = this.bookingRepository
-				.findAllByBookingDateBetween(particularBookingDate, nextBookingDate);
+	public List<BookingDTO> getBookingsByBookingDateBetween(final String strFromBookingDate,
+			final WorkShift fromWorkShift, final String strToBookingDate, final WorkShift toWorkShift) {
+		final LocalDateTime fromBookingDate = this.getLocalDateTimeForStrBookingDateAndWorkshift(strFromBookingDate,
+				fromWorkShift);
+		final LocalDateTime toBookingDate = this.getLocalDateTimeForStrBookingDateAndWorkshift(strToBookingDate,
+				toWorkShift);
+		final List<Booking> findAllByBookingDate = this.bookingRepository.findAllByBookingDateBetween(fromBookingDate,
+				toBookingDate);
 		final List<BookingDTO> bookingDTOForBookings = this.getBookingDTOForBookings(findAllByBookingDate);
 		return bookingDTOForBookings;
-	}
-
-	@Override
-	public List<BookingDTO> getBookingsForParticularBookingDateAndShift(final LocalDateTime fromBookingDate,
-			final WorkShift workShift) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }
