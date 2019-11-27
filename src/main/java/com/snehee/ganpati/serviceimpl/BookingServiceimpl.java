@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -206,10 +207,15 @@ public class BookingServiceimpl implements BookingService {
 	}
 
 	@Override
-	public Booking getBookingById(final Integer bookingId) throws ResourceNotFoundException {
+	public BookingDTO getBookingById(final Integer bookingId) throws ResourceNotFoundException {
 		final Booking booking = this.bookingRepository.findById(bookingId)
 				.orElseThrow(() -> new ResourceNotFoundException("Booking not found with booking id : " + bookingId));
-		return booking;
+		final List<BookingDTO> bookingDTOForBookings = this.getBookingDTOForBookings(Arrays.asList(booking));
+		if (bookingDTOForBookings.isEmpty()) {
+			throw new ResourceNotFoundException("Booking not found with booking id : " + bookingId);
+		}
+		return bookingDTOForBookings.get(0);
+
 	}
 
 	@Override

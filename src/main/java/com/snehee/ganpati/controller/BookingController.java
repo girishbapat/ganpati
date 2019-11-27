@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.snehee.ganpati.dto.BookingDTO;
-import com.snehee.ganpati.entity.Booking;
 import com.snehee.ganpati.entity.WorkShift;
 import com.snehee.ganpati.exception.InvalidInputException;
 import com.snehee.ganpati.exception.ResourceNotFoundException;
@@ -38,13 +37,13 @@ class BookingController {
 	 * @throws ResourceNotFoundException the resource not found exception
 	 */
 	@GetMapping("/bookings/{id}")
-	public ResponseEntity<Booking> getBookingByBookingId(@PathVariable(value = "id") final Integer bookingId)
+	public ResponseEntity<BookingDTO> bookingByBookingId(@PathVariable(value = "id") final Integer bookingId)
 			throws ResourceNotFoundException {
-		final Booking booking = this.bookingService.getBookingById(bookingId);
+		final BookingDTO booking = this.bookingService.getBookingById(bookingId);
 		return ResponseEntity.ok().body(booking);
 	}
 
-	@GetMapping("/getBookingsForParticularBookingDate/{strBookingDate}")
+	@GetMapping("/bookingsForParticularBookingDate/{strBookingDate}")
 	public ResponseEntity<List<BookingDTO>> getBookingsForParticularBookingDate(
 			@PathVariable(value = "strBookingDate") final String strBookingDate) throws ResourceNotFoundException {
 
@@ -53,7 +52,7 @@ class BookingController {
 		return ResponseEntity.ok().body(listOfBookingsDTO);
 	}
 
-	@GetMapping("/getBookingsForParticularBookingDate/{strBookingDate}/workShift/{workShift}")
+	@GetMapping("/bookingsForParticularBookingDate/{strBookingDate}/workShift/{workShift}")
 	public ResponseEntity<List<BookingDTO>> getBookingsForParticularBookingDateAndShift(
 			@PathVariable(value = "strBookingDate") final String strBookingDate,
 			@PathVariable(value = "workShift") final WorkShift workShift) throws ResourceNotFoundException {
@@ -63,7 +62,7 @@ class BookingController {
 		return ResponseEntity.ok().body(listOfBookingsDTO);
 	}
 
-	@GetMapping("/getBookingsByBookingDate/fromBookingDate/{strFromBookingDate}/toBookingDate/{strToBookingDate}")
+	@GetMapping("/bookingsByBookingDate/fromBookingDate/{strFromBookingDate}/toBookingDate/{strToBookingDate}")
 	public ResponseEntity<List<BookingDTO>> getBookingsByBookingDateBetween(
 			@PathVariable(value = "strFromBookingDate") final String strFromBookingDate,
 			@PathVariable(value = "strToBookingDate") final String strToBookingDate) throws ResourceNotFoundException {
@@ -73,7 +72,7 @@ class BookingController {
 		return ResponseEntity.ok().body(listOfBookingsDTO);
 	}
 
-	@GetMapping("/getBookingsByBookingDate/fromBookingDate/{strFromBookingDate}/fromWorkShift/{fromWorkShift}/toBookingDate/{strToBookingDate}/toWorkShift/{toWorkShift}")
+	@GetMapping("/bookingsByBookingDate/fromBookingDate/{strFromBookingDate}/fromWorkShift/{fromWorkShift}/toBookingDate/{strToBookingDate}/toWorkShift/{toWorkShift}")
 	public ResponseEntity<List<BookingDTO>> getBookingsByBookingDateAndWorkShift(
 			@PathVariable(value = "strFromBookingDate") final String strFromBookingDate,
 			@PathVariable(value = "fromWorkShift") final WorkShift fromWorkShift,
@@ -92,7 +91,7 @@ class BookingController {
 	 * @return
 	 * @throws Exception
 	 */
-	@GetMapping("/getBookingsWithCustomerAttributeLike/{attributeName}/{attributeValue}")
+	@GetMapping("/bookingsWithCustomerAttributeLike/{attributeName}/{attributeValue}")
 	public ResponseEntity<List<BookingDTO>> getBookingsWithAttributeLike(
 			@PathVariable(value = "attributeName") @NotBlank final String attributeName,
 			@PathVariable(value = "attributeValue", required = true) @NotBlank final String attributeValue)
