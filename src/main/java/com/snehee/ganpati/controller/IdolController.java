@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.snehee.ganpati.entity.Idol;
-import com.snehee.ganpati.entity.Size;
+import com.snehee.ganpati.enums.Size;
 import com.snehee.ganpati.exception.InvalidInputException;
 import com.snehee.ganpati.exception.ResourceNotFoundException;
 import com.snehee.ganpati.service.IdolService;

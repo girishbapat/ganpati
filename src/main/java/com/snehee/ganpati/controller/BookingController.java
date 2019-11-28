@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.snehee.ganpati.dto.BookingDTO;
-import com.snehee.ganpati.entity.WorkShift;
+import com.snehee.ganpati.enums.WorkShift;
 import com.snehee.ganpati.exception.InvalidInputException;
 import com.snehee.ganpati.exception.ResourceNotFoundException;
 import com.snehee.ganpati.service.BookingService;
@@ -111,7 +111,7 @@ class BookingController {
 			} else if (attributeName.equalsIgnoreCase(Constants.INFO)) {
 				bookingsListByType = this.bookingService.getBookingsWithInfoLike(attributeValue);
 			} else if (attributeName.equalsIgnoreCase(Constants.COMMENTS)) {
-				bookingsListByType = this.bookingService.getBookingssWithCustomerCommentsLike(attributeValue);
+				bookingsListByType = this.bookingService.getBookingsWithCustomerCommentsLike(attributeValue);
 			} else {
 				throw new InvalidInputException("Invalid customer attributeName:" + attributeName);
 			}

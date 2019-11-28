@@ -2,8 +2,8 @@ package com.snehee.ganpati.dto;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-import com.snehee.ganpati.entity.Location;
-import com.snehee.ganpati.entity.Status;
+import com.snehee.ganpati.enums.Location;
+import com.snehee.ganpati.enums.Status;
 
 import lombok.Data;
 

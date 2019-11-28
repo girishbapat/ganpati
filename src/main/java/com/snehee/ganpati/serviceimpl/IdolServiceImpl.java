@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.snehee.ganpati.entity.Idol;
-import com.snehee.ganpati.entity.Size;
+import com.snehee.ganpati.enums.Size;
 import com.snehee.ganpati.exception.ResourceNotFoundException;
 import com.snehee.ganpati.repository.IdolRepository;
 import com.snehee.ganpati.service.IdolService;

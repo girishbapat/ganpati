@@ -16,9 +16,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.snehee.ganpati.dto.BookingDTO;
+import com.snehee.ganpati.dto.TotalsDTO;
 import com.snehee.ganpati.entity.Booking;
 import com.snehee.ganpati.entity.Customer;
-import com.snehee.ganpati.entity.WorkShift;
+import com.snehee.ganpati.enums.Location;
+import com.snehee.ganpati.enums.PaymentMode;
+import com.snehee.ganpati.enums.Status;
+import com.snehee.ganpati.enums.WorkShift;
 import com.snehee.ganpati.exception.ResourceNotFoundException;
 import com.snehee.ganpati.repository.BookingRepository;
 import com.snehee.ganpati.service.BookingService;
@@ -192,7 +196,7 @@ public class BookingServiceimpl implements BookingService {
 	}
 
 	@Override
-	public List<BookingDTO> getBookingssWithCustomerCommentsLike(final String commentsAboutCustomer) {
+	public List<BookingDTO> getBookingsWithCustomerCommentsLike(final String commentsAboutCustomer) {
 		final List<Customer> customersWithNameLike = this.customerService
 				.getCustomersWithCommentsLike(commentsAboutCustomer);
 
@@ -263,6 +267,56 @@ public class BookingServiceimpl implements BookingService {
 				toBookingDate);
 		final List<BookingDTO> bookingDTOForBookings = this.getBookingDTOForBookings(findAllByBookingDate);
 		return bookingDTOForBookings;
+	}
+
+	@Override
+	public List<BookingDTO> getBookingsWithStatusLike(final Status status) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<BookingDTO> getBookingsWithLocation(final Location location) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<BookingDTO> getBookingsWithPaymentModeLike(final PaymentMode paymentModeLike) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<BookingDTO> getBookingsWithReasonLike(final String reason) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<BookingDTO> getBookingsWithCommentsLike(final String comments) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<TotalsDTO> getTotalsForBookingDateBetween(final String strFromBookingDate,
+			final String strToBookingDate) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<TotalsDTO> getTotalsAmountForParticularBookingDate(final String particularBookingDate) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<TotalsDTO> getTotalsForParticularBookingDateAndShift(final String particularBookingDate,
+			final WorkShift workShift) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

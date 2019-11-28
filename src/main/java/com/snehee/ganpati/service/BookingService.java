@@ -6,7 +6,11 @@ package com.snehee.ganpati.service;
 import java.util.List;
 
 import com.snehee.ganpati.dto.BookingDTO;
-import com.snehee.ganpati.entity.WorkShift;
+import com.snehee.ganpati.dto.TotalsDTO;
+import com.snehee.ganpati.enums.Location;
+import com.snehee.ganpati.enums.PaymentMode;
+import com.snehee.ganpati.enums.Status;
+import com.snehee.ganpati.enums.WorkShift;
 import com.snehee.ganpati.exception.ResourceNotFoundException;
 
 /**
@@ -18,21 +22,33 @@ public interface BookingService {
 
 	BookingDTO getBookingById(final Integer bookingId) throws ResourceNotFoundException;
 
-	List<BookingDTO> getBookingsWithCustomerNameLike(String attributeValue);
+	List<BookingDTO> getBookingsWithCustomerNameLike(String customerName);
 
-	List<BookingDTO> getBookingsWithPrimaryMobileLike(String attributeValue);
+	List<BookingDTO> getBookingsWithPrimaryMobileLike(String primaryMobile);
 
-	List<BookingDTO> getBookingsWithSecondaryMobileLike(String attributeValue);
+	List<BookingDTO> getBookingsWithSecondaryMobileLike(String secondaryMobile);
 
-	List<BookingDTO> getBookingsWithLandlineLike(String attributeValue);
+	List<BookingDTO> getBookingsWithLandlineLike(String landLine);
 
-	List<BookingDTO> getBookingsWithAddressLike(String attributeValue);
+	List<BookingDTO> getBookingsWithAddressLike(String address);
 
-	List<BookingDTO> getBookingsWithInfoLike(String attributeValue);
+	List<BookingDTO> getBookingsWithInfoLike(String info);
 
-	List<BookingDTO> getBookingssWithCustomerCommentsLike(String attributeValue);
+	List<BookingDTO> getBookingsWithCustomerCommentsLike(String customerComments);
+
+	List<BookingDTO> getBookingsWithPaymentModeLike(PaymentMode paymentModeLike);
+
+	List<BookingDTO> getBookingsWithStatusLike(Status status);
+
+	List<BookingDTO> getBookingsWithCommentsLike(String comments);
+
+	List<BookingDTO> getBookingsWithReasonLike(String reason);
+
+	List<BookingDTO> getBookingsWithLocation(Location location);
 
 	List<BookingDTO> getBookingsByBookingDateBetween(String strFromBookingDate, String strToBookingDate);
+
+	List<TotalsDTO> getTotalsForBookingDateBetween(String strFromBookingDate, String strToBookingDate);
 
 	List<BookingDTO> getBookingsByBookingDateBetween(String strFromBookingDate, WorkShift fromWorkShift,
 			String strToBookingDate, WorkShift toWorkShift);
@@ -47,6 +63,8 @@ public interface BookingService {
 	 */
 	List<BookingDTO> getBookingsForParticularBookingDate(String particularBookingDate);
 
+	List<TotalsDTO> getTotalsAmountForParticularBookingDate(String particularBookingDate);
+
 	/**
 	 * Get Bookings for Particular date and particular shift by default shift is
 	 * considered for 8 hours
@@ -56,5 +74,7 @@ public interface BookingService {
 	 * @return
 	 */
 	List<BookingDTO> getBookingsForParticularBookingDateAndShift(String particularBookingDate, WorkShift workShift);
+
+	List<TotalsDTO> getTotalsForParticularBookingDateAndShift(String particularBookingDate, WorkShift workShift);
 
 }

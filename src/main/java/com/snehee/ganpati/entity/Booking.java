@@ -12,6 +12,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.hibernate.envers.Audited;
+
+import com.snehee.ganpati.enums.Location;
+import com.snehee.ganpati.enums.PaymentMode;
+import com.snehee.ganpati.enums.Status;
+
 import lombok.Data;
 
 /**
@@ -19,6 +25,7 @@ import lombok.Data;
  * @author Girish
  *
  */
+@Audited
 @Data
 @Entity
 @Table(name = "booking")
@@ -37,6 +44,10 @@ public class Booking {
 	@Column(name = "idol_id")
 	private int idolId;
 
+	@Column(name = "payment_mode")
+	@Enumerated(EnumType.STRING)
+	private PaymentMode paymentMode;
+	
 	@Column(name = "booking_amt")
 	private BigDecimal bookingAmount;
 

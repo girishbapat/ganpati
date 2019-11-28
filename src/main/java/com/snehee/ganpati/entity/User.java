@@ -6,6 +6,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.hibernate.envers.Audited;
+
 import lombok.Data;
 
 /**
@@ -13,6 +15,7 @@ import lombok.Data;
  * @author Girish
  *
  */
+@Audited
 @Data
 @Entity
 @Table(name = "user")

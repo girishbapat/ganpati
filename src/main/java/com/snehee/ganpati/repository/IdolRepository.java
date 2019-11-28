@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import com.snehee.ganpati.entity.Idol;
-import com.snehee.ganpati.entity.Size;
+import com.snehee.ganpati.enums.Size;
 
 /**
  * The interface Idol repository.

@@ -1,7 +1,7 @@
 /**
  *
  */
-package com.snehee.ganpati.entity;
+package com.snehee.ganpati.enums;
 
 /**
  * @author Girish

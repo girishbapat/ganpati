@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import com.snehee.ganpati.entity.Idol;
-import com.snehee.ganpati.entity.Size;
+import com.snehee.ganpati.enums.Size;
 import com.snehee.ganpati.exception.ResourceNotFoundException;
 
 public interface IdolService {
