@@ -14,8 +14,10 @@ import java.util.stream.Collectors;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import com.snehee.ganpati.dto.BookingDTO;
+import com.snehee.ganpati.dto.BookingDates;
 import com.snehee.ganpati.dto.TotalsDTO;
 import com.snehee.ganpati.entity.Booking;
 import com.snehee.ganpati.entity.Customer;
@@ -23,6 +25,7 @@ import com.snehee.ganpati.enums.Location;
 import com.snehee.ganpati.enums.PaymentMode;
 import com.snehee.ganpati.enums.Status;
 import com.snehee.ganpati.enums.WorkShift;
+import com.snehee.ganpati.exception.InvalidInputException;
 import com.snehee.ganpati.exception.ResourceNotFoundException;
 import com.snehee.ganpati.repository.BookingRepository;
 import com.snehee.ganpati.service.BookingService;
@@ -46,6 +49,81 @@ public class BookingServiceimpl implements BookingService {
 	IdolService idolService;
 
 	/**
+	 * @param strFromBookingDate
+	 * @param fromWorkShift      TODO
+	 * @param strToBookingDate
+	 * @param toWorkShift        TODO
+	 * @return
+	 * @throws InvalidInputException
+	 */
+	private List<Booking> getBookingsBetweenBookingDates(final String strFromBookingDate, WorkShift fromWorkShift,
+			final String strToBookingDate, WorkShift toWorkShift) throws InvalidInputException {
+		// If from date is null throw exception
+		if (!StringUtils.hasText(strFromBookingDate)) {
+			throw new InvalidInputException("From Date cannot be null.");
+		}
+		List<Booking> listBookings = null;
+		// if from date is not null and other 3 parameters are null
+		if ((null == fromWorkShift) && !StringUtils.hasText(strToBookingDate) && (null == toWorkShift)) {
+			fromWorkShift = WorkShift.MORNING;
+			listBookings = this.getBookingsWithBookingDateWorkShiftAndDiffrence(strFromBookingDate, fromWorkShift, 24);
+		}
+		// if from date and fromWorkShift is not null and other 2 parameters are null
+		else if ((fromWorkShift != null) && !StringUtils.hasText(strToBookingDate) && (null == toWorkShift)) {
+			listBookings = this.getBookingsWithBookingDateWorkShiftAndDiffrence(strFromBookingDate, fromWorkShift, 8);
+		}
+		// if from date and fromWorkShift and todate is not and only to workshift is
+		// null then just set to workshift
+		else if ((fromWorkShift != null) && StringUtils.hasText(strToBookingDate) && (null == toWorkShift)) {
+			toWorkShift = WorkShift.MORNING;
+		}
+		// if listBookings is null means above atleaset 2 conditions are false
+		if (null == listBookings) {
+			final LocalDateTime fromBookingDate = this.getLocalDateTimeForStrBookingDateAndWorkshift(strFromBookingDate,
+					fromWorkShift);
+			final LocalDateTime toBookingDate = this.getLocalDateTimeForStrBookingDateAndWorkshift(strToBookingDate,
+					toWorkShift);
+			listBookings = this.bookingRepository.findAllByBookingDateBetween(fromBookingDate, toBookingDate);
+		}
+		return listBookings;
+	}
+
+	@Override
+	public List<TotalsDTO> getTotalsForBookingDatesAndShiftsBetween(final String strFromBookingDate,
+			WorkShift fromWorkShift, final String strToBookingDate, WorkShift toWorkShift)
+			throws InvalidInputException {
+		// If from date is null throw exception
+		if (!StringUtils.hasText(strFromBookingDate)) {
+			throw new InvalidInputException("From Date cannot be null.");
+		}
+		List<TotalsDTO> listOfTotalsDTO = null;
+		BookingDates bookingDates = null;
+
+		// if from date is not null and other 3 parameters are null
+		if ((null == fromWorkShift) && !StringUtils.hasText(strToBookingDate) && (null == toWorkShift)) {
+			fromWorkShift = WorkShift.MORNING;
+			bookingDates = this.getBookingDates(strFromBookingDate, fromWorkShift, 24);
+		}
+		// if from date and fromWorkShift is not null and other 2 parameters are null
+		else if ((fromWorkShift != null) && !StringUtils.hasText(strToBookingDate) && (null == toWorkShift)) {
+			bookingDates = this.getBookingDates(strFromBookingDate, fromWorkShift, 8);
+		}
+		// if from date and fromWorkShift and todate is not and only to workshift is
+		// null then just set to workshift
+		else if ((fromWorkShift != null) && StringUtils.hasText(strToBookingDate) && (null == toWorkShift)) {
+			toWorkShift = WorkShift.MORNING;
+			final LocalDateTime fromBookingDate = this.getLocalDateTimeForStrBookingDateAndWorkshift(strFromBookingDate,
+					fromWorkShift);
+			final LocalDateTime toBookingDate = this.getLocalDateTimeForStrBookingDateAndWorkshift(strToBookingDate,
+					toWorkShift);
+			bookingDates = new BookingDates(fromBookingDate, toBookingDate);
+
+		}
+		listOfTotalsDTO = this.bookingRepository.getTotals(bookingDates.getFromDate(), bookingDates.getToDate());
+		return listOfTotalsDTO;
+	}
+
+	/**
 	 * This method will get the booking details for particular date with Workshift
 	 * and difference of number of hours for next date
 	 *
@@ -54,12 +132,25 @@ public class BookingServiceimpl implements BookingService {
 	 */
 	private List<Booking> getBookingsWithBookingDateWorkShiftAndDiffrence(final String strParticularBookingDate,
 			final WorkShift workshift, final long addHours) {
+		final BookingDates bookingDates = this.getBookingDates(strParticularBookingDate, workshift, addHours);
+		final List<Booking> findAllByBookingDate = this.bookingRepository
+				.findAllByBookingDateBetween(bookingDates.getFromDate(), bookingDates.getToDate());
+		return findAllByBookingDate;
+	}
+
+	/**
+	 * @param strParticularBookingDate
+	 * @param workshift
+	 * @param addHours
+	 * @return
+	 */
+	private BookingDates getBookingDates(final String strParticularBookingDate, final WorkShift workshift,
+			final long addHours) {
 		final LocalDateTime particularBookingDate = this
 				.getLocalDateTimeForStrBookingDateAndWorkshift(strParticularBookingDate, workshift);
 		final LocalDateTime nextBookingDate = particularBookingDate.plusHours(addHours);
-		final List<Booking> findAllByBookingDate = this.bookingRepository
-				.findAllByBookingDateBetween(particularBookingDate, nextBookingDate);
-		return findAllByBookingDate;
+		final BookingDates bookingDates = new BookingDates(particularBookingDate, nextBookingDate);
+		return bookingDates;
 	}
 
 	/**
@@ -244,21 +335,21 @@ public class BookingServiceimpl implements BookingService {
 
 	@Override
 	public List<BookingDTO> getBookingsByBookingDateBetween(final String strFromBookingDate,
-			final String strToBookingDate) {
+			final String strToBookingDate) throws InvalidInputException {
 
-		final LocalDateTime fromBookingDate = this.getLocalDateTimeForStrBookingDateAndWorkshift(strFromBookingDate,
-				WorkShift.MORNING);
-		final LocalDateTime toBookingDate = this.getLocalDateTimeForStrBookingDateAndWorkshift(strToBookingDate,
-				WorkShift.MORNING);
-		final List<Booking> findAllByBookingDate = this.bookingRepository.findAllByBookingDateBetween(fromBookingDate,
-				toBookingDate);
+		final List<Booking> findAllByBookingDate = this.getBookingsBetweenBookingDates(strFromBookingDate, null,
+				strToBookingDate, null);
 		final List<BookingDTO> bookingDTOForBookings = this.getBookingDTOForBookings(findAllByBookingDate);
 		return bookingDTOForBookings;
 	}
 
 	@Override
 	public List<BookingDTO> getBookingsByBookingDateBetween(final String strFromBookingDate,
-			final WorkShift fromWorkShift, final String strToBookingDate, final WorkShift toWorkShift) {
+			final WorkShift fromWorkShift, final String strToBookingDate, final WorkShift toWorkShift)
+			throws InvalidInputException {
+		if (!StringUtils.hasText(strFromBookingDate)) {
+			throw new InvalidInputException("from Booking date is not provided");
+		}
 		final LocalDateTime fromBookingDate = this.getLocalDateTimeForStrBookingDateAndWorkshift(strFromBookingDate,
 				fromWorkShift);
 		final LocalDateTime toBookingDate = this.getLocalDateTimeForStrBookingDateAndWorkshift(strToBookingDate,
@@ -271,52 +362,68 @@ public class BookingServiceimpl implements BookingService {
 
 	@Override
 	public List<BookingDTO> getBookingsWithStatusLike(final Status status) {
-		// TODO Auto-generated method stub
-		return null;
+		final List<Booking> findBookingsWithStatus = this.bookingRepository.findByStatusContaining(status);
+		final List<BookingDTO> bookingDTOForBookings = this.getBookingDTOForBookings(findBookingsWithStatus);
+		return bookingDTOForBookings;
 	}
 
 	@Override
 	public List<BookingDTO> getBookingsWithLocation(final Location location) {
-		// TODO Auto-generated method stub
-		return null;
+		final List<Booking> findBookingsWithLocation = this.bookingRepository.findByLocationContaining(location);
+		final List<BookingDTO> bookingDTOForBookings = this.getBookingDTOForBookings(findBookingsWithLocation);
+		return bookingDTOForBookings;
 	}
 
 	@Override
 	public List<BookingDTO> getBookingsWithPaymentModeLike(final PaymentMode paymentModeLike) {
-		// TODO Auto-generated method stub
-		return null;
+		final List<Booking> findBookingsWithPaymentMode = this.bookingRepository
+				.findByPaymentModeContaining(paymentModeLike);
+		final List<BookingDTO> bookingDTOForBookings = this.getBookingDTOForBookings(findBookingsWithPaymentMode);
+		return bookingDTOForBookings;
 	}
 
 	@Override
 	public List<BookingDTO> getBookingsWithReasonLike(final String reason) {
-		// TODO Auto-generated method stub
-		return null;
+		final List<Booking> findBookingsWithReason = this.bookingRepository.findByReasonContaining(reason);
+		final List<BookingDTO> bookingDTOForBookings = this.getBookingDTOForBookings(findBookingsWithReason);
+		return bookingDTOForBookings;
 	}
 
 	@Override
 	public List<BookingDTO> getBookingsWithCommentsLike(final String comments) {
-		// TODO Auto-generated method stub
-		return null;
+		final List<Booking> findBookingsWithComments = this.bookingRepository.findByCommentsContaining(comments);
+		final List<BookingDTO> bookingDTOForBookings = this.getBookingDTOForBookings(findBookingsWithComments);
+		return bookingDTOForBookings;
 	}
 
 	@Override
 	public List<TotalsDTO> getTotalsForBookingDateBetween(final String strFromBookingDate,
-			final String strToBookingDate) {
-		// TODO Auto-generated method stub
-		return null;
+			final String strToBookingDate) throws InvalidInputException {
+		final List<TotalsDTO> bookingsBetweenBookingDates = this
+				.getTotalsForBookingDatesAndShiftsBetween(strFromBookingDate, null, strToBookingDate, null);
+		return bookingsBetweenBookingDates;
 	}
 
 	@Override
-	public List<TotalsDTO> getTotalsAmountForParticularBookingDate(final String particularBookingDate) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<TotalsDTO> getTotalsForParticularBookingDate(final String particularBookingDate)
+			throws InvalidInputException {
+		final List<TotalsDTO> bookingsBetweenBookingDates = this
+				.getTotalsForBookingDatesAndShiftsBetween(particularBookingDate, null, null, null);
+		return bookingsBetweenBookingDates;
 	}
 
 	@Override
 	public List<TotalsDTO> getTotalsForParticularBookingDateAndShift(final String particularBookingDate,
-			final WorkShift workShift) {
-		// TODO Auto-generated method stub
-		return null;
+			final WorkShift workShift) throws InvalidInputException {
+		final List<TotalsDTO> bookingsBetweenBookingDates = this
+				.getTotalsForBookingDatesAndShiftsBetween(particularBookingDate, workShift, null, null);
+		return bookingsBetweenBookingDates;
+	}
+
+	@Override
+	public List<TotalsDTO> getTotals() {
+		final List<TotalsDTO> totals = this.bookingRepository.getTotals();
+		return totals;
 	}
 
 }

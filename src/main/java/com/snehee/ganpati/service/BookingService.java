@@ -11,6 +11,7 @@ import com.snehee.ganpati.enums.Location;
 import com.snehee.ganpati.enums.PaymentMode;
 import com.snehee.ganpati.enums.Status;
 import com.snehee.ganpati.enums.WorkShift;
+import com.snehee.ganpati.exception.InvalidInputException;
 import com.snehee.ganpati.exception.ResourceNotFoundException;
 
 /**
@@ -46,12 +47,11 @@ public interface BookingService {
 
 	List<BookingDTO> getBookingsWithLocation(Location location);
 
-	List<BookingDTO> getBookingsByBookingDateBetween(String strFromBookingDate, String strToBookingDate);
-
-	List<TotalsDTO> getTotalsForBookingDateBetween(String strFromBookingDate, String strToBookingDate);
+	List<BookingDTO> getBookingsByBookingDateBetween(String strFromBookingDate, String strToBookingDate)
+			throws InvalidInputException;
 
 	List<BookingDTO> getBookingsByBookingDateBetween(String strFromBookingDate, WorkShift fromWorkShift,
-			String strToBookingDate, WorkShift toWorkShift);
+			String strToBookingDate, WorkShift toWorkShift) throws InvalidInputException;
 
 	/**
 	 * Get Bookings for Particular date from Morning Shift 8 AM to next date by
@@ -63,8 +63,6 @@ public interface BookingService {
 	 */
 	List<BookingDTO> getBookingsForParticularBookingDate(String particularBookingDate);
 
-	List<TotalsDTO> getTotalsAmountForParticularBookingDate(String particularBookingDate);
-
 	/**
 	 * Get Bookings for Particular date and particular shift by default shift is
 	 * considered for 8 hours
@@ -75,6 +73,17 @@ public interface BookingService {
 	 */
 	List<BookingDTO> getBookingsForParticularBookingDateAndShift(String particularBookingDate, WorkShift workShift);
 
-	List<TotalsDTO> getTotalsForParticularBookingDateAndShift(String particularBookingDate, WorkShift workShift);
+	List<TotalsDTO> getTotalsForParticularBookingDate(String particularBookingDate) throws InvalidInputException;
+
+	List<TotalsDTO> getTotalsForBookingDateBetween(String strFromBookingDate, String strToBookingDate)
+			throws InvalidInputException;
+
+	List<TotalsDTO> getTotalsForParticularBookingDateAndShift(String particularBookingDate, WorkShift workShift)
+			throws InvalidInputException;
+
+	List<TotalsDTO> getTotalsForBookingDatesAndShiftsBetween(final String strFromBookingDate, WorkShift fromWorkShift,
+			final String strToBookingDate, WorkShift toWorkShift) throws InvalidInputException;
+
+	List<TotalsDTO> getTotals();
 
 }

@@ -65,7 +65,8 @@ class BookingController {
 	@GetMapping("/bookingsByBookingDate/fromBookingDate/{strFromBookingDate}/toBookingDate/{strToBookingDate}")
 	public ResponseEntity<List<BookingDTO>> getBookingsByBookingDateBetween(
 			@PathVariable(value = "strFromBookingDate") final String strFromBookingDate,
-			@PathVariable(value = "strToBookingDate") final String strToBookingDate) throws ResourceNotFoundException {
+			@PathVariable(value = "strToBookingDate") final String strToBookingDate)
+			throws ResourceNotFoundException, InvalidInputException {
 
 		final List<BookingDTO> listOfBookingsDTO = this.bookingService
 				.getBookingsByBookingDateBetween(strFromBookingDate, strToBookingDate);
@@ -77,7 +78,8 @@ class BookingController {
 			@PathVariable(value = "strFromBookingDate") final String strFromBookingDate,
 			@PathVariable(value = "fromWorkShift") final WorkShift fromWorkShift,
 			@PathVariable(value = "strToBookingDate") final String strToBookingDate,
-			@PathVariable(value = "toWorkShift") final WorkShift toWorkShift) throws ResourceNotFoundException {
+			@PathVariable(value = "toWorkShift") final WorkShift toWorkShift)
+			throws ResourceNotFoundException, InvalidInputException {
 		final List<BookingDTO> listOfBookingsDTO = this.bookingService
 				.getBookingsByBookingDateBetween(strFromBookingDate, fromWorkShift, strToBookingDate, toWorkShift);
 		return ResponseEntity.ok().body(listOfBookingsDTO);

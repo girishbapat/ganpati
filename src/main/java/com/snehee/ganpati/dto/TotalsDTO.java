@@ -1,7 +1,6 @@
 package com.snehee.ganpati.dto;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 import com.snehee.ganpati.enums.PaymentMode;
 
@@ -13,5 +12,27 @@ public class TotalsDTO {
 	private BigDecimal bookingAmount;
 	private BigDecimal balanceAmount;
 	private BigDecimal totalAmount;
-	private LocalDateTime bookingDate;
+	
+	/**
+	 * @param paymentMode
+	 * @param bookingAmount
+	 * @param balanceAmount
+	 * @param totalAmount
+	 */
+	public TotalsDTO(PaymentMode paymentMode, BigDecimal bookingAmount, BigDecimal balanceAmount,
+			BigDecimal totalAmount) {
+		super();
+		this.paymentMode = paymentMode;
+		this.bookingAmount = bookingAmount;
+		this.balanceAmount = balanceAmount;
+		this.totalAmount = totalAmount;
+	}
+
+	/**
+	 * 
+	 */
+	public TotalsDTO() {
+		super();
+	}
+//pected arguments are: com.snehee.ganpati.enums.PaymentMode, java.math.BigDecimal, java.math.BigDecimal, java.math.BigDecimal 
 }
