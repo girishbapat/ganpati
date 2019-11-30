@@ -3,10 +3,11 @@
  */
 package com.snehee.ganpati.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import com.snehee.ganpati.dto.BookingDTO;
-import com.snehee.ganpati.dto.TotalsDTO;
+import com.snehee.ganpati.dto.BookingDates;
 import com.snehee.ganpati.enums.Location;
 import com.snehee.ganpati.enums.PaymentMode;
 import com.snehee.ganpati.enums.Status;
@@ -73,17 +74,8 @@ public interface BookingService {
 	 */
 	List<BookingDTO> getBookingsForParticularBookingDateAndShift(String particularBookingDate, WorkShift workShift);
 
-	List<TotalsDTO> getTotalsForParticularBookingDate(String particularBookingDate) throws InvalidInputException;
+	BookingDates getBookingDates(String strParticularBookingDate, WorkShift workshift, long addHours);
 
-	List<TotalsDTO> getTotalsForBookingDateBetween(String strFromBookingDate, String strToBookingDate)
-			throws InvalidInputException;
-
-	List<TotalsDTO> getTotalsForParticularBookingDateAndShift(String particularBookingDate, WorkShift workShift)
-			throws InvalidInputException;
-
-	List<TotalsDTO> getTotalsForBookingDatesAndShiftsBetween(final String strFromBookingDate, WorkShift fromWorkShift,
-			final String strToBookingDate, WorkShift toWorkShift) throws InvalidInputException;
-
-	List<TotalsDTO> getTotals();
+	LocalDateTime getLocalDateTimeForStrBookingDateAndWorkshift(String strParticularBookingDate, WorkShift workshift);
 
 }

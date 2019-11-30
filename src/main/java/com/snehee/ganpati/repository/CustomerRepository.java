@@ -10,6 +10,9 @@ public interface CustomerRepository extends JpaRepository<Customer, Integer> {
 
 	List<Customer> findByNameContaining(String nameOfCustomer);
 
+	List<Customer> findByNameContainingAndPrimaryMobileContaining(String nameOfCustomer,
+			String primaryMobileNoOfCustomer);
+
 	List<Customer> findByNameStartsWith(String nameOfCustomer);
 
 	List<Customer> findByPrimaryMobileContaining(String primaryMobileNoOfCustomer);

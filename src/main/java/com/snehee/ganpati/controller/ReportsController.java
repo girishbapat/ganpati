@@ -12,17 +12,17 @@ import com.snehee.ganpati.dto.TotalsDTO;
 import com.snehee.ganpati.enums.WorkShift;
 import com.snehee.ganpati.exception.InvalidInputException;
 import com.snehee.ganpati.exception.ResourceNotFoundException;
-import com.snehee.ganpati.service.BookingService;
+import com.snehee.ganpati.service.ReportService;
 
 @RestController
 public class ReportsController {
 	@Autowired
-	private BookingService bookingService;
+	private ReportService reportService;
 
 	@GetMapping("/totalsForBookings")
 	public ResponseEntity<List<TotalsDTO>> getTotalsForBookings() throws InvalidInputException {
 
-		final List<TotalsDTO> listOfTotalsDTO = this.bookingService.getTotals();
+		final List<TotalsDTO> listOfTotalsDTO = this.reportService.getTotals();
 		return ResponseEntity.ok().body(listOfTotalsDTO);
 	}
 
@@ -31,17 +31,18 @@ public class ReportsController {
 			@PathVariable(value = "particularBookingDate") final String particularBookingDate)
 			throws InvalidInputException {
 
-		final List<TotalsDTO> listOfTotalsDTO = this.bookingService
+		final List<TotalsDTO> listOfTotalsDTO = this.reportService
 				.getTotalsForParticularBookingDate(particularBookingDate);
 		return ResponseEntity.ok().body(listOfTotalsDTO);
 	}
 
-	@GetMapping("/totalsForParticularBookingDate/{strBookingDate}/workShift/{workShift}")
+	@GetMapping("/totalsForParticularBookingDate/{strBookingDate}/forParticularWorkShift/{workShift}")
+
 	public ResponseEntity<List<TotalsDTO>> getBookingsForParticularBookingDateAndShift(
 			@PathVariable(value = "strBookingDate") final String strBookingDate,
 			@PathVariable(value = "workShift") final WorkShift workShift) throws InvalidInputException {
 
-		final List<TotalsDTO> listOfTotalsDTO = this.bookingService
+		final List<TotalsDTO> listOfTotalsDTO = this.reportService
 				.getTotalsForParticularBookingDateAndShift(strBookingDate, workShift);
 		return ResponseEntity.ok().body(listOfTotalsDTO);
 	}
@@ -51,7 +52,7 @@ public class ReportsController {
 			@PathVariable(value = "strFromBookingDate") final String strFromBookingDate,
 			@PathVariable(value = "strToBookingDate") final String strToBookingDate) throws InvalidInputException {
 
-		final List<TotalsDTO> listOfTotalsDTO = this.bookingService.getTotalsForBookingDateBetween(strFromBookingDate,
+		final List<TotalsDTO> listOfTotalsDTO = this.reportService.getTotalsForBookingDateBetween(strFromBookingDate,
 				strToBookingDate);
 		return ResponseEntity.ok().body(listOfTotalsDTO);
 	}
@@ -63,7 +64,7 @@ public class ReportsController {
 			@PathVariable(value = "strToBookingDate") final String strToBookingDate,
 			@PathVariable(value = "toWorkShift") final WorkShift toWorkShift)
 			throws ResourceNotFoundException, InvalidInputException {
-		final List<TotalsDTO> listOfTotalsDTO = this.bookingService.getTotalsForBookingDatesAndShiftsBetween(
+		final List<TotalsDTO> listOfTotalsDTO = this.reportService.getTotalsForBookingDatesAndShiftsBetween(
 				strFromBookingDate, fromWorkShift, strToBookingDate, toWorkShift);
 		return ResponseEntity.ok().body(listOfTotalsDTO);
 	}

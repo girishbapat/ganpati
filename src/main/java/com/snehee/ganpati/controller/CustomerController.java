@@ -56,6 +56,15 @@ class CustomerController {
 		return ResponseEntity.ok().body(customerListByName);
 	}
 
+	@GetMapping("/getCustomersWithNameLike/{name}/primaryMobileLike/{primaryMobile}")
+	public ResponseEntity<List<Customer>> getCustomersWithNameAndPrimaryMobileLike(
+			@PathVariable(value = "name") final String nameOfCustomer,
+			@PathVariable(value = "primaryMobile") final String primaryMobile) throws ResourceNotFoundException {
+		final List<Customer> customerListByName = this.customerService
+				.getCustomersWithNameAndPrimaryMobileLike(nameOfCustomer, primaryMobile);
+		return ResponseEntity.ok().body(customerListByName);
+	}
+
 	@GetMapping("/getCustomersWithAttributeLike/{attributeName}/{attributeValue}")
 	public ResponseEntity<List<Customer>> getCustomersWithAttributeLike(
 			@PathVariable(value = "attributeName") @NotBlank final String attributeName,

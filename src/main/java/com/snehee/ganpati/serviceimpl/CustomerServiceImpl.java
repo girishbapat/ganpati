@@ -132,4 +132,12 @@ public class CustomerServiceImpl implements CustomerService {
 
 	}
 
+	@Override
+	public List<Customer> getCustomersWithNameAndPrimaryMobileLike(final String nameOfCustomer,
+			final String primaryMobileNoOfCustomer) {
+		final List<Customer> customerListByName = this.customerRespository
+				.findByNameContainingAndPrimaryMobileContaining(nameOfCustomer, primaryMobileNoOfCustomer);
+		return customerListByName;
+	}
+
 }

@@ -18,7 +18,6 @@ import org.springframework.util.StringUtils;
 
 import com.snehee.ganpati.dto.BookingDTO;
 import com.snehee.ganpati.dto.BookingDates;
-import com.snehee.ganpati.dto.TotalsDTO;
 import com.snehee.ganpati.entity.Booking;
 import com.snehee.ganpati.entity.Customer;
 import com.snehee.ganpati.enums.Location;
@@ -72,6 +71,12 @@ public class BookingServiceimpl implements BookingService {
 		else if ((fromWorkShift != null) && !StringUtils.hasText(strToBookingDate) && (null == toWorkShift)) {
 			listBookings = this.getBookingsWithBookingDateWorkShiftAndDiffrence(strFromBookingDate, fromWorkShift, 8);
 		}
+		// if todate is present but fromWorkShift and toWorkshift is null then just
+		// bothworkshifts to MORNING and proceed
+		else if ((null == fromWorkShift) && StringUtils.hasText(strToBookingDate) && (null == toWorkShift)) {
+			fromWorkShift = WorkShift.MORNING;
+			toWorkShift = WorkShift.MORNING;
+		}
 		// if from date and fromWorkShift and todate is not and only to workshift is
 		// null then just set to workshift
 		else if ((fromWorkShift != null) && StringUtils.hasText(strToBookingDate) && (null == toWorkShift)) {
@@ -86,41 +91,6 @@ public class BookingServiceimpl implements BookingService {
 			listBookings = this.bookingRepository.findAllByBookingDateBetween(fromBookingDate, toBookingDate);
 		}
 		return listBookings;
-	}
-
-	@Override
-	public List<TotalsDTO> getTotalsForBookingDatesAndShiftsBetween(final String strFromBookingDate,
-			WorkShift fromWorkShift, final String strToBookingDate, WorkShift toWorkShift)
-			throws InvalidInputException {
-		// If from date is null throw exception
-		if (!StringUtils.hasText(strFromBookingDate)) {
-			throw new InvalidInputException("From Date cannot be null.");
-		}
-		List<TotalsDTO> listOfTotalsDTO = null;
-		BookingDates bookingDates = null;
-
-		// if from date is not null and other 3 parameters are null
-		if ((null == fromWorkShift) && !StringUtils.hasText(strToBookingDate) && (null == toWorkShift)) {
-			fromWorkShift = WorkShift.MORNING;
-			bookingDates = this.getBookingDates(strFromBookingDate, fromWorkShift, 24);
-		}
-		// if from date and fromWorkShift is not null and other 2 parameters are null
-		else if ((fromWorkShift != null) && !StringUtils.hasText(strToBookingDate) && (null == toWorkShift)) {
-			bookingDates = this.getBookingDates(strFromBookingDate, fromWorkShift, 8);
-		}
-		// if from date and fromWorkShift and todate is not and only to workshift is
-		// null then just set to workshift
-		else if ((fromWorkShift != null) && StringUtils.hasText(strToBookingDate) && (null == toWorkShift)) {
-			toWorkShift = WorkShift.MORNING;
-			final LocalDateTime fromBookingDate = this.getLocalDateTimeForStrBookingDateAndWorkshift(strFromBookingDate,
-					fromWorkShift);
-			final LocalDateTime toBookingDate = this.getLocalDateTimeForStrBookingDateAndWorkshift(strToBookingDate,
-					toWorkShift);
-			bookingDates = new BookingDates(fromBookingDate, toBookingDate);
-
-		}
-		listOfTotalsDTO = this.bookingRepository.getTotals(bookingDates.getFromDate(), bookingDates.getToDate());
-		return listOfTotalsDTO;
 	}
 
 	/**
@@ -144,7 +114,8 @@ public class BookingServiceimpl implements BookingService {
 	 * @param addHours
 	 * @return
 	 */
-	private BookingDates getBookingDates(final String strParticularBookingDate, final WorkShift workshift,
+	@Override
+	public BookingDates getBookingDates(final String strParticularBookingDate, final WorkShift workshift,
 			final long addHours) {
 		final LocalDateTime particularBookingDate = this
 				.getLocalDateTimeForStrBookingDateAndWorkshift(strParticularBookingDate, workshift);
@@ -158,7 +129,8 @@ public class BookingServiceimpl implements BookingService {
 	 * @param workshift
 	 * @return
 	 */
-	private LocalDateTime getLocalDateTimeForStrBookingDateAndWorkshift(final String strParticularBookingDate,
+	@Override
+	public LocalDateTime getLocalDateTimeForStrBookingDateAndWorkshift(final String strParticularBookingDate,
 			final WorkShift workshift) {
 		final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d-MMM-yyyy");
 		final LocalDate particularDate = LocalDate.parse(strParticularBookingDate, formatter);
@@ -394,36 +366,6 @@ public class BookingServiceimpl implements BookingService {
 		final List<Booking> findBookingsWithComments = this.bookingRepository.findByCommentsContaining(comments);
 		final List<BookingDTO> bookingDTOForBookings = this.getBookingDTOForBookings(findBookingsWithComments);
 		return bookingDTOForBookings;
-	}
-
-	@Override
-	public List<TotalsDTO> getTotalsForBookingDateBetween(final String strFromBookingDate,
-			final String strToBookingDate) throws InvalidInputException {
-		final List<TotalsDTO> bookingsBetweenBookingDates = this
-				.getTotalsForBookingDatesAndShiftsBetween(strFromBookingDate, null, strToBookingDate, null);
-		return bookingsBetweenBookingDates;
-	}
-
-	@Override
-	public List<TotalsDTO> getTotalsForParticularBookingDate(final String particularBookingDate)
-			throws InvalidInputException {
-		final List<TotalsDTO> bookingsBetweenBookingDates = this
-				.getTotalsForBookingDatesAndShiftsBetween(particularBookingDate, null, null, null);
-		return bookingsBetweenBookingDates;
-	}
-
-	@Override
-	public List<TotalsDTO> getTotalsForParticularBookingDateAndShift(final String particularBookingDate,
-			final WorkShift workShift) throws InvalidInputException {
-		final List<TotalsDTO> bookingsBetweenBookingDates = this
-				.getTotalsForBookingDatesAndShiftsBetween(particularBookingDate, workShift, null, null);
-		return bookingsBetweenBookingDates;
-	}
-
-	@Override
-	public List<TotalsDTO> getTotals() {
-		final List<TotalsDTO> totals = this.bookingRepository.getTotals();
-		return totals;
 	}
 
 }

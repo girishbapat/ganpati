@@ -52,7 +52,7 @@ class BookingController {
 		return ResponseEntity.ok().body(listOfBookingsDTO);
 	}
 
-	@GetMapping("/bookingsForParticularBookingDate/{strBookingDate}/workShift/{workShift}")
+	@GetMapping("/bookingsForParticularBookingDate/{strBookingDate}/forParticularWorkShift/{workShift}")
 	public ResponseEntity<List<BookingDTO>> getBookingsForParticularBookingDateAndShift(
 			@PathVariable(value = "strBookingDate") final String strBookingDate,
 			@PathVariable(value = "workShift") final WorkShift workShift) throws ResourceNotFoundException {

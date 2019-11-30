@@ -10,6 +10,8 @@ public interface CustomerService {
 
 	List<Customer> getCustomersWithNameLike(String nameOfCustomer);
 
+	List<Customer> getCustomersWithNameAndPrimaryMobileLike(String nameOfCustomer, String primaryMobileNoOfCustomer);
+
 	List<Customer> getCustomersStartingWithCustomerName(String nameOfCustomer);
 
 	List<Customer> getCustomersStartingWithPrimaryMobile(String primaryMobileNoOfCustomer);
