@@ -3,6 +3,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import com.snehee.ganpati.enums.Location;
+import com.snehee.ganpati.enums.PaymentMode;
 import com.snehee.ganpati.enums.Status;
 
 import lombok.Data;
@@ -16,6 +17,7 @@ public class BookingDTO {
 	private String primaryMobile;
 	private int idolId;
 	private String idolName;
+	private PaymentMode paymentMode;	
 	private BigDecimal bookingAmount;
 	private BigDecimal balanceAmount;
 	private BigDecimal totalAmount;

@@ -3,15 +3,19 @@ package com.snehee.ganpati.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.snehee.ganpati.dto.BookingDTO;
+import com.snehee.ganpati.entity.Booking;
 import com.snehee.ganpati.enums.WorkShift;
 import com.snehee.ganpati.exception.InvalidInputException;
 import com.snehee.ganpati.exception.ResourceNotFoundException;
@@ -27,6 +31,11 @@ class BookingController {
 	@GetMapping("/bookings")
 	List<BookingDTO> getAllBookings() {
 		return this.bookingService.getAllBookings();
+	}
+
+	@PostMapping("/bookings")
+	BookingDTO createBooking(@Valid @RequestBody final Booking bookingTobeSaved) throws InvalidInputException {
+		return this.bookingService.createBooking(bookingTobeSaved);
 	}
 
 	/**

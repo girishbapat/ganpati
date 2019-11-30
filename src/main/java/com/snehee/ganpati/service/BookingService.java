@@ -8,6 +8,7 @@ import java.util.List;
 
 import com.snehee.ganpati.dto.BookingDTO;
 import com.snehee.ganpati.dto.BookingDates;
+import com.snehee.ganpati.entity.Booking;
 import com.snehee.ganpati.enums.Location;
 import com.snehee.ganpati.enums.PaymentMode;
 import com.snehee.ganpati.enums.Status;
@@ -77,5 +78,15 @@ public interface BookingService {
 	BookingDates getBookingDates(String strParticularBookingDate, WorkShift workshift, long addHours);
 
 	LocalDateTime getLocalDateTimeForStrBookingDateAndWorkshift(String strParticularBookingDate, WorkShift workshift);
+
+	/**
+	 * Save booking
+	 *
+	 * @param bookingTobeSaved
+	 * @return
+	 * @throws InvalidInputException
+	 */
+
+	BookingDTO createBooking(Booking bookingTobeSaved) throws InvalidInputException;
 
 }

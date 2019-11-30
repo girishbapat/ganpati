@@ -20,6 +20,7 @@ import com.snehee.ganpati.dto.BookingDTO;
 import com.snehee.ganpati.dto.BookingDates;
 import com.snehee.ganpati.entity.Booking;
 import com.snehee.ganpati.entity.Customer;
+import com.snehee.ganpati.entity.Idol;
 import com.snehee.ganpati.enums.Location;
 import com.snehee.ganpati.enums.PaymentMode;
 import com.snehee.ganpati.enums.Status;
@@ -277,12 +278,23 @@ public class BookingServiceimpl implements BookingService {
 	public BookingDTO getBookingById(final Integer bookingId) throws ResourceNotFoundException {
 		final Booking booking = this.bookingRepository.findById(bookingId)
 				.orElseThrow(() -> new ResourceNotFoundException("Booking not found with booking id : " + bookingId));
+		final BookingDTO bookingTobeReturned = this.getBookingDTOForBooking(booking);
+		return bookingTobeReturned;
+
+	}
+
+	/**
+	 * @param booking
+	 * @return
+	 * @throws ResourceNotFoundException
+	 */
+	private BookingDTO getBookingDTOForBooking(final Booking booking) throws ResourceNotFoundException {
 		final List<BookingDTO> bookingDTOForBookings = this.getBookingDTOForBookings(Arrays.asList(booking));
 		if (bookingDTOForBookings.isEmpty()) {
-			throw new ResourceNotFoundException("Booking not found with booking id : " + bookingId);
+			throw new ResourceNotFoundException("Booking not found with booking id : " + booking.getId());
 		}
-		return bookingDTOForBookings.get(0);
-
+		final BookingDTO bookingTobeReturned = bookingDTOForBookings.get(0);
+		return bookingTobeReturned;
 	}
 
 	@Override
@@ -366,6 +378,51 @@ public class BookingServiceimpl implements BookingService {
 		final List<Booking> findBookingsWithComments = this.bookingRepository.findByCommentsContaining(comments);
 		final List<BookingDTO> bookingDTOForBookings = this.getBookingDTOForBookings(findBookingsWithComments);
 		return bookingDTOForBookings;
+	}
+
+	@Override
+	public BookingDTO createBooking(final Booking bookingTobeSaved) throws InvalidInputException {
+		final Booking newBookingTobeSaved = this.createValidBookingRecordTobeSaved(bookingTobeSaved);
+		BookingDTO bookingTobeReturned;
+		try {
+			this.bookingRepository.save(newBookingTobeSaved);
+			bookingTobeReturned = this.getBookingDTOForBooking(newBookingTobeSaved);
+		} catch (final ResourceNotFoundException e) {
+			throw new InvalidInputException(
+					"Not able to create booking due to invalid data. Values submitted are customerId:"
+							+ bookingTobeSaved.getCustomerId() + ", Idol id:" + bookingTobeSaved.getIdolId()
+							+ ", or invalid booking amount:" + bookingTobeSaved.getBookingAmount());
+		} catch (final Exception e) {
+			throw new InvalidInputException(
+					"Not able to create booking due to invalid data. Values submitted are customerId:"
+							+ bookingTobeSaved.getCustomerId() + ", Idol id:" + bookingTobeSaved.getIdolId()
+							+ ", or invalid booking amount:" + bookingTobeSaved.getBookingAmount());
+		}
+		return bookingTobeReturned;
+	}
+
+	private Booking createValidBookingRecordTobeSaved(Booking bookingTobeSaved) throws InvalidInputException {
+		if ((bookingTobeSaved.getCustomerId() <= 0) || (bookingTobeSaved.getIdolId() <= 0)
+				|| (null == bookingTobeSaved.getBookingAmount())) {
+			throw new InvalidInputException(
+					"Not able to create booking due to invalid data. Values submitted are customerId:"
+							+ bookingTobeSaved.getCustomerId() + ", Idol id:" + bookingTobeSaved.getIdolId()
+							+ ", or invalid booking amount:" + bookingTobeSaved.getBookingAmount());
+		}
+		if ((null == bookingTobeSaved.getTotalAmount()) || (bookingTobeSaved.getTotalAmount().floatValue() <= 0)) {
+			try {
+				final Idol idolsById = this.idolService.getIdolsById(bookingTobeSaved.getIdolId());
+				bookingTobeSaved.setTotalAmount(idolsById.getPrice());
+				bookingTobeSaved.setBalanceAmount(
+						bookingTobeSaved.getTotalAmount().subtract(bookingTobeSaved.getBookingAmount()));
+			} catch (final ResourceNotFoundException e) {
+				throw new InvalidInputException(
+						"Not able to create booking due to invalid idol Id.Cannot find idol with Idol id:"
+								+ bookingTobeSaved.getIdolId());
+			}
+		}
+		bookingTobeSaved = new Booking(bookingTobeSaved);
+		return bookingTobeSaved;
 	}
 
 }

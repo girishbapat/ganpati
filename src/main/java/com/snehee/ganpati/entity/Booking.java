@@ -2,6 +2,7 @@ package com.snehee.ganpati.entity;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -47,7 +48,7 @@ public class Booking {
 	@Column(name = "payment_mode")
 	@Enumerated(EnumType.STRING)
 	private PaymentMode paymentMode;
-	
+
 	@Column(name = "booking_amt")
 	private BigDecimal bookingAmount;
 
@@ -75,4 +76,150 @@ public class Booking {
 	private int userId;
 
 	private String comments;
+
+	/**
+	 * 
+	 */
+	public Booking() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	/**
+	 * @param bookingDate
+	 * @param customerId
+	 * @param idolId
+	 * @param paymentMode
+	 * @param bookingAmount
+	 * @param balanceAmount
+	 * @param totalAmount
+	 * @param status
+	 * @param reason
+	 * @param location
+	 * @param shipmentDate
+	 * @param userId
+	 * @param comments
+	 */
+	public Booking(LocalDateTime bookingDate, int customerId, int idolId, PaymentMode paymentMode,
+			BigDecimal bookingAmount, BigDecimal balanceAmount, BigDecimal totalAmount, Status status, String reason,
+			Location location, LocalDateTime shipmentDate, int userId, String comments) {
+		super();
+		if (null == bookingDate) {
+			this.bookingDate = LocalDateTime.now(ZoneId.of("Asia/Kolkata"));
+		} else {
+			this.bookingDate = bookingDate;
+		}
+		
+		this.customerId = customerId;
+		
+		this.idolId = idolId;
+		
+		if (null == paymentMode) {
+			this.paymentMode =PaymentMode.CASH;
+		}else {
+			this.paymentMode = paymentMode;
+		}
+		
+		this.bookingAmount = bookingAmount;
+		this.totalAmount = totalAmount;
+		if(null==balanceAmount) {
+			balanceAmount=totalAmount.subtract(bookingAmount);
+		}
+		else {
+			this.balanceAmount = balanceAmount;
+		}
+		
+		if(null==status) {
+			this.status =Status.BOOKED;
+		}else {
+			this.status = status;
+		}
+		this.reason = reason;
+		this.location = location;
+		this.shipmentDate = shipmentDate;
+		if(0==userId) {
+			this.userId = 1;
+		}else {
+			this.userId = userId;
+		}
+			this.comments = comments;
+	}
+
+	/**
+	 * 
+	 * @param customerId
+	 * @param idolId
+	 * @param bookingAmount
+	 * @param totalAmount
+	 */
+	public Booking(int customerId, int idolId, BigDecimal bookingAmount, BigDecimal totalAmount) {
+		super();
+		this.bookingDate = LocalDateTime.now(ZoneId.of("Asia/Kolkata"));
+		this.customerId = customerId;
+		this.idolId = idolId;
+		this.paymentMode = PaymentMode.CASH;
+		this.bookingAmount = bookingAmount;
+		this.totalAmount = totalAmount;
+		this.balanceAmount = totalAmount.subtract(bookingAmount);
+		this.status =Status.BOOKED;
+		this.userId = 1;
+	}
+	
+	/**
+	 * @param customerId
+	 * @param idolId
+	 * @param bookingAmount
+	 */
+	public Booking(int customerId, int idolId, BigDecimal bookingAmount) {
+		super();
+		this.customerId = customerId;
+		this.idolId = idolId;
+		this.bookingAmount = bookingAmount;
+	}
+	
+
+	/**
+	 * @param id
+	 * @param bookingDate
+	 * @param customerId
+	 * @param idolId
+	 * @param paymentMode
+	 * @param bookingAmount
+	 * @param balanceAmount
+	 * @param totalAmount
+	 * @param status
+	 * @param reason
+	 * @param location
+	 * @param shipmentDate
+	 * @param userId
+	 * @param comments
+	 */
+	public Booking(int id, LocalDateTime bookingDate, int customerId, int idolId, PaymentMode paymentMode,
+			BigDecimal bookingAmount, BigDecimal balanceAmount, BigDecimal totalAmount, Status status, String reason,
+			Location location, LocalDateTime shipmentDate, int userId, String comments) {
+		super();
+		this.id = id;
+		this.bookingDate = bookingDate;
+		this.customerId = customerId;
+		this.idolId = idolId;
+		this.paymentMode = paymentMode;
+		this.bookingAmount = bookingAmount;
+		this.balanceAmount = balanceAmount;
+		this.totalAmount = totalAmount;
+		this.status = status;
+		this.reason = reason;
+		this.location = location;
+		this.shipmentDate = shipmentDate;
+		this.userId = userId;
+		this.comments = comments;
+	}
+
+	public Booking(Booking bookingTobeSaved) {
+		//Booking(int customerId, int idolId, BigDecimal bookingAmount, BigDecimal totalAmount) 
+		this(bookingTobeSaved.getCustomerId(),bookingTobeSaved.getIdolId(),bookingTobeSaved.bookingAmount,bookingTobeSaved.getTotalAmount());
+	}
+
+	
+	
+	
 }
