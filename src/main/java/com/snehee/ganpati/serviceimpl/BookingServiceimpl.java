@@ -13,7 +13,9 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.expression.Operation;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import com.snehee.ganpati.dto.BookingDTO;
@@ -37,6 +39,7 @@ import com.snehee.ganpati.util.Constants;
  * @author Girish
  *
  */
+@Transactional
 @Service
 public class BookingServiceimpl implements BookingService {
 
@@ -381,12 +384,13 @@ public class BookingServiceimpl implements BookingService {
 	}
 
 	@Override
-	public BookingDTO createBooking(final Booking bookingTobeSaved) throws InvalidInputException {
+	public BookingDTO bookTheIdol(final Booking bookingTobeSaved) throws InvalidInputException {
 		final Booking newBookingTobeSaved = this.createValidBookingRecordTobeSaved(bookingTobeSaved);
-		BookingDTO bookingTobeReturned;
+		BookingDTO idolTobeBooked;
 		try {
+			this.idolService.updateQuantyWithById(null, Operation.SUBTRACT, 1, newBookingTobeSaved.getIdolId());
 			this.bookingRepository.save(newBookingTobeSaved);
-			bookingTobeReturned = this.getBookingDTOForBooking(newBookingTobeSaved);
+			idolTobeBooked = this.getBookingDTOForBooking(newBookingTobeSaved);
 		} catch (final ResourceNotFoundException e) {
 			throw new InvalidInputException(
 					"Not able to create booking due to invalid data. Values submitted are customerId:"
@@ -398,7 +402,7 @@ public class BookingServiceimpl implements BookingService {
 							+ bookingTobeSaved.getCustomerId() + ", Idol id:" + bookingTobeSaved.getIdolId()
 							+ ", or invalid booking amount:" + bookingTobeSaved.getBookingAmount());
 		}
-		return bookingTobeReturned;
+		return idolTobeBooked;
 	}
 
 	private Booking createValidBookingRecordTobeSaved(Booking bookingTobeSaved) throws InvalidInputException {

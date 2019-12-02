@@ -87,6 +87,6 @@ public interface BookingService {
 	 * @throws InvalidInputException
 	 */
 
-	BookingDTO createBooking(Booking bookingTobeSaved) throws InvalidInputException;
+	BookingDTO bookTheIdol(Booking bookingTobeSaved) throws InvalidInputException;
 
 }

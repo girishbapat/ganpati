@@ -35,7 +35,7 @@ class BookingController {
 
 	@PostMapping("/bookings")
 	BookingDTO createBooking(@Valid @RequestBody final Booking bookingTobeSaved) throws InvalidInputException {
-		return this.bookingService.createBooking(bookingTobeSaved);
+		return this.bookingService.bookTheIdol(bookingTobeSaved);
 	}
 
 	/**

@@ -5,7 +5,9 @@ import java.util.List;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.expression.Operation;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.snehee.ganpati.entity.Idol;
 import com.snehee.ganpati.enums.Size;
@@ -14,6 +16,7 @@ import com.snehee.ganpati.repository.IdolRepository;
 import com.snehee.ganpati.service.IdolService;
 import com.snehee.ganpati.util.Constants;
 
+@Transactional
 @Service
 public class IdolServiceImpl implements IdolService {
 
@@ -125,6 +128,77 @@ public class IdolServiceImpl implements IdolService {
 		this.idolRespository.delete(currentIdolDetailsFromDb);
 		this.getAllIdols();
 		return true;
+	}
+
+	@Override
+	public Idol reduceQuantityOfIdolById(final Integer idolId) throws ResourceNotFoundException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Idol reduceQuantityOfIdolByIdol(final Idol idol) throws ResourceNotFoundException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Idol updateQuantyWithById(final String otherQuantityField, final Operation operation,
+			final int quantityTobeUpdated, final int idolId) throws ResourceNotFoundException {
+		final Idol idolQuantityTobeUpdated = this.getIdolsById(idolId);
+		return this.updateQuantyWithByIdol(otherQuantityField, operation, quantityTobeUpdated, idolQuantityTobeUpdated);
+	}
+
+	@Override
+	public Idol updateQuantyWithByIdol(final String otherQuantityField, final Operation operation,
+			final int quantityTobeUpdated, final Idol idolQuantityTobeUpdated) throws ResourceNotFoundException {
+		if (Operation.ADD.equals(operation)) {
+			/*
+			 * Case 1- if the booking is cancelled or something other than repaired just
+			 * increase quantity.
+			 */
+			idolQuantityTobeUpdated.setQuantity(idolQuantityTobeUpdated.getQuantity() + quantityTobeUpdated);
+			/*
+			 * Case 2- If quantity is repaired that means repairable quantity will be
+			 * reduced.
+			 */
+			if (Constants.REPARABLE_QTY.equals(otherQuantityField)) {
+				idolQuantityTobeUpdated
+						.setReparableQty(idolQuantityTobeUpdated.getReparableQty() - quantityTobeUpdated);
+			}
+		} else if (Operation.SUBTRACT.equals(operation)) {
+
+			/*
+			 * Case 1- if the idol is booked then just reduce quantity.
+			 */
+			idolQuantityTobeUpdated.setQuantity(idolQuantityTobeUpdated.getQuantity() - quantityTobeUpdated);
+
+			/*
+			 * Case 2- if the idol will be repaired or damaged increase that quantity as
+			 * well.
+			 */
+			if (Constants.REPARABLE_QTY.equals(otherQuantityField)) {
+				idolQuantityTobeUpdated
+						.setReparableQty(idolQuantityTobeUpdated.getReparableQty() + quantityTobeUpdated);
+			} else if (Constants.DAMAGED_QTY.equals(otherQuantityField)) {
+				idolQuantityTobeUpdated.setDamagedQty(idolQuantityTobeUpdated.getDamagedQty() + quantityTobeUpdated);
+			}
+
+		}
+		return this.updateIdol(idolQuantityTobeUpdated);
+	}
+
+	@Override
+	public Idol updateIdol(final Integer idolId) throws ResourceNotFoundException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Idol updateIdol(final Idol idolTobeUpdated) throws ResourceNotFoundException {
+		final Idol updatedIdol = this.idolRespository.save(idolTobeUpdated);
+		this.getAllIdols();
+		return updatedIdol;
 	}
 
 }
