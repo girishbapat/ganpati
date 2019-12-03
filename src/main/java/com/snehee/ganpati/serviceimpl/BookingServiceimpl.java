@@ -388,7 +388,7 @@ public class BookingServiceimpl implements BookingService {
 		final Booking newBookingTobeSaved = this.createValidBookingRecordTobeSaved(bookingTobeSaved);
 		BookingDTO idolTobeBooked;
 		try {
-			this.idolService.updateQuantyWithById(null, Operation.SUBTRACT, 1, newBookingTobeSaved.getIdolId());
+			this.idolService.updateQuantityById(null, Operation.SUBTRACT, 1, newBookingTobeSaved.getIdolId());
 			this.bookingRepository.save(newBookingTobeSaved);
 			idolTobeBooked = this.getBookingDTOForBooking(newBookingTobeSaved);
 		} catch (final ResourceNotFoundException e) {
@@ -403,6 +403,12 @@ public class BookingServiceimpl implements BookingService {
 							+ ", or invalid booking amount:" + bookingTobeSaved.getBookingAmount());
 		}
 		return idolTobeBooked;
+	}
+
+	@Override
+	public BookingDTO cancelTheBookedIdol(final Booking bookingTobeSaved) throws InvalidInputException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	private Booking createValidBookingRecordTobeSaved(Booking bookingTobeSaved) throws InvalidInputException {

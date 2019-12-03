@@ -38,21 +38,34 @@ public interface IdolService {
 
 	Idol createIdol(final Idol idolToBeCreated);
 
-	Idol updateIdol(final Integer idolId, final Idol idolDetailsTobeUpdated) throws ResourceNotFoundException;
-
 	Idol updateIdol(final Idol idolDetailsTobeUpdated) throws ResourceNotFoundException;
 
-	Idol reduceQuantityOfIdolById(final Integer idolId) throws ResourceNotFoundException;
-
-	Idol reduceQuantityOfIdolByIdol(final Idol idol) throws ResourceNotFoundException;
-
-	Idol updateQuantyWithById(String otherQuantityField, Operation operation, int quantityTobeUpdated, int idolId)
+	/**
+	 * Update the quantity of idol to be updated. In the same API if this update
+	 * trigger due to reparable or damaged quantity then provide that field in
+	 * otherQuantityField
+	 *
+	 * @param otherQuantityField-  name of field which may be reduced or increased
+	 *                             and due to which quantity will be updated
+	 *                             e.g.Case 1-if the reparable idol quantity or
+	 *                             damaged idol quantity is increased then quantity
+	 *                             will be reduced. for normal booking this field
+	 *                             will be null Case 2-if reparable quantity is
+	 *                             repaired then reparable quantity will be reduced
+	 *                             and quantity will be increased. -for booking
+	 *                             cancellation or returned this field will be blank
+	 * @param operation-           its wrt to quantity filed if its ADDITION or
+	 *                             SUBTRACTION
+	 * @param quantityTobeUpdated- actual quantity to be updated
+	 * @param idolId-              idol id for which this change would be done.
+	 * @return-updated idol
+	 * @throws ResourceNotFoundException
+	 */
+	Idol updateQuantityById(String otherQuantityField, Operation operation, int quantityTobeUpdated, int idolId)
 			throws ResourceNotFoundException;
 
-	Idol updateQuantyWithByIdol(String otherQuantityField, Operation operation, int quantityTobeUpdated,
+	Idol updateQuantityByIdol(String otherQuantityField, Operation operation, int quantityTobeUpdated,
 			Idol idolQuantityTobeUpdated) throws ResourceNotFoundException;
-
-	Idol updateIdol(final Integer idolId) throws ResourceNotFoundException;
 
 	Boolean deleteIdol(final Integer idolId) throws ResourceNotFoundException;
 

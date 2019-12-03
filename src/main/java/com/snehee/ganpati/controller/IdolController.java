@@ -9,7 +9,6 @@ import java.util.Map;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -133,19 +132,15 @@ public class IdolController {
 	/**
 	 * Update idol response entity.
 	 *
-	 * @param idolId                 the idol id
 	 * @param idolDetailsTobeUpdated the idol details which needed to be updated.
 	 * @return the response entity
 	 * @throws ResourceNotFoundException the resource not found exception
 	 */
-	@PutMapping("/idols/{id}")
-	public ResponseEntity<Idol> updateIdol(@PathVariable(value = "id") final Integer idolId,
-			@Valid @RequestBody final Idol idolDetailsTobeUpdated) throws ResourceNotFoundException {
+	@PutMapping("/idols")
+	public ResponseEntity<Idol> updateIdol(@Valid @RequestBody final Idol idolDetailsTobeUpdated)
+			throws ResourceNotFoundException {
 
-		final Idol currentIdolFromDb = this.idolService.getIdolsById(idolId);
-
-		BeanUtils.copyProperties(idolDetailsTobeUpdated, currentIdolFromDb);
-		final Idol updatedIdol = this.idolService.createIdol(currentIdolFromDb);
+		final Idol updatedIdol = this.idolService.updateIdol(idolDetailsTobeUpdated);
 		return ResponseEntity.ok(updatedIdol);
 	}
 

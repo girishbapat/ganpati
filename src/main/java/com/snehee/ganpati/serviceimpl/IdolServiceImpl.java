@@ -111,17 +111,6 @@ public class IdolServiceImpl implements IdolService {
 	}
 
 	@Override
-	public Idol updateIdol(final Integer idolId, final Idol idolDetailsTobeUpdated) throws ResourceNotFoundException {
-		final Idol currentIdolDetailsFromDb = this.idolRespository.findById(idolId)
-				.orElseThrow(() -> new ResourceNotFoundException("Idol not found with idol id :: " + idolId));
-
-		BeanUtils.copyProperties(idolDetailsTobeUpdated, currentIdolDetailsFromDb);
-		final Idol updatedIdol = this.idolRespository.save(currentIdolDetailsFromDb);
-		this.getAllIdols();
-		return updatedIdol;
-	}
-
-	@Override
 	public Boolean deleteIdol(final Integer idolId) throws ResourceNotFoundException {
 		final Idol currentIdolDetailsFromDb = this.idolRespository.findById(idolId)
 				.orElseThrow(() -> new ResourceNotFoundException("Idol not found with idol id :: " + idolId));
@@ -131,26 +120,14 @@ public class IdolServiceImpl implements IdolService {
 	}
 
 	@Override
-	public Idol reduceQuantityOfIdolById(final Integer idolId) throws ResourceNotFoundException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Idol reduceQuantityOfIdolByIdol(final Idol idol) throws ResourceNotFoundException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Idol updateQuantyWithById(final String otherQuantityField, final Operation operation,
+	public Idol updateQuantityById(final String otherQuantityField, final Operation operation,
 			final int quantityTobeUpdated, final int idolId) throws ResourceNotFoundException {
 		final Idol idolQuantityTobeUpdated = this.getIdolsById(idolId);
-		return this.updateQuantyWithByIdol(otherQuantityField, operation, quantityTobeUpdated, idolQuantityTobeUpdated);
+		return this.updateQuantityByIdol(otherQuantityField, operation, quantityTobeUpdated, idolQuantityTobeUpdated);
 	}
 
 	@Override
-	public Idol updateQuantyWithByIdol(final String otherQuantityField, final Operation operation,
+	public Idol updateQuantityByIdol(final String otherQuantityField, final Operation operation,
 			final int quantityTobeUpdated, final Idol idolQuantityTobeUpdated) throws ResourceNotFoundException {
 		if (Operation.ADD.equals(operation)) {
 			/*
@@ -189,16 +166,16 @@ public class IdolServiceImpl implements IdolService {
 	}
 
 	@Override
-	public Idol updateIdol(final Integer idolId) throws ResourceNotFoundException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public Idol updateIdol(final Idol idolTobeUpdated) throws ResourceNotFoundException {
-		final Idol updatedIdol = this.idolRespository.save(idolTobeUpdated);
+
+		final Idol currentIdolDetailsFromDb = this.idolRespository.findById(idolTobeUpdated.getId()).orElseThrow(
+				() -> new ResourceNotFoundException("Idol not found with idol id :: " + idolTobeUpdated.getId()));
+
+		BeanUtils.copyProperties(idolTobeUpdated, currentIdolDetailsFromDb);
+		final Idol updatedIdol = this.idolRespository.save(currentIdolDetailsFromDb);
 		this.getAllIdols();
 		return updatedIdol;
+
 	}
 
 }
