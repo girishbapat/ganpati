@@ -9,6 +9,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,7 +31,7 @@ class CustomerController {
 	@Autowired
 	private CustomerService customerService;
 
-	@GetMapping("/customers")
+	@GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE }, value = "/customers")
 	List<Customer> getAllCustomers() {
 		return this.customerService.getAllCustomers();
 	}
@@ -42,21 +43,24 @@ class CustomerController {
 	 * @return the customers by id
 	 * @throws ResourceNotFoundException the resource not found exception
 	 */
-	@GetMapping("/customers/{id}")
+	@GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE,
+			MediaType.APPLICATION_XML_VALUE }, value = "/customers/{id}")
 	public ResponseEntity<Customer> getCustomersById(@PathVariable(value = "id") final Integer customerId)
 			throws ResourceNotFoundException {
 		final Customer customer = this.customerService.getCustomersById(customerId);
 		return ResponseEntity.ok().body(customer);
 	}
 
-	@GetMapping("/getCustomersWithNameLike/{name}")
+	@GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE,
+			MediaType.APPLICATION_XML_VALUE }, value = "/getCustomersWithNameLike/{name}")
 	public ResponseEntity<List<Customer>> getCustomersByName(@PathVariable(value = "name") final String nameOfCustomer)
 			throws ResourceNotFoundException {
 		final List<Customer> customerListByName = this.customerService.getCustomersWithNameLike(nameOfCustomer);
 		return ResponseEntity.ok().body(customerListByName);
 	}
 
-	@GetMapping("/getCustomersWithNameLike/{name}/primaryMobileLike/{primaryMobile}")
+	@GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE,
+			MediaType.APPLICATION_XML_VALUE }, value = "/getCustomersWithNameLike/{name}/primaryMobileLike/{primaryMobile}")
 	public ResponseEntity<List<Customer>> getCustomersWithNameAndPrimaryMobileLike(
 			@PathVariable(value = "name") final String nameOfCustomer,
 			@PathVariable(value = "primaryMobile") final String primaryMobile) throws ResourceNotFoundException {
@@ -65,7 +69,8 @@ class CustomerController {
 		return ResponseEntity.ok().body(customerListByName);
 	}
 
-	@GetMapping("/getCustomersWithAttributeLike/{attributeName}/{attributeValue}")
+	@GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE,
+			MediaType.APPLICATION_XML_VALUE }, value = "/getCustomersWithAttributeLike/{attributeName}/{attributeValue}")
 	public ResponseEntity<List<Customer>> getCustomersWithAttributeLike(
 			@PathVariable(value = "attributeName") @NotBlank final String attributeName,
 			@PathVariable(value = "attributeValue", required = true) @NotBlank final String attributeValue)
@@ -99,7 +104,8 @@ class CustomerController {
 		return ResponseEntity.ok().body(customerListByType);
 	}
 
-	@GetMapping("/getCustomersStartingWithAttribute/{attributeName}/{attributeValue}")
+	@GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE,
+			MediaType.APPLICATION_XML_VALUE }, value = "/getCustomersStartingWithAttribute/{attributeName}/{attributeValue}")
 	public ResponseEntity<List<Customer>> getCustomersStartingWithAttribute(
 			@PathVariable(value = "attributeName") @NotBlank final String attributeName,
 			@PathVariable(value = "attributeValue", required = true) @NotBlank final String attributeValue)
@@ -133,7 +139,8 @@ class CustomerController {
 	 * @param customer the customer
 	 * @return the customer
 	 */
-	@PostMapping("/customers")
+	@PostMapping(consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE }, produces = {
+			MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE }, value = "/customers")
 	public Customer createCustomer(@Valid @RequestBody final Customer customer) {
 		return this.customerService.createCustomer(customer);
 	}
@@ -147,7 +154,8 @@ class CustomerController {
 	 * @return the response entity
 	 * @throws ResourceNotFoundException the resource not found exception
 	 */
-	@PutMapping("/customers/{id}")
+	@PutMapping(consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE }, produces = {
+			MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE }, value = "/customers/{id}")
 	public ResponseEntity<Customer> updateCustomer(@PathVariable(value = "id") final Integer customerId,
 			@Valid @RequestBody final Customer customerDetailsTobeUpdated) throws ResourceNotFoundException {
 		final Customer updatedCustomer = this.customerService.updateCustomer(customerId, customerDetailsTobeUpdated);
@@ -161,7 +169,8 @@ class CustomerController {
 	 * @return the map
 	 * @throws Exception the exception
 	 */
-	@DeleteMapping("/customers/{id}")
+	@DeleteMapping(produces = { MediaType.APPLICATION_JSON_VALUE,
+			MediaType.APPLICATION_XML_VALUE }, value = "/customers/{id}")
 	public Map<String, Boolean> deleteCustomer(@PathVariable(value = "id") final Integer customerId) throws Exception {
 
 		final Boolean isCustomerDeleted = this.customerService.deleteCustomer(customerId);

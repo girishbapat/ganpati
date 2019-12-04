@@ -10,6 +10,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,7 +43,7 @@ public class IdolController {
 	 *
 	 * @return the list
 	 */
-	@GetMapping("/idols")
+	@GetMapping(consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE }, value = "/idols")
 	public List<Idol> getAllIdols() {
 		return this.idolService.getAllIdols();
 	}
@@ -54,14 +55,15 @@ public class IdolController {
 	 * @return the idols by id
 	 * @throws ResourceNotFoundException the resource not found exception
 	 */
-	@GetMapping("/idols/{id}")
+	@GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE }, value = "/idols/{id}")
 	public ResponseEntity<Idol> getIdolsById(@PathVariable(value = "id") final Integer idolId)
 			throws ResourceNotFoundException {
 		final Idol idol = this.idolService.getIdolsById(idolId);
 		return ResponseEntity.ok().body(idol);
 	}
 
-	@GetMapping("/getIdolsByNameStartingWith/{name}")
+	@GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE,
+			MediaType.APPLICATION_XML_VALUE }, value = "/getIdolsByNameStartingWith/{name}")
 	public ResponseEntity<List<Idol>> getIdolsByNameStartingWith(@PathVariable(value = "name") final String nameOfIdol)
 			throws ResourceNotFoundException {
 		final List<Idol> idolListByName = this.idolService.getIdolsStartingWithIdolName(nameOfIdol);
@@ -75,7 +77,8 @@ public class IdolController {
 		return ResponseEntity.ok().body(idolListByName);
 	}
 
-	@GetMapping("/getIdolsByAttribute/{attributeName}/{attributeValue}")
+	@GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE,
+			MediaType.APPLICATION_XML_VALUE }, value = "/getIdolsByAttribute/{attributeName}/{attributeValue}")
 	public ResponseEntity<List<Idol>> getIdolsByAttribute(
 			@PathVariable(value = "attributeName") @NotBlank final String attributeName,
 			@PathVariable(value = "attributeValue", required = true) @NotBlank final String attributeValue)
@@ -124,7 +127,8 @@ public class IdolController {
 	 * @param idol the idol
 	 * @return the idol
 	 */
-	@PostMapping("/idols")
+	@PostMapping(consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE }, produces = {
+			MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE }, value = "/idols")
 	public Idol createIdol(@Valid @RequestBody final Idol idol) {
 		return this.idolService.createIdol(idol);
 	}
@@ -136,7 +140,8 @@ public class IdolController {
 	 * @return the response entity
 	 * @throws ResourceNotFoundException the resource not found exception
 	 */
-	@PutMapping("/idols")
+	@PutMapping(consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE }, produces = {
+			MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE }, value = "/idols")
 	public ResponseEntity<Idol> updateIdol(@Valid @RequestBody final Idol idolDetailsTobeUpdated)
 			throws ResourceNotFoundException {
 
@@ -151,7 +156,8 @@ public class IdolController {
 	 * @return the map
 	 * @throws Exception the exception
 	 */
-	@DeleteMapping("/idols/{id}")
+	@DeleteMapping(produces = { MediaType.APPLICATION_JSON_VALUE,
+			MediaType.APPLICATION_XML_VALUE }, value = "/idols/{id}")
 	public Map<String, Boolean> deleteIdol(@PathVariable(value = "id") final Integer idolId) throws Exception {
 		final Boolean isIdolDeleted = this.idolService.deleteIdol(idolId);
 		final Map<String, Boolean> response = new HashMap<>();

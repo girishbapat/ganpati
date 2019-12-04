@@ -39,7 +39,7 @@ import com.snehee.ganpati.util.Constants;
  * @author Girish
  *
  */
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 @Service
 public class BookingServiceimpl implements BookingService {
 

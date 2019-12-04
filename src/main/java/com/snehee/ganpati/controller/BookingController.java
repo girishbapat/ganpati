@@ -7,6 +7,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,12 +29,14 @@ class BookingController {
 	@Autowired
 	private BookingService bookingService;
 
-	@GetMapping("/bookings")
+	@GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE }, value = "/bookings")
 	List<BookingDTO> getAllBookings() {
 		return this.bookingService.getAllBookings();
 	}
 
-	@PostMapping("/bookings")
+	@PostMapping(consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE }, produces = {
+			MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE }, value = "/bookings")
+
 	BookingDTO createBooking(@Valid @RequestBody final Booking bookingTobeSaved) throws InvalidInputException {
 		return this.bookingService.bookTheIdol(bookingTobeSaved);
 	}
@@ -45,14 +48,16 @@ class BookingController {
 	 * @return the bookings by id
 	 * @throws ResourceNotFoundException the resource not found exception
 	 */
-	@GetMapping("/bookings/{id}")
+	@GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE,
+			MediaType.APPLICATION_XML_VALUE }, value = "/bookings/{id}")
 	public ResponseEntity<BookingDTO> bookingByBookingId(@PathVariable(value = "id") final Integer bookingId)
 			throws ResourceNotFoundException {
 		final BookingDTO booking = this.bookingService.getBookingById(bookingId);
 		return ResponseEntity.ok().body(booking);
 	}
 
-	@GetMapping("/bookingsForParticularBookingDate/{strBookingDate}")
+	@GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE,
+			MediaType.APPLICATION_XML_VALUE }, value = "/bookingsForParticularBookingDate/{strBookingDate}")
 	public ResponseEntity<List<BookingDTO>> getBookingsForParticularBookingDate(
 			@PathVariable(value = "strBookingDate") final String strBookingDate) throws ResourceNotFoundException {
 
@@ -61,7 +66,8 @@ class BookingController {
 		return ResponseEntity.ok().body(listOfBookingsDTO);
 	}
 
-	@GetMapping("/bookingsForParticularBookingDate/{strBookingDate}/forParticularWorkShift/{workShift}")
+	@GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE,
+			MediaType.APPLICATION_XML_VALUE }, value = "/bookingsForParticularBookingDate/{strBookingDate}/forParticularWorkShift/{workShift}")
 	public ResponseEntity<List<BookingDTO>> getBookingsForParticularBookingDateAndShift(
 			@PathVariable(value = "strBookingDate") final String strBookingDate,
 			@PathVariable(value = "workShift") final WorkShift workShift) throws ResourceNotFoundException {
@@ -71,7 +77,8 @@ class BookingController {
 		return ResponseEntity.ok().body(listOfBookingsDTO);
 	}
 
-	@GetMapping("/bookingsByBookingDate/fromBookingDate/{strFromBookingDate}/toBookingDate/{strToBookingDate}")
+	@GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE,
+			MediaType.APPLICATION_XML_VALUE }, value = "/bookingsByBookingDate/fromBookingDate/{strFromBookingDate}/toBookingDate/{strToBookingDate}")
 	public ResponseEntity<List<BookingDTO>> getBookingsByBookingDateBetween(
 			@PathVariable(value = "strFromBookingDate") final String strFromBookingDate,
 			@PathVariable(value = "strToBookingDate") final String strToBookingDate)
@@ -82,7 +89,8 @@ class BookingController {
 		return ResponseEntity.ok().body(listOfBookingsDTO);
 	}
 
-	@GetMapping("/bookingsByBookingDate/fromBookingDate/{strFromBookingDate}/fromWorkShift/{fromWorkShift}/toBookingDate/{strToBookingDate}/toWorkShift/{toWorkShift}")
+	@GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE,
+			MediaType.APPLICATION_XML_VALUE }, value = "/bookingsByBookingDate/fromBookingDate/{strFromBookingDate}/fromWorkShift/{fromWorkShift}/toBookingDate/{strToBookingDate}/toWorkShift/{toWorkShift}")
 	public ResponseEntity<List<BookingDTO>> getBookingsByBookingDateAndWorkShift(
 			@PathVariable(value = "strFromBookingDate") final String strFromBookingDate,
 			@PathVariable(value = "fromWorkShift") final WorkShift fromWorkShift,
@@ -102,7 +110,8 @@ class BookingController {
 	 * @return
 	 * @throws Exception
 	 */
-	@GetMapping("/bookingsWithCustomerAttributeLike/{attributeName}/{attributeValue}")
+	@GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE,
+			MediaType.APPLICATION_XML_VALUE }, value = "/bookingsWithCustomerAttributeLike/{attributeName}/{attributeValue}")
 	public ResponseEntity<List<BookingDTO>> getBookingsWithAttributeLike(
 			@PathVariable(value = "attributeName") @NotBlank final String attributeName,
 			@PathVariable(value = "attributeValue", required = true) @NotBlank final String attributeValue)

@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.snehee.ganpati.entity.Customer;
 import com.snehee.ganpati.exception.ResourceNotFoundException;
@@ -12,6 +13,7 @@ import com.snehee.ganpati.repository.CustomerRepository;
 import com.snehee.ganpati.service.CustomerService;
 import com.snehee.ganpati.util.Constants;
 
+@Transactional(rollbackFor = Exception.class)
 @Service
 public class CustomerServiceImpl implements CustomerService {
 

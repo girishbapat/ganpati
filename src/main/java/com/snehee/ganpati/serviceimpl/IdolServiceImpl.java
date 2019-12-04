@@ -16,7 +16,7 @@ import com.snehee.ganpati.repository.IdolRepository;
 import com.snehee.ganpati.service.IdolService;
 import com.snehee.ganpati.util.Constants;
 
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 @Service
 public class IdolServiceImpl implements IdolService {
 

@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import com.snehee.ganpati.dto.BookingDates;
@@ -22,6 +23,7 @@ import com.snehee.ganpati.service.ReportService;
  * @author Girish
  *
  */
+@Transactional(rollbackFor = Exception.class)
 @Service
 public class ReportServiceImpl implements ReportService {
 

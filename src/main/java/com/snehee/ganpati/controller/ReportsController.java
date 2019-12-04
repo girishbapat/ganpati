@@ -3,6 +3,7 @@ package com.snehee.ganpati.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,14 +20,16 @@ public class ReportsController {
 	@Autowired
 	private ReportService reportService;
 
-	@GetMapping("/totalsForBookings")
+	@GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE,
+			MediaType.APPLICATION_XML_VALUE }, value = "/totalsForBookings")
 	public ResponseEntity<List<TotalsDTO>> getTotalsForBookings() throws InvalidInputException {
 
 		final List<TotalsDTO> listOfTotalsDTO = this.reportService.getTotals();
 		return ResponseEntity.ok().body(listOfTotalsDTO);
 	}
 
-	@GetMapping("/totalsForParticularBookingDate/{particularBookingDate}")
+	@GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE,
+			MediaType.APPLICATION_XML_VALUE }, value = "/totalsForParticularBookingDate/{particularBookingDate}")
 	public ResponseEntity<List<TotalsDTO>> getBookingsForParticularBookingDate(
 			@PathVariable(value = "particularBookingDate") final String particularBookingDate)
 			throws InvalidInputException {
@@ -36,7 +39,8 @@ public class ReportsController {
 		return ResponseEntity.ok().body(listOfTotalsDTO);
 	}
 
-	@GetMapping("/totalsForParticularBookingDate/{strBookingDate}/forParticularWorkShift/{workShift}")
+	@GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE,
+			MediaType.APPLICATION_XML_VALUE }, value = "/totalsForParticularBookingDate/{strBookingDate}/forParticularWorkShift/{workShift}")
 
 	public ResponseEntity<List<TotalsDTO>> getBookingsForParticularBookingDateAndShift(
 			@PathVariable(value = "strBookingDate") final String strBookingDate,
@@ -47,7 +51,8 @@ public class ReportsController {
 		return ResponseEntity.ok().body(listOfTotalsDTO);
 	}
 
-	@GetMapping("/totalsByBookingDate/fromBookingDate/{strFromBookingDate}/toBookingDate/{strToBookingDate}")
+	@GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE,
+			MediaType.APPLICATION_XML_VALUE }, value = "/totalsByBookingDate/fromBookingDate/{strFromBookingDate}/toBookingDate/{strToBookingDate}")
 	public ResponseEntity<List<TotalsDTO>> getBookingsByBookingDateBetween(
 			@PathVariable(value = "strFromBookingDate") final String strFromBookingDate,
 			@PathVariable(value = "strToBookingDate") final String strToBookingDate) throws InvalidInputException {
@@ -57,7 +62,8 @@ public class ReportsController {
 		return ResponseEntity.ok().body(listOfTotalsDTO);
 	}
 
-	@GetMapping("/totalsByBookingDate/fromBookingDate/{strFromBookingDate}/fromWorkShift/{fromWorkShift}/toBookingDate/{strToBookingDate}/toWorkShift/{toWorkShift}")
+	@GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE,
+			MediaType.APPLICATION_XML_VALUE }, value = "/totalsByBookingDate/fromBookingDate/{strFromBookingDate}/fromWorkShift/{fromWorkShift}/toBookingDate/{strToBookingDate}/toWorkShift/{toWorkShift}")
 	public ResponseEntity<List<TotalsDTO>> getBookingsByBookingDateAndWorkShift(
 			@PathVariable(value = "strFromBookingDate") final String strFromBookingDate,
 			@PathVariable(value = "fromWorkShift") final WorkShift fromWorkShift,

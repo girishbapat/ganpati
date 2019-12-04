@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,7 +37,7 @@ public class UserController {
 	 *
 	 * @return the list
 	 */
-	@GetMapping("/users")
+	@GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE }, value = "/users")
 	public List<User> getAllUsers() {
 		return this.userService.getAllUsers();
 	}
@@ -48,7 +49,7 @@ public class UserController {
 	 * @return the users by id
 	 * @throws ResourceNotFoundException the resource not found exception
 	 */
-	@GetMapping("/users/{id}")
+	@GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE }, value = "/users/{id}")
 	public ResponseEntity<User> getUserById(@PathVariable(value = "id") final Integer userId)
 			throws ResourceNotFoundException {
 		final User user = this.userService.getUserById(userId);
@@ -61,7 +62,8 @@ public class UserController {
 	 * @param user the user
 	 * @return the user
 	 */
-	@PostMapping("/users")
+	@PostMapping(consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE }, produces = {
+			MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE }, value = "/users")
 	public User createUser(@Valid @RequestBody final User user) {
 		return this.userService.createUser(user);
 	}
@@ -74,7 +76,8 @@ public class UserController {
 	 * @return the response entity
 	 * @throws ResourceNotFoundException the resource not found exception
 	 */
-	@PutMapping("/users/{id}")
+	@PutMapping(consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE }, produces = {
+			MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE }, value = "/users/{id}")
 	public ResponseEntity<User> updateUser(@PathVariable(value = "id") final Integer userId,
 			@Valid @RequestBody final User userDetails) throws ResourceNotFoundException {
 		final User updatedUser = this.userService.updateUser(userId, userDetails);
@@ -88,7 +91,8 @@ public class UserController {
 	 * @return the map
 	 * @throws Exception the exception
 	 */
-	@DeleteMapping("/users/{id}")
+	@DeleteMapping(produces = { MediaType.APPLICATION_JSON_VALUE,
+			MediaType.APPLICATION_XML_VALUE }, value = "/users/{id}")
 	public Map<String, Boolean> deleteUser(@PathVariable(value = "id") final Integer userId) throws Exception {
 		final Boolean ifcurrentUserGotDeleted = this.userService.deleteUser(userId);
 		final Map<String, Boolean> response = new HashMap<>();
