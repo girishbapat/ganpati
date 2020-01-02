@@ -80,7 +80,7 @@ public interface BookingService {
 	LocalDateTime getLocalDateTimeForStrBookingDateAndWorkshift(String strParticularBookingDate, WorkShift workshift);
 
 	/**
-	 * Save booking
+	 * do the booking of an idol
 	 *
 	 * @param bookingTobeSaved
 	 * @return
@@ -88,6 +88,17 @@ public interface BookingService {
 	 */
 
 	BookingDTO bookTheIdol(Booking bookingTobeSaved) throws InvalidInputException;
+
+	/**
+	 * Change the booking
+	 * 
+	 * @param currentlyBookedIdol-   old or existing booking to be changed
+	 * @param newBookingTobeUpdated- new booking to be saved
+	 * @return- new or updated booking
+	 * @throws InvalidInputException
+	 */
+	BookingDTO changeThebooking(BookingDTO currentlyBookedIdol, Booking newBookingTobeUpdated)
+			throws InvalidInputException;
 
 	BookingDTO cancelTheBookedIdol(Booking bookingTobeSaved) throws InvalidInputException;
 

@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -39,6 +40,22 @@ class BookingController {
 
 	BookingDTO createBooking(@Valid @RequestBody final Booking bookingTobeSaved) throws InvalidInputException {
 		return this.bookingService.bookTheIdol(bookingTobeSaved);
+	}
+
+	@PutMapping(consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE }, produces = {
+			MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE }, value = "/bookings")
+
+	BookingDTO changeBooking(@Valid @RequestBody final Booking changedBookingTobeUpdated)
+			throws InvalidInputException, ResourceNotFoundException {
+		BookingDTO rebookedIdol = null;
+		try {
+			final BookingDTO currentlyBookedIdol = this.bookingService
+					.getBookingById(changedBookingTobeUpdated.getId());
+			rebookedIdol = this.bookingService.changeThebooking(currentlyBookedIdol, changedBookingTobeUpdated);
+		} catch (final ResourceNotFoundException resourceNotFound) {
+			throw resourceNotFound;
+		}
+		return rebookedIdol;
 	}
 
 	/**

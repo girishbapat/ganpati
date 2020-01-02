@@ -112,6 +112,41 @@ public class BookingServiceimpl implements BookingService {
 		return findAllByBookingDate;
 	}
 
+	private Booking createValidBookingRecordTobeSaved(Booking bookingTobeSaved) throws InvalidInputException {
+		this.validateBasicValidationForBooking(bookingTobeSaved);
+		bookingTobeSaved = new Booking(bookingTobeSaved);
+		return bookingTobeSaved;
+	}
+
+	/**
+	 * Do the basic validations of bookings to be saved. The validations include if
+	 * customer id, idol id, total amount, booking amount
+	 *
+	 * @param bookingTobeSaved
+	 * @throws InvalidInputException
+	 */
+	private void validateBasicValidationForBooking(final Booking bookingTobeSaved) throws InvalidInputException {
+		if ((bookingTobeSaved.getCustomerId() <= 0) || (bookingTobeSaved.getIdolId() <= 0)
+				|| (null == bookingTobeSaved.getBookingAmount())) {
+			throw new InvalidInputException(
+					"Not able to create booking due to invalid data. Values submitted are customerId:"
+							+ bookingTobeSaved.getCustomerId() + ", Idol id:" + bookingTobeSaved.getIdolId()
+							+ ", or invalid booking amount:" + bookingTobeSaved.getBookingAmount());
+		}
+		if ((null == bookingTobeSaved.getTotalAmount()) || (bookingTobeSaved.getTotalAmount().floatValue() <= 0)) {
+			try {
+				final Idol idolsById = this.idolService.getIdolsById(bookingTobeSaved.getIdolId());
+				bookingTobeSaved.setTotalAmount(idolsById.getPrice());
+				bookingTobeSaved.setBalanceAmount(
+						bookingTobeSaved.getTotalAmount().subtract(bookingTobeSaved.getBookingAmount()));
+			} catch (final ResourceNotFoundException e) {
+				throw new InvalidInputException(
+						"Not able to create booking due to invalid idol Id.Cannot find idol with Idol id:"
+								+ bookingTobeSaved.getIdolId());
+			}
+		}
+	}
+
 	/**
 	 * @param strParticularBookingDate
 	 * @param workshift
@@ -411,28 +446,11 @@ public class BookingServiceimpl implements BookingService {
 		return null;
 	}
 
-	private Booking createValidBookingRecordTobeSaved(Booking bookingTobeSaved) throws InvalidInputException {
-		if ((bookingTobeSaved.getCustomerId() <= 0) || (bookingTobeSaved.getIdolId() <= 0)
-				|| (null == bookingTobeSaved.getBookingAmount())) {
-			throw new InvalidInputException(
-					"Not able to create booking due to invalid data. Values submitted are customerId:"
-							+ bookingTobeSaved.getCustomerId() + ", Idol id:" + bookingTobeSaved.getIdolId()
-							+ ", or invalid booking amount:" + bookingTobeSaved.getBookingAmount());
-		}
-		if ((null == bookingTobeSaved.getTotalAmount()) || (bookingTobeSaved.getTotalAmount().floatValue() <= 0)) {
-			try {
-				final Idol idolsById = this.idolService.getIdolsById(bookingTobeSaved.getIdolId());
-				bookingTobeSaved.setTotalAmount(idolsById.getPrice());
-				bookingTobeSaved.setBalanceAmount(
-						bookingTobeSaved.getTotalAmount().subtract(bookingTobeSaved.getBookingAmount()));
-			} catch (final ResourceNotFoundException e) {
-				throw new InvalidInputException(
-						"Not able to create booking due to invalid idol Id.Cannot find idol with Idol id:"
-								+ bookingTobeSaved.getIdolId());
-			}
-		}
-		bookingTobeSaved = new Booking(bookingTobeSaved);
-		return bookingTobeSaved;
+	@Override
+	public BookingDTO changeThebooking(final BookingDTO currentlyBookedIdol, final Booking newBookingTobeUpdated)
+			throws InvalidInputException {
+		this.validateBasicValidationForBooking(newBookingTobeUpdated);
+		return null;
 	}
 
 }

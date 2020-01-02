@@ -55,6 +55,9 @@ public class Booking {
 	@Column(name = "balance_amt")
 	private BigDecimal balanceAmount;
 
+	@Column(name = "discount_amt")
+	private BigDecimal discountAmount;
+	
 	@Column(name = "total_amt")
 	private BigDecimal totalAmount;
 
@@ -216,7 +219,7 @@ public class Booking {
 
 	public Booking(Booking bookingTobeSaved) {
 		//Booking(int customerId, int idolId, BigDecimal bookingAmount, BigDecimal totalAmount) 
-		this(bookingTobeSaved.getCustomerId(),bookingTobeSaved.getIdolId(),bookingTobeSaved.bookingAmount,bookingTobeSaved.getTotalAmount());
+		this(bookingTobeSaved.getCustomerId(),bookingTobeSaved.getIdolId(),bookingTobeSaved.getBookingAmount(),bookingTobeSaved.getTotalAmount());
 	}
 
 	
