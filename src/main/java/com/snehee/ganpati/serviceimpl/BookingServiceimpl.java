@@ -67,23 +67,23 @@ public class BookingServiceimpl implements BookingService {
 		}
 		List<Booking> listBookings = null;
 		// if from date is not null and other 3 parameters are null
-		if ((null == fromWorkShift) && !StringUtils.hasText(strToBookingDate) && (null == toWorkShift)) {
+		if (null == fromWorkShift && !StringUtils.hasText(strToBookingDate) && null == toWorkShift) {
 			fromWorkShift = WorkShift.MORNING;
 			listBookings = this.getBookingsWithBookingDateWorkShiftAndDiffrence(strFromBookingDate, fromWorkShift, 24);
 		}
 		// if from date and fromWorkShift is not null and other 2 parameters are null
-		else if ((fromWorkShift != null) && !StringUtils.hasText(strToBookingDate) && (null == toWorkShift)) {
+		else if (fromWorkShift != null && !StringUtils.hasText(strToBookingDate) && null == toWorkShift) {
 			listBookings = this.getBookingsWithBookingDateWorkShiftAndDiffrence(strFromBookingDate, fromWorkShift, 8);
 		}
 		// if todate is present but fromWorkShift and toWorkshift is null then just
 		// bothworkshifts to MORNING and proceed
-		else if ((null == fromWorkShift) && StringUtils.hasText(strToBookingDate) && (null == toWorkShift)) {
+		else if (null == fromWorkShift && StringUtils.hasText(strToBookingDate) && null == toWorkShift) {
 			fromWorkShift = WorkShift.MORNING;
 			toWorkShift = WorkShift.MORNING;
 		}
 		// if from date and fromWorkShift and todate is not and only to workshift is
 		// null then just set to workshift
-		else if ((fromWorkShift != null) && StringUtils.hasText(strToBookingDate) && (null == toWorkShift)) {
+		else if (fromWorkShift != null && StringUtils.hasText(strToBookingDate) && null == toWorkShift) {
 			toWorkShift = WorkShift.MORNING;
 		}
 		// if listBookings is null means above atleaset 2 conditions are false
@@ -126,14 +126,14 @@ public class BookingServiceimpl implements BookingService {
 	 * @throws InvalidInputException
 	 */
 	private void validateBasicValidationForBooking(final Booking bookingTobeSaved) throws InvalidInputException {
-		if ((bookingTobeSaved.getCustomerId() <= 0) || (bookingTobeSaved.getIdolId() <= 0)
-				|| (null == bookingTobeSaved.getBookingAmount())) {
+		if (bookingTobeSaved.getCustomerId() <= 0 || bookingTobeSaved.getIdolId() <= 0
+				|| null == bookingTobeSaved.getBookingAmount()) {
 			throw new InvalidInputException(
 					"Not able to create booking due to invalid data. Values submitted are customerId:"
 							+ bookingTobeSaved.getCustomerId() + ", Idol id:" + bookingTobeSaved.getIdolId()
 							+ ", or invalid booking amount:" + bookingTobeSaved.getBookingAmount());
 		}
-		if ((null == bookingTobeSaved.getTotalAmount()) || (bookingTobeSaved.getTotalAmount().floatValue() <= 0)) {
+		if (null == bookingTobeSaved.getTotalAmount() || bookingTobeSaved.getTotalAmount().floatValue() <= 0) {
 			try {
 				final Idol idolsById = this.idolService.getIdolsById(bookingTobeSaved.getIdolId());
 				bookingTobeSaved.setTotalAmount(idolsById.getPrice());
@@ -368,7 +368,7 @@ public class BookingServiceimpl implements BookingService {
 	@Override
 	public List<BookingDTO> getBookingsByBookingDateBetween(final String strFromBookingDate,
 			final WorkShift fromWorkShift, final String strToBookingDate, final WorkShift toWorkShift)
-			throws InvalidInputException {
+					throws InvalidInputException {
 		if (!StringUtils.hasText(strFromBookingDate)) {
 			throw new InvalidInputException("from Booking date is not provided");
 		}
@@ -443,7 +443,7 @@ public class BookingServiceimpl implements BookingService {
 	@Override
 	public BookingDTO cancelTheBookedIdol(final Booking bookingTobeSaved) throws InvalidInputException {
 		// TODO Auto-generated method stub
-		// test check-in
+		// test check-in, updating again.
 		return null;
 	}
 
