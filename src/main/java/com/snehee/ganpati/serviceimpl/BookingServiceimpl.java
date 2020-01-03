@@ -443,6 +443,7 @@ public class BookingServiceimpl implements BookingService {
 	@Override
 	public BookingDTO cancelTheBookedIdol(final Booking bookingTobeSaved) throws InvalidInputException {
 		// TODO Auto-generated method stub
+		// test check-in
 		return null;
 	}
 
