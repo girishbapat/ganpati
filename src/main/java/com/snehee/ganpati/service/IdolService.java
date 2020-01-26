@@ -54,7 +54,7 @@ public interface IdolService {
 	 *                             repaired then reparable quantity will be reduced
 	 *                             and quantity will be increased. -for booking
 	 *                             cancellation or returned this field will be blank
-	 * @param operation-           its wrt to quantity filed if its ADDITION or
+	 * @param operation-           its wrt to quantity field if its ADDITION or
 	 *                             SUBTRACTION
 	 * @param quantityTobeUpdated- actual quantity to be updated
 	 * @param idolId-              idol id for which this change would be done.

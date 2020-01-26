@@ -35,11 +35,11 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
 
 	List<Booking> findByCommentsContaining(String comments);
 
-	@Query("SELECT new com.snehee.ganpati.dto.TotalsDTO( b.paymentMode , sum(b.bookingAmount) , sum(b.balanceAmount) ,  sum(b.totalAmount)) FROM Booking as b where b.bookingDate between :fromBookingDate and :toBookingDate group by b.paymentMode")
+	@Query("SELECT new com.snehee.ganpati.dto.TotalsDTO( b.paymentMode , sum(b.bookingAmount) , sum(b.discountAmount) , sum(b.balanceAmount) ,  sum(b.totalAmount)) FROM Booking as b where  UPPER( b.status ) IN ('BOOKED', 'CHANGED', 'DISPATCHED') and b.bookingDate between :fromBookingDate and :toBookingDate group by b.paymentMode")
 	List<TotalsDTO> getTotals(@Param("fromBookingDate") LocalDateTime fromBookingDate,
 			@Param("toBookingDate") LocalDateTime toBookingDate);
 
-	@Query("SELECT new com.snehee.ganpati.dto.TotalsDTO( b.paymentMode , sum(b.bookingAmount) , sum(b.balanceAmount) ,  sum(b.totalAmount)) FROM Booking as b group by b.paymentMode")
+	@Query("SELECT new com.snehee.ganpati.dto.TotalsDTO( b.paymentMode , sum(b.bookingAmount) ,  sum(b.discountAmount) , sum(b.balanceAmount) ,  sum(b.totalAmount)) FROM Booking as b where UPPER( b.status ) IN ('BOOKED', 'CHANGED', 'DISPATCHED') group by b.paymentMode")
 	List<TotalsDTO> getTotals();
 
 }

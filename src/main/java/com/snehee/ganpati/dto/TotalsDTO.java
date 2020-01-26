@@ -10,29 +10,30 @@ import lombok.Data;
 public class TotalsDTO {
 	private PaymentMode paymentMode;
 	private BigDecimal bookingAmount;
+	private BigDecimal discountAmount;
 	private BigDecimal balanceAmount;
 	private BigDecimal totalAmount;
-	
+
 	/**
 	 * @param paymentMode
 	 * @param bookingAmount
 	 * @param balanceAmount
 	 * @param totalAmount
 	 */
-	public TotalsDTO(PaymentMode paymentMode, BigDecimal bookingAmount, BigDecimal balanceAmount,
+	public TotalsDTO(PaymentMode paymentMode, BigDecimal bookingAmount,BigDecimal discountAmount, BigDecimal balanceAmount,
 			BigDecimal totalAmount) {
 		super();
 		this.paymentMode = paymentMode;
 		this.bookingAmount = bookingAmount;
+		this.discountAmount=discountAmount;
 		this.balanceAmount = balanceAmount;
 		this.totalAmount = totalAmount;
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public TotalsDTO() {
 		super();
 	}
-//pected arguments are: com.snehee.ganpati.enums.PaymentMode, java.math.BigDecimal, java.math.BigDecimal, java.math.BigDecimal 
 }

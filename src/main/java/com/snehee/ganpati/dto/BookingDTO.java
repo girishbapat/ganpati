@@ -17,8 +17,9 @@ public class BookingDTO {
 	private String primaryMobile;
 	private int idolId;
 	private String idolName;
-	private PaymentMode paymentMode;	
+	private PaymentMode paymentMode;
 	private BigDecimal bookingAmount;
+	private BigDecimal discountAmount;
 	private BigDecimal balanceAmount;
 	private BigDecimal totalAmount;
 	private Status status;

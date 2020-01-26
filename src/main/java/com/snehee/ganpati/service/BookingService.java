@@ -81,25 +81,30 @@ public interface BookingService {
 
 	/**
 	 * do the booking of an idol
-	 *
+	 * @param currentlyBookedIdol TODO
 	 * @param bookingTobeSaved
+	 *
 	 * @return
 	 * @throws InvalidInputException
 	 */
 
-	BookingDTO bookTheIdol(Booking bookingTobeSaved) throws InvalidInputException;
+	BookingDTO bookTheIdol(BookingDTO currentlyBookedIdol, Booking bookingTobeSaved) throws InvalidInputException;
 
 	/**
 	 * Change the booking
-	 * 
+	 *
 	 * @param currentlyBookedIdol-   old or existing booking to be changed
 	 * @param newBookingTobeUpdated- new booking to be saved
 	 * @return- new or updated booking
 	 * @throws InvalidInputException
 	 */
-	BookingDTO changeThebooking(BookingDTO currentlyBookedIdol, Booking newBookingTobeUpdated)
-			throws InvalidInputException;
 
-	BookingDTO cancelTheBookedIdol(Booking bookingTobeSaved) throws InvalidInputException;
+	/*
+	 * BookingDTO changeThebooking(BookingDTO currentlyBookedIdol, Booking
+	 * newBookingTobeUpdated) throws InvalidInputException;
+	 */
+
+
+	BookingDTO cancelTheBookedIdol(Booking bookingToCancel) throws InvalidInputException;
 
 }
