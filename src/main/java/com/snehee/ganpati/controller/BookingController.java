@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.snehee.ganpati.dto.BookingDTO;
 import com.snehee.ganpati.entity.Booking;
+import com.snehee.ganpati.enums.Status;
 import com.snehee.ganpati.enums.WorkShift;
 import com.snehee.ganpati.exception.InvalidInputException;
 import com.snehee.ganpati.exception.ResourceNotFoundException;
@@ -51,6 +52,10 @@ class BookingController {
 		try {
 			final BookingDTO currentlyBookedIdol = this.bookingService
 					.getBookingById(bookingId);
+			if(changedBookingTobeUpdated.getCustomerId()!=currentlyBookedIdol.getCustomerId())
+			{
+				throw new InvalidInputException("Not able to update booking, due to invalid data. Booking customer id in the request is:"+changedBookingTobeUpdated.getCustomerId()+" and customer id in db is:"+currentlyBookedIdol.getCustomerId());
+			}
 			rebookedIdol = this.bookingService.bookTheIdol(currentlyBookedIdol, changedBookingTobeUpdated);
 		} catch (final ResourceNotFoundException resourceNotFound) {
 			throw resourceNotFound;
@@ -63,16 +68,24 @@ class BookingController {
 
 	public BookingDTO cancelBooking(@PathVariable(value = "id") final Integer bookingId,@Valid @RequestBody final Booking cancelledBookingTobeUpdated)
 			throws InvalidInputException, ResourceNotFoundException {
-		BookingDTO rebookedIdol = null;
+		BookingDTO cancelledIdol = null;
 		try {
 			final BookingDTO currentlyBookedIdol = this.bookingService
 					.getBookingById(bookingId);
+			if(cancelledBookingTobeUpdated.getCustomerId()!=currentlyBookedIdol.getCustomerId())
+			{
+				throw new InvalidInputException("Not able to cancel booking, due to invalid data. current booking customer id in the request is:"+cancelledBookingTobeUpdated.getCustomerId()+" and customer id in db is:"+currentlyBookedIdol.getCustomerId());
+			}
+			if(Status.CANCELLED.equals(currentlyBookedIdol.getStatus())) {
+				throw new InvalidInputException("Not able to cancel booking, Booking already cancelled:"+currentlyBookedIdol);
+			}
 			cancelledBookingTobeUpdated.setId(currentlyBookedIdol.getId());
-			rebookedIdol = this.bookingService.cancelTheBookedIdol(cancelledBookingTobeUpdated);
+			cancelledBookingTobeUpdated.setIdolId(currentlyBookedIdol.getIdolId());
+			cancelledIdol = this.bookingService.cancelTheBookedIdol(cancelledBookingTobeUpdated);
 		} catch (final ResourceNotFoundException resourceNotFound) {
 			throw resourceNotFound;
 		}
-		return rebookedIdol;
+		return cancelledIdol;
 	}
 
 	/**

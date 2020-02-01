@@ -125,7 +125,7 @@ public class BookingServiceimpl implements BookingService {
 			throw new InvalidInputException(
 					"Not able to create/update booking due to invalid data. Values submitted are customerId:"
 							+ bookingTobeSaved.getCustomerId() + ", Idol id:" + bookingTobeSaved.getIdolId()
-							+ ", or invalid booking amount:" + bookingTobeSaved.getBookingAmount());
+							+ ",  invalid booking amount:" + bookingTobeSaved.getBookingAmount());
 		}
 		if (null == bookingTobeSaved.getTotalAmount() || bookingTobeSaved.getTotalAmount().floatValue() <= 0) {
 			try {
@@ -474,18 +474,25 @@ public class BookingServiceimpl implements BookingService {
 	}
 
 	@Override
-	public BookingDTO cancelTheBookedIdol(final Booking bookingToCancel) throws InvalidInputException {
-		if (bookingToCancel.getCustomerId() <= 0 || bookingToCancel.getIdolId() <= 0
-				|| null == bookingToCancel.getBookingAmount()||bookingToCancel.getBookingAmount().intValue()>0) {
+	public BookingDTO cancelTheBookedIdol(Booking bookingToCancel) throws InvalidInputException {
+		if (bookingToCancel.getCustomerId() <= 0 || bookingToCancel.getIdolId() <= 0||bookingToCancel.getBookingAmount()==null) {
 			throw new InvalidInputException(
-					"Not able to cancel booking. Need to provide mandatory values of customer id, idol id, booking id, booking amount, total amount, status, reason etc."+bookingToCancel);
+					"Not able to cancel booking. Need to provide mandatory values of customer id, booking amount (negative in case of refund or 0 in case of no refund)."+bookingToCancel);
 		}
-		bookingToCancel.setTotalAmount(new BigDecimal(0));
-		bookingToCancel.setDiscountAmount(new BigDecimal(0));
+		if(bookingToCancel.getTotalAmount()==null) {
+			bookingToCancel.setTotalAmount(new BigDecimal(0));
+		}
+		if(bookingToCancel.getDiscountAmount()==null) {
+			bookingToCancel.setDiscountAmount(new BigDecimal(0));
+		}
+		if(bookingToCancel.getBalanceAmount()==null) {
+			bookingToCancel.setBalanceAmount(new BigDecimal(0));
+		}
 		bookingToCancel.setStatus(Status.CANCELLED);
 		if(!StringUtils.hasText(bookingToCancel.getReason())) {
 			bookingToCancel.setReason(Reason.CUSTOMER_CANCELLED_BOOKING.toString());
 		}
+		bookingToCancel = new Booking(bookingToCancel);
 		return	this.performActualDBOperationForBookingCancellation(bookingToCancel);
 	}
 

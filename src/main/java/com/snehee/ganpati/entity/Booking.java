@@ -103,10 +103,13 @@ public class Booking {
 	 * @param userId
 	 * @param comments
 	 */
-	public Booking(LocalDateTime bookingDate, int customerId, int idolId, PaymentMode paymentMode,
+	public Booking(int id,LocalDateTime bookingDate, int customerId, int idolId, PaymentMode paymentMode,
 			BigDecimal bookingAmount, BigDecimal balanceAmount, BigDecimal discountAmount, BigDecimal totalAmount, Status status, String reason,
 			Location location, LocalDateTime shipmentDate, int userId, String comments) {
 		super();
+		if(id>0) {
+			this.id=id;
+		}
 		if (null == bookingDate) {
 			this.bookingDate = LocalDateTime.now(ZoneId.of("Asia/Kolkata"));
 		} else {
@@ -184,45 +187,10 @@ public class Booking {
 	}
 
 
-	/**
-	 * @param id
-	 * @param bookingDate
-	 * @param customerId
-	 * @param idolId
-	 * @param paymentMode
-	 * @param bookingAmount
-	 * @param balanceAmount
-	 * @param totalAmount
-	 * @param status
-	 * @param reason
-	 * @param location
-	 * @param shipmentDate
-	 * @param userId
-	 * @param comments
-	 */
-	public Booking(int id, LocalDateTime bookingDate, int customerId, int idolId, PaymentMode paymentMode,
-			BigDecimal bookingAmount, BigDecimal discountAmount,BigDecimal balanceAmount, BigDecimal totalAmount, Status status, String reason,
-			Location location, LocalDateTime shipmentDate, int userId, String comments) {
-		super();
-		this.id = id;
-		this.bookingDate = bookingDate;
-		this.customerId = customerId;
-		this.idolId = idolId;
-		this.paymentMode = paymentMode;
-		this.bookingAmount = bookingAmount;
-		this.discountAmount=discountAmount;
-		this.balanceAmount = balanceAmount;
-		this.totalAmount = totalAmount;
-		this.status = status;
-		this.reason = reason;
-		this.location = location;
-		this.shipmentDate = shipmentDate;
-		this.userId = userId;
-		this.comments = comments;
-	}
+
 
 	public Booking(Booking bookingTobeSaved) {
-		this( bookingTobeSaved.getBookingDate(), bookingTobeSaved.getCustomerId(), bookingTobeSaved.getIdolId(), bookingTobeSaved.getPaymentMode(),
+		this( bookingTobeSaved.getId(),bookingTobeSaved.getBookingDate(), bookingTobeSaved.getCustomerId(), bookingTobeSaved.getIdolId(), bookingTobeSaved.getPaymentMode(),
 				bookingTobeSaved.getBookingAmount(),bookingTobeSaved.getBalanceAmount(), bookingTobeSaved.getDiscountAmount(), bookingTobeSaved.getTotalAmount(),
 				bookingTobeSaved.getStatus(), bookingTobeSaved.getReason(),bookingTobeSaved.getLocation(),bookingTobeSaved.getShipmentDate(), bookingTobeSaved.getUserId(), bookingTobeSaved.getComments());
 	}
