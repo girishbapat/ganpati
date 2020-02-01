@@ -107,4 +107,7 @@ public interface BookingService {
 
 	BookingDTO cancelTheBookedIdol(Booking bookingToCancel) throws InvalidInputException;
 
+
+	BookingDTO updateLocation(int bookingId, String location) throws ResourceNotFoundException, InvalidInputException;
+
 }

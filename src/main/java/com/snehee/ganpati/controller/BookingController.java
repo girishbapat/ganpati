@@ -22,6 +22,7 @@ import com.snehee.ganpati.enums.Status;
 import com.snehee.ganpati.enums.WorkShift;
 import com.snehee.ganpati.exception.InvalidInputException;
 import com.snehee.ganpati.exception.ResourceNotFoundException;
+import com.snehee.ganpati.repository.BookingRepository;
 import com.snehee.ganpati.service.BookingService;
 import com.snehee.ganpati.util.Constants;
 
@@ -30,6 +31,8 @@ class BookingController {
 
 	@Autowired
 	private BookingService bookingService;
+	@Autowired
+	BookingRepository bookingRepository;
 
 	@GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE }, value = "/bookings")
 	public List<BookingDTO> getAllBookings() {
@@ -61,6 +64,16 @@ class BookingController {
 			throw resourceNotFound;
 		}
 		return rebookedIdol;
+	}
+
+	@PutMapping(consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE }, produces = {
+			MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE }, value = "/bookings/{id}/location/{location}")
+
+	public BookingDTO updateLocationForBooking(@PathVariable(value = "id") final Integer bookingId,@PathVariable(value = "location") final String location)
+			throws InvalidInputException, ResourceNotFoundException {
+		BookingDTO updatedLocationIdol = null;
+		updatedLocationIdol = this.bookingService.updateLocation(bookingId, location);
+		return updatedLocationIdol;
 	}
 
 	@PutMapping(consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE }, produces = {

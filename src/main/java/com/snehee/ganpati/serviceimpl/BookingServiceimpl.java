@@ -113,9 +113,11 @@ public class BookingServiceimpl implements BookingService {
 				.findAllByBookingDateBetween(bookingDates.getFromDate(), bookingDates.getToDate());
 		return findAllByBookingDate;
 	}
+
 	/**
 	 * Do the basic validations of bookings to be saved. The validations include if
 	 * customer id, idol id, total amount, booking amount
+	 *
 	 * @param bookingTobeSaved
 	 * @throws InvalidInputException
 	 */
@@ -131,7 +133,8 @@ public class BookingServiceimpl implements BookingService {
 			try {
 				final Idol idolsById = this.idolService.getIdolsById(bookingTobeSaved.getIdolId());
 				bookingTobeSaved.setTotalAmount(idolsById.getPrice());
-				if(null == bookingTobeSaved.getDiscountAmount() || bookingTobeSaved.getDiscountAmount().floatValue() <= 0)  {
+				if (null == bookingTobeSaved.getDiscountAmount()
+						|| bookingTobeSaved.getDiscountAmount().floatValue() <= 0) {
 					bookingTobeSaved.setDiscountAmount(new BigDecimal(0));
 				}
 				bookingTobeSaved.setBalanceAmount(bookingTobeSaved.getTotalAmount()
@@ -417,31 +420,34 @@ public class BookingServiceimpl implements BookingService {
 	}
 
 	@Override
-	public BookingDTO bookTheIdol(BookingDTO currentlyBookedIdol, Booking bookingTobeSaved) throws InvalidInputException {
+	public BookingDTO bookTheIdol(BookingDTO currentlyBookedIdol, Booking bookingTobeSaved)
+			throws InvalidInputException {
 		this.performValidationsForBooking(bookingTobeSaved);
 		bookingTobeSaved = new Booking(bookingTobeSaved);
-		if(null!=currentlyBookedIdol) {
-			this.performUpdatesForChangedBooking(currentlyBookedIdol,bookingTobeSaved);
+		if (null != currentlyBookedIdol) {
+			this.performUpdatesForChangedBooking(currentlyBookedIdol, bookingTobeSaved);
 		}
 		final BookingDTO bookedIdolDTO = this.performActualDBOperationForBooking(currentlyBookedIdol, bookingTobeSaved);
 		return bookedIdolDTO;
 	}
 
 	private void performUpdatesForChangedBooking(BookingDTO currentlyBookedIdol, Booking bookingTobeSaved) {
-		// Set  customerId and id same as of currently booked idol
+		// Set customerId and id same as of currently booked idol
 		bookingTobeSaved.setId(currentlyBookedIdol.getId());
 		bookingTobeSaved.setCustomerId(currentlyBookedIdol.getCustomerId());
 		bookingTobeSaved.setStatus(Status.CHANGED);
-		if(!StringUtils.hasText(bookingTobeSaved.getReason())) {
+		if (!StringUtils.hasText(bookingTobeSaved.getReason())) {
 			bookingTobeSaved.setReason(Reason.OTHER.toString());
 		}
 	}
 
-	private BookingDTO performActualDBOperationForBooking(BookingDTO currentlyBookedIdol, final Booking bookingTobeSaved) throws InvalidInputException {
-		BookingDTO bookedIdolDTO=null;
+	private BookingDTO performActualDBOperationForBooking(BookingDTO currentlyBookedIdol,
+			final Booking bookingTobeSaved) throws InvalidInputException {
+		BookingDTO bookedIdolDTO = null;
 		try {
-			//as idol will be changed current idol quantity from shop will be added and for the new idol the idol quantity will  be reduced.
-			if(null!=currentlyBookedIdol) {
+			// as idol will be changed current idol quantity from shop will be added and for
+			// the new idol the idol quantity will be reduced.
+			if (null != currentlyBookedIdol) {
 				this.idolService.updateQuantityById(null, Operation.ADD, 1, currentlyBookedIdol.getIdolId());
 			}
 			this.idolService.updateQuantityById(null, Operation.SUBTRACT, 1, bookingTobeSaved.getIdolId());
@@ -449,52 +455,76 @@ public class BookingServiceimpl implements BookingService {
 			bookedIdolDTO = this.getBookingDTOForBooking(bookingTobeSaved);
 		} catch (final ResourceNotFoundException e) {
 			throw new InvalidInputException(
-					"Not able to create or update booking due to invalid data. Values submitted are :"+bookingTobeSaved);
+					"Not able to create or update booking due to invalid data. Values submitted are :"
+							+ bookingTobeSaved);
 		} catch (final Exception e) {
 			throw new InvalidInputException(
-					"Not able to create or update booking due to invalid data. Values submitted are :"+bookingTobeSaved);
+					"Not able to create or update booking due to invalid data. Values submitted are :"
+							+ bookingTobeSaved);
 		}
 		return bookedIdolDTO;
 	}
-	private BookingDTO performActualDBOperationForBookingCancellation(Booking currentlyBookedIdolToBeCancelled) throws InvalidInputException {
-		BookingDTO bookedIdolDTO=null;
+
+	private BookingDTO performActualDBOperationForBookingCancellation(Booking currentlyBookedIdolToBeCancelled)
+			throws InvalidInputException {
+		BookingDTO bookedIdolDTO = null;
 		try {
-			//as idol will be added back to idol quantity as the booking is cancelled.
+			// as idol will be added back to idol quantity as the booking is cancelled.
 			this.idolService.updateQuantityById(null, Operation.ADD, 1, currentlyBookedIdolToBeCancelled.getIdolId());
 			this.bookingRepository.save(currentlyBookedIdolToBeCancelled);
 			bookedIdolDTO = this.getBookingDTOForBooking(currentlyBookedIdolToBeCancelled);
 		} catch (final ResourceNotFoundException e) {
-			throw new InvalidInputException(
-					"Not able to cancel booking due to invalid data. Values submitted are :"+currentlyBookedIdolToBeCancelled);
+			throw new InvalidInputException("Not able to cancel booking due to invalid data. Values submitted are :"
+					+ currentlyBookedIdolToBeCancelled);
 		} catch (final Exception e) {
 			throw new InvalidInputException(
-					"Not able to cancel booking. Values submitted are :"+currentlyBookedIdolToBeCancelled);
+					"Not able to cancel booking. Values submitted are :" + currentlyBookedIdolToBeCancelled);
 		}
 		return bookedIdolDTO;
 	}
 
 	@Override
 	public BookingDTO cancelTheBookedIdol(Booking bookingToCancel) throws InvalidInputException {
-		if (bookingToCancel.getCustomerId() <= 0 || bookingToCancel.getIdolId() <= 0||bookingToCancel.getBookingAmount()==null) {
+		if (bookingToCancel.getCustomerId() <= 0 || bookingToCancel.getIdolId() <= 0
+				|| bookingToCancel.getBookingAmount() == null) {
 			throw new InvalidInputException(
-					"Not able to cancel booking. Need to provide mandatory values of customer id, booking amount (negative in case of refund or 0 in case of no refund)."+bookingToCancel);
+					"Not able to cancel booking. Need to provide mandatory values of customer id, booking amount (negative in case of refund or 0 in case of no refund)."
+							+ bookingToCancel);
 		}
-		if(bookingToCancel.getTotalAmount()==null) {
+		if (bookingToCancel.getTotalAmount() == null) {
 			bookingToCancel.setTotalAmount(new BigDecimal(0));
 		}
-		if(bookingToCancel.getDiscountAmount()==null) {
+		if (bookingToCancel.getDiscountAmount() == null) {
 			bookingToCancel.setDiscountAmount(new BigDecimal(0));
 		}
-		if(bookingToCancel.getBalanceAmount()==null) {
+		if (bookingToCancel.getBalanceAmount() == null) {
 			bookingToCancel.setBalanceAmount(new BigDecimal(0));
 		}
 		bookingToCancel.setStatus(Status.CANCELLED);
-		if(!StringUtils.hasText(bookingToCancel.getReason())) {
+		if (!StringUtils.hasText(bookingToCancel.getReason())) {
 			bookingToCancel.setReason(Reason.CUSTOMER_CANCELLED_BOOKING.toString());
 		}
 		bookingToCancel = new Booking(bookingToCancel);
-		return	this.performActualDBOperationForBookingCancellation(bookingToCancel);
+		return this.performActualDBOperationForBookingCancellation(bookingToCancel);
 	}
 
+	@Override
+	public BookingDTO updateLocation(int bookingId, String location)
+			throws ResourceNotFoundException, InvalidInputException {
+		final Booking booking = this.bookingRepository.findById(bookingId)
+				.orElseThrow(() -> new ResourceNotFoundException("Booking not found with booking id : " + bookingId));
+
+		if (StringUtils.hasText(location)) {
+			throw new InvalidInputException("Not able to update location, invalid location shared:" + location);
+		}
+
+		final Location loc = Location.valueOf(location);
+
+		booking.setLocation(loc);
+		this.bookingRepository.save(booking);
+		final BookingDTO bookedIdolDTO = this.getBookingDTOForBooking(booking);
+
+		return bookedIdolDTO;
+	}
 
 }
