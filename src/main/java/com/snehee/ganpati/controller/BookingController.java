@@ -49,15 +49,17 @@ class BookingController {
 	@PutMapping(consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE }, produces = {
 			MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE }, value = "/bookings/{id}")
 
-	public BookingDTO changeBooking(@PathVariable(value = "id") final Integer bookingId,@Valid @RequestBody final Booking changedBookingTobeUpdated)
+	public BookingDTO changeBooking(@PathVariable(value = "id") final Integer bookingId,
+			@Valid @RequestBody final Booking changedBookingTobeUpdated)
 			throws InvalidInputException, ResourceNotFoundException {
 		BookingDTO rebookedIdol = null;
 		try {
-			final BookingDTO currentlyBookedIdol = this.bookingService
-					.getBookingById(bookingId);
-			if(changedBookingTobeUpdated.getCustomerId()!=currentlyBookedIdol.getCustomerId())
-			{
-				throw new InvalidInputException("Not able to update booking, due to invalid data. Booking customer id in the request is:"+changedBookingTobeUpdated.getCustomerId()+" and customer id in db is:"+currentlyBookedIdol.getCustomerId());
+			final BookingDTO currentlyBookedIdol = this.bookingService.getBookingById(bookingId);
+			if (changedBookingTobeUpdated.getCustomerId() != currentlyBookedIdol.getCustomerId()) {
+				throw new InvalidInputException(
+						"Not able to update booking, due to invalid data. Booking customer id in the request is:"
+								+ changedBookingTobeUpdated.getCustomerId() + " and customer id in db is:"
+								+ currentlyBookedIdol.getCustomerId());
 			}
 			rebookedIdol = this.bookingService.bookTheIdol(currentlyBookedIdol, changedBookingTobeUpdated);
 		} catch (final ResourceNotFoundException resourceNotFound) {
@@ -66,10 +68,11 @@ class BookingController {
 		return rebookedIdol;
 	}
 
-	@PutMapping(consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE }, produces = {
-			MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE }, value = "/bookings/{id}/location/{location}")
+	@PutMapping(produces = { MediaType.APPLICATION_JSON_VALUE,
+			MediaType.APPLICATION_XML_VALUE }, value = "/bookings/{id}/location/{location}")
 
-	public BookingDTO updateLocationForBooking(@PathVariable(value = "id") final Integer bookingId,@PathVariable(value = "location") final String location)
+	public BookingDTO updateLocationForBooking(@PathVariable(value = "id") final Integer bookingId,
+			@PathVariable(value = "location") final String location)
 			throws InvalidInputException, ResourceNotFoundException {
 		BookingDTO updatedLocationIdol = null;
 		updatedLocationIdol = this.bookingService.updateLocation(bookingId, location);
@@ -79,18 +82,21 @@ class BookingController {
 	@PutMapping(consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE }, produces = {
 			MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE }, value = "/bookings/cancel/{id}")
 
-	public BookingDTO cancelBooking(@PathVariable(value = "id") final Integer bookingId,@Valid @RequestBody final Booking cancelledBookingTobeUpdated)
+	public BookingDTO cancelBooking(@PathVariable(value = "id") final Integer bookingId,
+			@Valid @RequestBody final Booking cancelledBookingTobeUpdated)
 			throws InvalidInputException, ResourceNotFoundException {
 		BookingDTO cancelledIdol = null;
 		try {
-			final BookingDTO currentlyBookedIdol = this.bookingService
-					.getBookingById(bookingId);
-			if(cancelledBookingTobeUpdated.getCustomerId()!=currentlyBookedIdol.getCustomerId())
-			{
-				throw new InvalidInputException("Not able to cancel booking, due to invalid data. current booking customer id in the request is:"+cancelledBookingTobeUpdated.getCustomerId()+" and customer id in db is:"+currentlyBookedIdol.getCustomerId());
+			final BookingDTO currentlyBookedIdol = this.bookingService.getBookingById(bookingId);
+			if (cancelledBookingTobeUpdated.getCustomerId() != currentlyBookedIdol.getCustomerId()) {
+				throw new InvalidInputException(
+						"Not able to cancel booking, due to invalid data. current booking customer id in the request is:"
+								+ cancelledBookingTobeUpdated.getCustomerId() + " and customer id in db is:"
+								+ currentlyBookedIdol.getCustomerId());
 			}
-			if(Status.CANCELLED.equals(currentlyBookedIdol.getStatus())) {
-				throw new InvalidInputException("Not able to cancel booking, Booking already cancelled:"+currentlyBookedIdol);
+			if (Status.CANCELLED.equals(currentlyBookedIdol.getStatus())) {
+				throw new InvalidInputException(
+						"Not able to cancel booking, Booking already cancelled:" + currentlyBookedIdol);
 			}
 			cancelledBookingTobeUpdated.setId(currentlyBookedIdol.getId());
 			cancelledBookingTobeUpdated.setIdolId(currentlyBookedIdol.getIdolId());
@@ -142,7 +148,7 @@ class BookingController {
 	public ResponseEntity<List<BookingDTO>> getBookingsByBookingDateBetween(
 			@PathVariable(value = "strFromBookingDate") final String strFromBookingDate,
 			@PathVariable(value = "strToBookingDate") final String strToBookingDate)
-					throws ResourceNotFoundException, InvalidInputException {
+			throws ResourceNotFoundException, InvalidInputException {
 
 		final List<BookingDTO> listOfBookingsDTO = this.bookingService
 				.getBookingsByBookingDateBetween(strFromBookingDate, strToBookingDate);
@@ -156,7 +162,7 @@ class BookingController {
 			@PathVariable(value = "fromWorkShift") final WorkShift fromWorkShift,
 			@PathVariable(value = "strToBookingDate") final String strToBookingDate,
 			@PathVariable(value = "toWorkShift") final WorkShift toWorkShift)
-					throws ResourceNotFoundException, InvalidInputException {
+			throws ResourceNotFoundException, InvalidInputException {
 		final List<BookingDTO> listOfBookingsDTO = this.bookingService
 				.getBookingsByBookingDateBetween(strFromBookingDate, fromWorkShift, strToBookingDate, toWorkShift);
 		return ResponseEntity.ok().body(listOfBookingsDTO);
@@ -175,7 +181,7 @@ class BookingController {
 	public ResponseEntity<List<BookingDTO>> getBookingsWithAttributeLike(
 			@PathVariable(value = "attributeName") @NotBlank final String attributeName,
 			@PathVariable(value = "attributeValue", required = true) @NotBlank final String attributeValue)
-					throws Exception {
+			throws Exception {
 		List<BookingDTO> bookingsListByType = new ArrayList<>();
 		try {
 			if (attributeName.equalsIgnoreCase(Constants.NAME)) {

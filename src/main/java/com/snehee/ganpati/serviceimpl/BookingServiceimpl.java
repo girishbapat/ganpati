@@ -12,12 +12,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.expression.Operation;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
 import com.snehee.ganpati.dto.BookingDTO;
 import com.snehee.ganpati.dto.BookingDates;
@@ -64,28 +64,28 @@ public class BookingServiceimpl implements BookingService {
 	private List<Booking> getBookingsBetweenBookingDates(final String strFromBookingDate, WorkShift fromWorkShift,
 			final String strToBookingDate, WorkShift toWorkShift) throws InvalidInputException {
 		// If from date is null throw exception
-		if (!StringUtils.hasText(strFromBookingDate)) {
+		if (StringUtils.isBlank(strFromBookingDate)) {
 			throw new InvalidInputException("From Date cannot be null.");
 		}
 		List<Booking> listBookings = null;
 		// if from date is not null and other 3 parameters are null
-		if (null == fromWorkShift && !StringUtils.hasText(strToBookingDate) && null == toWorkShift) {
+		if ((null == fromWorkShift) && StringUtils.isBlank(strToBookingDate) && (null == toWorkShift)) {
 			fromWorkShift = WorkShift.MORNING;
 			listBookings = this.getBookingsWithBookingDateWorkShiftAndDiffrence(strFromBookingDate, fromWorkShift, 24);
 		}
 		// if from date and fromWorkShift is not null and other 2 parameters are null
-		else if (fromWorkShift != null && !StringUtils.hasText(strToBookingDate) && null == toWorkShift) {
+		else if ((fromWorkShift != null) && StringUtils.isBlank(strToBookingDate) && (null == toWorkShift)) {
 			listBookings = this.getBookingsWithBookingDateWorkShiftAndDiffrence(strFromBookingDate, fromWorkShift, 8);
 		}
 		// if todate is present but fromWorkShift and toWorkshift is null then just
 		// bothworkshifts to MORNING and proceed
-		else if (null == fromWorkShift && StringUtils.hasText(strToBookingDate) && null == toWorkShift) {
+		else if ((null == fromWorkShift) && StringUtils.isNotBlank(strToBookingDate) && (null == toWorkShift)) {
 			fromWorkShift = WorkShift.MORNING;
 			toWorkShift = WorkShift.MORNING;
 		}
 		// if from date and fromWorkShift and todate is not and only to workshift is
 		// null then just set to workshift
-		else if (fromWorkShift != null && StringUtils.hasText(strToBookingDate) && null == toWorkShift) {
+		else if ((fromWorkShift != null) && StringUtils.isNotBlank(strToBookingDate) && (null == toWorkShift)) {
 			toWorkShift = WorkShift.MORNING;
 		}
 		// if listBookings is null means above atleaset 2 conditions are false
@@ -122,19 +122,19 @@ public class BookingServiceimpl implements BookingService {
 	 * @throws InvalidInputException
 	 */
 	private void performValidationsForBooking(final Booking bookingTobeSaved) throws InvalidInputException {
-		if (bookingTobeSaved.getCustomerId() <= 0 || bookingTobeSaved.getIdolId() <= 0
-				|| null == bookingTobeSaved.getBookingAmount()) {
+		if ((bookingTobeSaved.getCustomerId() <= 0) || (bookingTobeSaved.getIdolId() <= 0)
+				|| (null == bookingTobeSaved.getBookingAmount())) {
 			throw new InvalidInputException(
 					"Not able to create/update booking due to invalid data. Values submitted are customerId:"
 							+ bookingTobeSaved.getCustomerId() + ", Idol id:" + bookingTobeSaved.getIdolId()
 							+ ",  invalid booking amount:" + bookingTobeSaved.getBookingAmount());
 		}
-		if (null == bookingTobeSaved.getTotalAmount() || bookingTobeSaved.getTotalAmount().floatValue() <= 0) {
+		if ((null == bookingTobeSaved.getTotalAmount()) || (bookingTobeSaved.getTotalAmount().floatValue() <= 0)) {
 			try {
 				final Idol idolsById = this.idolService.getIdolsById(bookingTobeSaved.getIdolId());
 				bookingTobeSaved.setTotalAmount(idolsById.getPrice());
-				if (null == bookingTobeSaved.getDiscountAmount()
-						|| bookingTobeSaved.getDiscountAmount().floatValue() <= 0) {
+				if ((null == bookingTobeSaved.getDiscountAmount())
+						|| (bookingTobeSaved.getDiscountAmount().floatValue() <= 0)) {
 					bookingTobeSaved.setDiscountAmount(new BigDecimal(0));
 				}
 				bookingTobeSaved.setBalanceAmount(bookingTobeSaved.getTotalAmount()
@@ -369,8 +369,8 @@ public class BookingServiceimpl implements BookingService {
 	@Override
 	public List<BookingDTO> getBookingsByBookingDateBetween(final String strFromBookingDate,
 			final WorkShift fromWorkShift, final String strToBookingDate, final WorkShift toWorkShift)
-					throws InvalidInputException {
-		if (!StringUtils.hasText(strFromBookingDate)) {
+			throws InvalidInputException {
+		if (StringUtils.isBlank(strFromBookingDate)) {
 			throw new InvalidInputException("from Booking date is not provided");
 		}
 		final LocalDateTime fromBookingDate = this.getLocalDateTimeForStrBookingDateAndWorkshift(strFromBookingDate,
@@ -420,7 +420,7 @@ public class BookingServiceimpl implements BookingService {
 	}
 
 	@Override
-	public BookingDTO bookTheIdol(BookingDTO currentlyBookedIdol, Booking bookingTobeSaved)
+	public BookingDTO bookTheIdol(final BookingDTO currentlyBookedIdol, Booking bookingTobeSaved)
 			throws InvalidInputException {
 		this.performValidationsForBooking(bookingTobeSaved);
 		bookingTobeSaved = new Booking(bookingTobeSaved);
@@ -431,17 +431,17 @@ public class BookingServiceimpl implements BookingService {
 		return bookedIdolDTO;
 	}
 
-	private void performUpdatesForChangedBooking(BookingDTO currentlyBookedIdol, Booking bookingTobeSaved) {
+	private void performUpdatesForChangedBooking(final BookingDTO currentlyBookedIdol, final Booking bookingTobeSaved) {
 		// Set customerId and id same as of currently booked idol
 		bookingTobeSaved.setId(currentlyBookedIdol.getId());
 		bookingTobeSaved.setCustomerId(currentlyBookedIdol.getCustomerId());
 		bookingTobeSaved.setStatus(Status.CHANGED);
-		if (!StringUtils.hasText(bookingTobeSaved.getReason())) {
+		if (StringUtils.isBlank(bookingTobeSaved.getReason())) {
 			bookingTobeSaved.setReason(Reason.OTHER.toString());
 		}
 	}
 
-	private BookingDTO performActualDBOperationForBooking(BookingDTO currentlyBookedIdol,
+	private BookingDTO performActualDBOperationForBooking(final BookingDTO currentlyBookedIdol,
 			final Booking bookingTobeSaved) throws InvalidInputException {
 		BookingDTO bookedIdolDTO = null;
 		try {
@@ -465,7 +465,7 @@ public class BookingServiceimpl implements BookingService {
 		return bookedIdolDTO;
 	}
 
-	private BookingDTO performActualDBOperationForBookingCancellation(Booking currentlyBookedIdolToBeCancelled)
+	private BookingDTO performActualDBOperationForBookingCancellation(final Booking currentlyBookedIdolToBeCancelled)
 			throws InvalidInputException {
 		BookingDTO bookedIdolDTO = null;
 		try {
@@ -485,8 +485,8 @@ public class BookingServiceimpl implements BookingService {
 
 	@Override
 	public BookingDTO cancelTheBookedIdol(Booking bookingToCancel) throws InvalidInputException {
-		if (bookingToCancel.getCustomerId() <= 0 || bookingToCancel.getIdolId() <= 0
-				|| bookingToCancel.getBookingAmount() == null) {
+		if ((bookingToCancel.getCustomerId() <= 0) || (bookingToCancel.getIdolId() <= 0)
+				|| (bookingToCancel.getBookingAmount() == null)) {
 			throw new InvalidInputException(
 					"Not able to cancel booking. Need to provide mandatory values of customer id, booking amount (negative in case of refund or 0 in case of no refund)."
 							+ bookingToCancel);
@@ -501,7 +501,7 @@ public class BookingServiceimpl implements BookingService {
 			bookingToCancel.setBalanceAmount(new BigDecimal(0));
 		}
 		bookingToCancel.setStatus(Status.CANCELLED);
-		if (!StringUtils.hasText(bookingToCancel.getReason())) {
+		if (StringUtils.isBlank(bookingToCancel.getReason())) {
 			bookingToCancel.setReason(Reason.CUSTOMER_CANCELLED_BOOKING.toString());
 		}
 		bookingToCancel = new Booking(bookingToCancel);
@@ -509,16 +509,22 @@ public class BookingServiceimpl implements BookingService {
 	}
 
 	@Override
-	public BookingDTO updateLocation(int bookingId, String location)
+	public BookingDTO updateLocation(final int bookingId, final String location)
 			throws ResourceNotFoundException, InvalidInputException {
 		final Booking booking = this.bookingRepository.findById(bookingId)
 				.orElseThrow(() -> new ResourceNotFoundException("Booking not found with booking id : " + bookingId));
-
-		if (StringUtils.hasText(location)) {
+		Location loc = null;
+		try {
+			if (StringUtils.isNotBlank(location)) {
+				loc = Location.valueOf(StringUtils.upperCase(location.trim()));
+			} else {
+				throw new InvalidInputException("Not able to update location, location shared is empty.");
+			}
+		} catch (final InvalidInputException e) {
+			throw e;
+		} catch (final Exception e) {
 			throw new InvalidInputException("Not able to update location, invalid location shared:" + location);
 		}
-
-		final Location loc = Location.valueOf(location);
 
 		booking.setLocation(loc);
 		this.bookingRepository.save(booking);
