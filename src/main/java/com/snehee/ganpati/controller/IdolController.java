@@ -43,7 +43,7 @@ public class IdolController {
 	 *
 	 * @return the list
 	 */
-	@GetMapping(consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE }, value = "/idols")
+	@GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE }, value = "/idols")
 	public List<Idol> getAllIdols() {
 		return this.idolService.getAllIdols();
 	}

@@ -195,14 +195,17 @@ public class BookingServiceimpl implements BookingService {
 				.map(bookingForSpecificCustomer -> {
 					final BookingDTO bookingDTO = new BookingDTO();
 					BeanUtils.copyProperties(bookingForSpecificCustomer, bookingDTO,
-							new String[] { "customerName", "primaryMobile", "idolName" });
+							new String[] { "customerName", "primaryMobile", "idolName", "idolSpecs" });
 					final Customer customer = Constants.CUSTOMER_LIST
 							.get(bookingForSpecificCustomer.getCustomerId() - 1);
 					bookingDTO.setCustomerName(customer.getName());
 					bookingDTO.setPrimaryMobile(customer.getPrimaryMobile());
-					final String IdolName = Constants.IDOL_LIST.get(bookingForSpecificCustomer.getIdolId() - 1)
+					final String idolName = Constants.IDOL_LIST.get(bookingForSpecificCustomer.getIdolId() - 1)
 							.getName();
-					bookingDTO.setIdolName(IdolName);//
+					bookingDTO.setIdolName(idolName);//
+					final String idolSpecs = Constants.IDOL_LIST.get(bookingForSpecificCustomer.getIdolId() - 1)
+							.getSpecs();
+					bookingDTO.setIdolSpecs(idolSpecs);
 					return bookingDTO;
 				}).collect(Collectors.toList());
 		return bookingListofAllCustomers;
