@@ -27,33 +27,52 @@ public class ReportsController {
 		final List<TotalsDTO> listOfTotalsDTO = this.reportService.getTotals();
 		return ResponseEntity.ok().body(listOfTotalsDTO);
 	}
-
+	/**
+	 * Get totals for particular booking date.
+	 * @param particularBookingDate- d-MMM-yyyy- 04-Feb-2020
+	 * @return
+	 * @throws InvalidInputException
+	 */
 	@GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE,
 			MediaType.APPLICATION_XML_VALUE }, value = "/totalsForParticularBookingDate/{particularBookingDate}")
-	public ResponseEntity<List<TotalsDTO>> getBookingsForParticularBookingDate(
+	public ResponseEntity<List<TotalsDTO>> getTotalsForParticularBookingDate(
 			@PathVariable(value = "particularBookingDate") final String particularBookingDate)
-			throws InvalidInputException {
+					throws InvalidInputException {
 
 		final List<TotalsDTO> listOfTotalsDTO = this.reportService
 				.getTotalsForParticularBookingDate(particularBookingDate);
 		return ResponseEntity.ok().body(listOfTotalsDTO);
 	}
 
+	/**
+	 * Get totals for particular date for particular shift
+	 * @param particularBookingDate- d-MMM-yyyy- 04-Feb-2020
+	 * @param workShift- MORNING/EVENING
+	 * @return
+	 * @throws InvalidInputException
+	 */
 	@GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE,
-			MediaType.APPLICATION_XML_VALUE }, value = "/totalsForParticularBookingDate/{strBookingDate}/forParticularWorkShift/{workShift}")
+			MediaType.APPLICATION_XML_VALUE }, value = "/totalsForParticularBookingDate/{particularBookingDate}/forParticularWorkShift/{workShift}")
 
-	public ResponseEntity<List<TotalsDTO>> getBookingsForParticularBookingDateAndShift(
-			@PathVariable(value = "strBookingDate") final String strBookingDate,
+	public ResponseEntity<List<TotalsDTO>> getTotalsForParticularBookingDateAndShift(
+			@PathVariable(value = "particularBookingDate") final String particularBookingDate,
 			@PathVariable(value = "workShift") final WorkShift workShift) throws InvalidInputException {
 
 		final List<TotalsDTO> listOfTotalsDTO = this.reportService
-				.getTotalsForParticularBookingDateAndShift(strBookingDate, workShift);
+				.getTotalsForParticularBookingDateAndShift(particularBookingDate, workShift);
 		return ResponseEntity.ok().body(listOfTotalsDTO);
 	}
 
+	/**
+	 * Get totals between from and to booking dates
+	 * @param strFromBookingDate-01-FEB-2020
+	 * @param strToBookingDate-04-FEB-2020
+	 * @return
+	 * @throws InvalidInputException
+	 */
 	@GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE,
 			MediaType.APPLICATION_XML_VALUE }, value = "/totalsByBookingDate/fromBookingDate/{strFromBookingDate}/toBookingDate/{strToBookingDate}")
-	public ResponseEntity<List<TotalsDTO>> getBookingsByBookingDateBetween(
+	public ResponseEntity<List<TotalsDTO>> getTotalsByBookingDateBetween(
 			@PathVariable(value = "strFromBookingDate") final String strFromBookingDate,
 			@PathVariable(value = "strToBookingDate") final String strToBookingDate) throws InvalidInputException {
 
@@ -62,14 +81,24 @@ public class ReportsController {
 		return ResponseEntity.ok().body(listOfTotalsDTO);
 	}
 
+	/**
+	 * Get totals by booking dates
+	 * @param strFromBookingDate-01-FEB-2020
+	 * @param fromWorkShift-MORNING
+	 * @param strToBookingDate-04-FEB-2020
+	 * @param toWorkShift-EVENING
+	 * @return
+	 * @throws ResourceNotFoundException
+	 * @throws InvalidInputException
+	 */
 	@GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE,
 			MediaType.APPLICATION_XML_VALUE }, value = "/totalsByBookingDate/fromBookingDate/{strFromBookingDate}/fromWorkShift/{fromWorkShift}/toBookingDate/{strToBookingDate}/toWorkShift/{toWorkShift}")
-	public ResponseEntity<List<TotalsDTO>> getBookingsByBookingDateAndWorkShift(
+	public ResponseEntity<List<TotalsDTO>> getTotalsByBookingDateAndWorkShift(
 			@PathVariable(value = "strFromBookingDate") final String strFromBookingDate,
 			@PathVariable(value = "fromWorkShift") final WorkShift fromWorkShift,
 			@PathVariable(value = "strToBookingDate") final String strToBookingDate,
 			@PathVariable(value = "toWorkShift") final WorkShift toWorkShift)
-			throws ResourceNotFoundException, InvalidInputException {
+					throws ResourceNotFoundException, InvalidInputException {
 		final List<TotalsDTO> listOfTotalsDTO = this.reportService.getTotalsForBookingDatesAndShiftsBetween(
 				strFromBookingDate, fromWorkShift, strToBookingDate, toWorkShift);
 		return ResponseEntity.ok().body(listOfTotalsDTO);
