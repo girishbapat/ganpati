@@ -15,7 +15,7 @@ import com.snehee.ganpati.dto.BookingDates;
 import com.snehee.ganpati.dto.TotalsDTO;
 import com.snehee.ganpati.enums.WorkShift;
 import com.snehee.ganpati.exception.InvalidInputException;
-import com.snehee.ganpati.repository.BookingRepository;
+import com.snehee.ganpati.repository.DailyBookingRepository;
 import com.snehee.ganpati.service.BookingService;
 import com.snehee.ganpati.service.ReportService;
 
@@ -31,12 +31,12 @@ public class ReportServiceImpl implements ReportService {
 	private BookingService bookingService;
 
 	@Autowired
-	private BookingRepository bookingRepository;
+	private DailyBookingRepository dailyBookingRepository;
 
 	@Override
 	public List<TotalsDTO> getTotalsForBookingDatesAndShiftsBetween(final String strFromBookingDate,
 			WorkShift fromWorkShift, final String strToBookingDate, WorkShift toWorkShift)
-			throws InvalidInputException {
+					throws InvalidInputException {
 		// If from date is null throw exception
 		if (StringUtils.isBlank(strFromBookingDate)) {
 			throw new InvalidInputException("From Date cannot be null.");
@@ -45,17 +45,17 @@ public class ReportServiceImpl implements ReportService {
 		BookingDates bookingDates = null;
 
 		// if from date is not null and other 3 parameters are null
-		if ((null == fromWorkShift) && StringUtils.isBlank(strToBookingDate) && (null == toWorkShift)) {
+		if (null == fromWorkShift && StringUtils.isBlank(strToBookingDate) && null == toWorkShift) {
 			fromWorkShift = WorkShift.MORNING;
 			bookingDates = this.bookingService.getBookingDates(strFromBookingDate, fromWorkShift, 24);
 		}
 		// if from date and fromWorkShift is not null and other 2 parameters are null
-		else if ((fromWorkShift != null) && StringUtils.isBlank(strToBookingDate) && (null == toWorkShift)) {
+		else if (fromWorkShift != null && StringUtils.isBlank(strToBookingDate) && null == toWorkShift) {
 			bookingDates = this.bookingService.getBookingDates(strFromBookingDate, fromWorkShift, 8);
 		}
 		// if from date and fromWorkShift and todate is not and only to workshift is
 		// null then just set to workshift
-		else if ((fromWorkShift != null) && StringUtils.isNotBlank(strToBookingDate) && (null == toWorkShift)) {
+		else if (fromWorkShift != null && StringUtils.isNotBlank(strToBookingDate) && null == toWorkShift) {
 			toWorkShift = WorkShift.MORNING;
 			final LocalDateTime fromBookingDate = this.bookingService
 					.getLocalDateTimeForStrBookingDateAndWorkshift(strFromBookingDate, fromWorkShift);
@@ -64,7 +64,7 @@ public class ReportServiceImpl implements ReportService {
 			bookingDates = new BookingDates(fromBookingDate, toBookingDate);
 
 		}
-		listOfTotalsDTO = this.bookingRepository.getTotals(bookingDates.getFromDate(), bookingDates.getToDate());
+		listOfTotalsDTO = this.dailyBookingRepository.getTotals(bookingDates.getFromDate(), bookingDates.getToDate());
 		return listOfTotalsDTO;
 	}
 
@@ -94,7 +94,7 @@ public class ReportServiceImpl implements ReportService {
 
 	@Override
 	public List<TotalsDTO> getTotals() {
-		final List<TotalsDTO> totals = this.bookingRepository.getTotals();
+		final List<TotalsDTO> totals = this.dailyBookingRepository.getTotals();
 		return totals;
 	}
 
