@@ -20,6 +20,11 @@ public class ReportsController {
 	@Autowired
 	private ReportService reportService;
 
+	/**
+	 * get totals
+	 * @return
+	 * @throws InvalidInputException
+	 */
 	@GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE,
 			MediaType.APPLICATION_XML_VALUE }, value = "/totalsForBookings")
 	public ResponseEntity<List<TotalsDTO>> getTotalsForBookings() throws InvalidInputException {
