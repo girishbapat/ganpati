@@ -19,7 +19,7 @@ import com.snehee.ganpati.enums.Status;
 import lombok.Data;
 
 /**
- *This entity is only used for daily booking calculations
+ *This entity is only used for daily booking calculations.
  * @author Girish
  *
  */

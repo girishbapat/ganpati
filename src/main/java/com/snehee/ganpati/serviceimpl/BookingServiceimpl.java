@@ -500,7 +500,7 @@ public class BookingServiceimpl implements BookingService {
 			dailyBookingTobeSaved.setBookingAmount(newOrUpdatedBookingEntryTobeSaved.getBookingAmount().subtract(oldBookedEntry.getBookingAmount()));
 		}
 		this.dailyBookingRepository.save(dailyBookingTobeSaved);
-		return dailyBookingTobeSaved;
+		return dailyBookingTobeSaved;//test
 	}
 
 	private BookingDTO performActualDBOperationForBookingCancellation(final Booking currentlyBookedIdolToBeCancelled)

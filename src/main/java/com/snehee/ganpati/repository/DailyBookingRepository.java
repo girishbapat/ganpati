@@ -13,6 +13,7 @@ import com.snehee.ganpati.entity.DailyBooking;
 
 /**
  * The interface DailyBooking repository.
+ * this is for daily booking totals
  *
  * @author Girish
  */
