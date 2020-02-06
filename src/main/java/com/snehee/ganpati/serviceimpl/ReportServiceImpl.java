@@ -50,11 +50,11 @@ public class ReportServiceImpl implements ReportService {
 			fromWorkShift = WorkShift.MORNING;
 			bookingDates = this.bookingService.getBookingDates(strFromBookingDate, fromWorkShift, 24);
 		}
-		// if from date and fromWorkShift is not null and other 2 parameters are null
+		// if from date and fromWorkShift are not null and other 2 parameters are null
 		else if (fromWorkShift != null && StringUtils.isBlank(strToBookingDate) && null == toWorkShift) {
 			bookingDates = this.bookingService.getBookingDates(strFromBookingDate, fromWorkShift, 8);
 		}
-		// if from date and fromWorkShift and todate is not and only to workshift is
+		// if from date and fromWorkShift and to date is not and only to workshift is
 		// null then just set to workshift
 		else if (fromWorkShift != null && StringUtils.isNotBlank(strToBookingDate) && null == toWorkShift) {
 			toWorkShift = WorkShift.MORNING;
@@ -64,6 +64,21 @@ public class ReportServiceImpl implements ReportService {
 					.getLocalDateTimeForStrBookingDateAndWorkshift(strToBookingDate, toWorkShift);
 			bookingDates = new BookingDates(fromBookingDate, toBookingDate);
 
+		} else if(null==fromWorkShift  && StringUtils.isNotBlank(strToBookingDate) && null == toWorkShift) {
+			fromWorkShift = WorkShift.MORNING;
+			toWorkShift = WorkShift.NIGHT;// used for special purpose
+			final LocalDateTime fromBookingDate = this.bookingService
+					.getLocalDateTimeForStrBookingDateAndWorkshift(strFromBookingDate, fromWorkShift);
+			final LocalDateTime toBookingDate = this.bookingService
+					.getLocalDateTimeForStrBookingDateAndWorkshift(strToBookingDate, toWorkShift);
+			bookingDates = new BookingDates(fromBookingDate, toBookingDate);
+		}
+		else if(fromWorkShift != null && StringUtils.isNotBlank(strToBookingDate) && toWorkShift!=null) {
+			final LocalDateTime fromBookingDate = this.bookingService
+					.getLocalDateTimeForStrBookingDateAndWorkshift(strFromBookingDate, fromWorkShift);
+			final LocalDateTime toBookingDate = this.bookingService
+					.getLocalDateTimeForStrBookingDateAndWorkshift(strToBookingDate, toWorkShift);
+			bookingDates = new BookingDates(fromBookingDate, toBookingDate);
 		}
 		listOfTotalsDTO = this.dailyBookingRepository.getTotals(bookingDates.getFromDate(), bookingDates.getToDate());
 		return listOfTotalsDTO;

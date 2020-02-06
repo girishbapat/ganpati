@@ -128,7 +128,7 @@
   <classpathentry kind="var" path="M2_REPO/io/swagger/core/v3/swagger-models/2.0.9/swagger-models-2.0.9.jar" sourcepath="M2_REPO/io/swagger/core/v3/swagger-models/2.0.9/swagger-models-2.0.9-sources.jar"/>
   <classpathentry kind="var" path="M2_REPO/io/swagger/core/v3/swagger-annotations/2.0.9/swagger-annotations-2.0.9.jar" sourcepath="M2_REPO/io/swagger/core/v3/swagger-annotations/2.0.9/swagger-annotations-2.0.9-sources.jar"/>
   <classpathentry kind="var" path="M2_REPO/io/swagger/core/v3/swagger-integration/2.0.9/swagger-integration-2.0.9.jar" sourcepath="M2_REPO/io/swagger/core/v3/swagger-integration/2.0.9/swagger-integration-2.0.9-sources.jar"/>
-  <classpathentry kind="var" path="M2_REPO/io/github/classgraph/classgraph/4.8.60/classgraph-4.8.60.jar" sourcepath="M2_REPO/io/github/classgraph/classgraph/4.8.60/classgraph-4.8.60-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/io/github/classgraph/classgraph/4.8.61/classgraph-4.8.61.jar"/>
   <classpathentry kind="var" path="M2_REPO/io/swagger/core/v3/swagger-core/2.0.9/swagger-core-2.0.9.jar" sourcepath="M2_REPO/io/swagger/core/v3/swagger-core/2.0.9/swagger-core-2.0.9-sources.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/apache/commons/commons-lang3/3.9/commons-lang3-3.9.jar" sourcepath="M2_REPO/org/apache/commons/commons-lang3/3.9/commons-lang3-3.9-sources.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/dataformat/jackson-dataformat-yaml/2.10.0/jackson-dataformat-yaml-2.10.0.jar" sourcepath="M2_REPO/com/fasterxml/jackson/dataformat/jackson-dataformat-yaml/2.10.0/jackson-dataformat-yaml-2.10.0-sources.jar"/>
