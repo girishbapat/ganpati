@@ -68,3 +68,23 @@ CREATE TABLE `booking` (
   PRIMARY KEY (`id`)
 ) ;
 INSERT INTO `booking` (`id`, `booking_date`, `customer_id`, `idol_id`, `payment_mode`, `booking_amt`, `balance_amt`, `discount_amt`, `total_amt`, `status`, `reason`, `location`, `shipment_date`, `user_id`, `comments`) VALUES (1,'2019-11-17 02:33:40',1,1,'PAYTM',100.00,100.00,0.00,200.00,'BOOKED','BOOKED','A2','2019-11-18 13:33:40',1,'TEST'),(2,'2019-11-18 13:33:40',1,2,'PAYTM',1001.00,999.00,0.00,2000.00,'BOOKED','booked-2','A3','2019-11-27 13:33:40',1,'test 2\n'),(3,'2019-11-18 04:30:40',4,2,'CASH',1.00,999.00,0.00,1000.00,'BOOKED','booked-3','B3','2019-11-27 13:33:40',2,'test 2\n'),(4,'2019-11-17 13:33:40',5,3,'PAYTM',1.00,999.00,0.00,1000.00,'BOOKED','booked-3','B3','2019-11-27 13:33:40',2,'test 2\n'),(5,'2019-11-18 05:33:40',3,5,'CASH',1.00,999.00,0.00,1000.00,'BOOKED','booked-3','B3','2019-11-27 13:33:40',3,'test 2\n'),(6,'2019-11-19 13:33:40',4,5,'CASH',1.00,999.00,0.00,1000.00,'BOOKED','booked-5','B3','2019-11-27 13:33:40',3,'test 2\n'),(7,'2019-11-30 19:49:41',1,22,'CASH',100.00,1700.00,0.00,1800.00,'BOOKED',NULL,NULL,NULL,1,NULL),(8,'2019-11-30 19:51:43',2,5,'CASH',100.00,1461.00,0.00,1561.00,'BOOKED',NULL,NULL,NULL,1,NULL),(9,'2019-12-03 15:11:02',2,10,'CASH',100.00,2000.00,0.00,2100.00,'BOOKED',NULL,NULL,NULL,1,NULL),(10,'2019-12-03 16:17:11',3,11,'CASH',1000.00,751.00,0.00,1751.00,'BOOKED',NULL,NULL,NULL,1,NULL),(11,'2019-12-03 16:31:31',3,10,'CASH',1000.00,1100.00,0.00,2100.00,'BOOKED',NULL,NULL,NULL,1,NULL);
+DROP TABLE IF EXISTS `daily_booking`;
+CREATE TABLE `daily_booking` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `booking_id` int(11) NOT NULL DEFAULT 0,
+  `booking_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ,
+  `customer_id` int(11) NOT NULL ,
+  `idol_id` int(11) NOT NULL,
+  `payment_mode` varchar(25) NOT NULL DEFAULT 'CASH',
+  `booking_amt` decimal(7,2) NOT NULL DEFAULT '0.00' ,
+  `balance_amt` decimal(7,2) NOT NULL DEFAULT '0.00' ,
+  `discount_amt` decimal(7,2) NOT NULL DEFAULT '0.00' ,
+  `total_amt` decimal(7,2) NOT NULL DEFAULT '0.00' ,
+  `status` varchar(25) NOT NULL DEFAULT 'BOOKED' ,
+  `reason` varchar(50) DEFAULT NULL ,
+  `location` varchar(10) DEFAULT NULL,
+  `shipment_date` timestamp NULL DEFAULT NULL ,
+  `user_id` int(11) DEFAULT NULL,
+  `comments` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ;

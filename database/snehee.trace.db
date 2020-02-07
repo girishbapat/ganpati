@@ -440,3 +440,6 @@ CREATE SEQUENCE "public"."SYSTEM_SEQUENCE_70ECAC92_8066_470C_87A3_25A6B2FD72EB" 
 	at org.h2.message.DbException.getJdbcSQLException(DbException.java:576)
 	at org.h2.message.DbException.getJdbcSQLException(DbException.java:429)
 	... 34 more
+2020-02-07 22:29:23 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "daily_booking" already exists; SQL statement:
+CREATE TABLE `daily_booking` ( `id` int(11) NOT NULL AUTO_INCREMENT, `booking_id` int(11) NOT NULL DEFAULT 0, `booking_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP , `customer_id` int(11) NOT NULL , `idol_id` int(11) NOT NULL, `payment_mode` varchar(25) NOT NULL DEFAULT 'CASH', `booking_amt` decimal(7,2) NOT NULL DEFAULT '0.00' , `balance_amt` decimal(7,2) NOT NULL DEFAULT '0.00' , `discount_amt` decimal(7,2) NOT NULL DEFAULT '0.00' , `total_amt` decimal(7,2) NOT NULL DEFAULT '0.00' , `status` varchar(25) NOT NULL DEFAULT 'BOOKED' , `reason` varchar(50) DEFAULT NULL , `location` varchar(10) DEFAULT NULL, `shipment_date` timestamp NULL DEFAULT NULL , `user_id` int(11) DEFAULT NULL, `comments` varchar(255) DEFAULT NULL, PRIMARY KEY (`id`) )  [42101-200]
