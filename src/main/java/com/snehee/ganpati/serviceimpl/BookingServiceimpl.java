@@ -74,23 +74,23 @@ public class BookingServiceimpl implements BookingService {
 		}
 		List<Booking> listBookings = null;
 		// if from date is not null and other 3 parameters are null
-		if (null == fromWorkShift && StringUtils.isBlank(strToBookingDate) && null == toWorkShift) {
+		if ((null == fromWorkShift) && StringUtils.isBlank(strToBookingDate) && (null == toWorkShift)) {
 			fromWorkShift = WorkShift.MORNING;
 			listBookings = this.getBookingsWithBookingDateWorkShiftAndDiffrence(strFromBookingDate, fromWorkShift, 24);
 		}
 		// if from date and fromWorkShift is not null and other 2 parameters are null
-		else if (fromWorkShift != null && StringUtils.isBlank(strToBookingDate) && null == toWorkShift) {
+		else if ((fromWorkShift != null) && StringUtils.isBlank(strToBookingDate) && (null == toWorkShift)) {
 			listBookings = this.getBookingsWithBookingDateWorkShiftAndDiffrence(strFromBookingDate, fromWorkShift, 8);
 		}
 		// if todate is present but fromWorkShift and toWorkshift is null then just
 		// bothworkshifts to MORNING and proceed
-		else if (null == fromWorkShift && StringUtils.isNotBlank(strToBookingDate) && null == toWorkShift) {
+		else if ((null == fromWorkShift) && StringUtils.isNotBlank(strToBookingDate) && (null == toWorkShift)) {
 			fromWorkShift = WorkShift.MORNING;
 			toWorkShift = WorkShift.MORNING;
 		}
 		// if from date and fromWorkShift and todate is not and only to workshift is
 		// null then just set to workshift
-		else if (fromWorkShift != null && StringUtils.isNotBlank(strToBookingDate) && null == toWorkShift) {
+		else if ((fromWorkShift != null) && StringUtils.isNotBlank(strToBookingDate) && (null == toWorkShift)) {
 			toWorkShift = WorkShift.MORNING;
 		}
 		// if listBookings is null means above atleaset 2 conditions are false
@@ -127,19 +127,19 @@ public class BookingServiceimpl implements BookingService {
 	 * @throws InvalidInputException
 	 */
 	private void performValidationsForBooking(final Booking bookingTobeSaved) throws InvalidInputException {
-		if (bookingTobeSaved.getCustomerId() <= 0 || bookingTobeSaved.getIdolId() <= 0
-				|| null == bookingTobeSaved.getBookingAmount()) {
+		if ((bookingTobeSaved.getCustomerId() <= 0) || (bookingTobeSaved.getIdolId() <= 0)
+				|| (null == bookingTobeSaved.getBookingAmount())) {
 			throw new InvalidInputException(
 					"Not able to create/update booking due to invalid data. Values submitted are customerId:"
 							+ bookingTobeSaved.getCustomerId() + ", Idol id:" + bookingTobeSaved.getIdolId()
 							+ ",  invalid booking amount:" + bookingTobeSaved.getBookingAmount());
 		}
-		if (null == bookingTobeSaved.getTotalAmount() || bookingTobeSaved.getTotalAmount().floatValue() <= 0) {
+		if ((null == bookingTobeSaved.getTotalAmount()) || (bookingTobeSaved.getTotalAmount().floatValue() <= 0)) {
 			try {
 				final Idol idolsById = this.idolService.getIdolsById(bookingTobeSaved.getIdolId());
 				bookingTobeSaved.setTotalAmount(idolsById.getPrice());
-				if (null == bookingTobeSaved.getDiscountAmount()
-						|| bookingTobeSaved.getDiscountAmount().floatValue() <= 0) {
+				if ((null == bookingTobeSaved.getDiscountAmount())
+						|| (bookingTobeSaved.getDiscountAmount().floatValue() <= 0)) {
 					bookingTobeSaved.setDiscountAmount(new BigDecimal(0));
 				}
 				bookingTobeSaved.setBalanceAmount(bookingTobeSaved.getTotalAmount()
@@ -187,9 +187,11 @@ public class BookingServiceimpl implements BookingService {
 	 * Convert from Bookings to BookingDTO
 	 *
 	 * @param bookingsForCustomersWithNameLike
+	 * @param generateReportAsWell             TODO
 	 * @return
 	 */
-	private List<BookingDTO> getBookingDTOForBookings(final List<Booking> bookingsForCustomersWithNameLike) {
+	private List<BookingDTO> getBookingDTOForBookings(final List<Booking> bookingsForCustomersWithNameLike,
+			final boolean generateReportAsWell) {
 		this.customerService.getAllCustomers();
 		this.idolService.getAllIdols();
 
@@ -235,7 +237,7 @@ public class BookingServiceimpl implements BookingService {
 		});
 
 		final List<BookingDTO> bookingListofAllCustomers = this
-				.getBookingDTOForBookings(bookingsForCustomersWithNameLike);
+				.getBookingDTOForBookings(bookingsForCustomersWithNameLike, false);
 		return bookingListofAllCustomers;
 	}
 
@@ -318,7 +320,7 @@ public class BookingServiceimpl implements BookingService {
 
 	@Override
 	public List<BookingDTO> getAllBookings() {
-		return this.getBookingDTOForBookings(this.bookingRepository.findAll());
+		return this.getBookingDTOForBookings(this.bookingRepository.findAll(), false);
 	}
 
 	@Override
@@ -336,7 +338,7 @@ public class BookingServiceimpl implements BookingService {
 	 * @throws ResourceNotFoundException
 	 */
 	private BookingDTO getBookingDTOForBooking(final Booking booking) throws ResourceNotFoundException {
-		final List<BookingDTO> bookingDTOForBookings = this.getBookingDTOForBookings(Arrays.asList(booking));
+		final List<BookingDTO> bookingDTOForBookings = this.getBookingDTOForBookings(Arrays.asList(booking), true);
 		if (bookingDTOForBookings.isEmpty()) {
 			throw new ResourceNotFoundException("Booking not found with booking id : " + booking.getId());
 		}
@@ -350,7 +352,7 @@ public class BookingServiceimpl implements BookingService {
 		// hours will be considered as for this date.
 		final List<Booking> findAllByBookingDate = this
 				.getBookingsWithBookingDateWorkShiftAndDiffrence(strParticularBookingDate, WorkShift.MORNING, 24);
-		final List<BookingDTO> bookingDTOForBookings = this.getBookingDTOForBookings(findAllByBookingDate);
+		final List<BookingDTO> bookingDTOForBookings = this.getBookingDTOForBookings(findAllByBookingDate, false);
 		return bookingDTOForBookings;
 	}
 
@@ -360,7 +362,7 @@ public class BookingServiceimpl implements BookingService {
 		// here we are considering shift of 8 hours
 		final List<Booking> findAllByBookingDate = this
 				.getBookingsWithBookingDateWorkShiftAndDiffrence(strParticularBookingDate, workShift, 8);
-		final List<BookingDTO> bookingDTOForBookings = this.getBookingDTOForBookings(findAllByBookingDate);
+		final List<BookingDTO> bookingDTOForBookings = this.getBookingDTOForBookings(findAllByBookingDate, false);
 		return bookingDTOForBookings;
 	}
 
@@ -370,14 +372,14 @@ public class BookingServiceimpl implements BookingService {
 
 		final List<Booking> findAllByBookingDate = this.getBookingsBetweenBookingDates(strFromBookingDate, null,
 				strToBookingDate, null);
-		final List<BookingDTO> bookingDTOForBookings = this.getBookingDTOForBookings(findAllByBookingDate);
+		final List<BookingDTO> bookingDTOForBookings = this.getBookingDTOForBookings(findAllByBookingDate, false);
 		return bookingDTOForBookings;
 	}
 
 	@Override
 	public List<BookingDTO> getBookingsByBookingDateBetween(final String strFromBookingDate,
 			final WorkShift fromWorkShift, final String strToBookingDate, final WorkShift toWorkShift)
-					throws InvalidInputException {
+			throws InvalidInputException {
 		if (StringUtils.isBlank(strFromBookingDate)) {
 			throw new InvalidInputException("from Booking date is not provided");
 		}
@@ -387,21 +389,21 @@ public class BookingServiceimpl implements BookingService {
 				toWorkShift);
 		final List<Booking> findAllByBookingDate = this.bookingRepository.findAllByBookingDateBetween(fromBookingDate,
 				toBookingDate);
-		final List<BookingDTO> bookingDTOForBookings = this.getBookingDTOForBookings(findAllByBookingDate);
+		final List<BookingDTO> bookingDTOForBookings = this.getBookingDTOForBookings(findAllByBookingDate, false);
 		return bookingDTOForBookings;
 	}
 
 	@Override
 	public List<BookingDTO> getBookingsWithStatusLike(final Status status) {
 		final List<Booking> findBookingsWithStatus = this.bookingRepository.findByStatusContaining(status);
-		final List<BookingDTO> bookingDTOForBookings = this.getBookingDTOForBookings(findBookingsWithStatus);
+		final List<BookingDTO> bookingDTOForBookings = this.getBookingDTOForBookings(findBookingsWithStatus, false);
 		return bookingDTOForBookings;
 	}
 
 	@Override
 	public List<BookingDTO> getBookingsWithLocation(final Location location) {
 		final List<Booking> findBookingsWithLocation = this.bookingRepository.findByLocationContaining(location);
-		final List<BookingDTO> bookingDTOForBookings = this.getBookingDTOForBookings(findBookingsWithLocation);
+		final List<BookingDTO> bookingDTOForBookings = this.getBookingDTOForBookings(findBookingsWithLocation, false);
 		return bookingDTOForBookings;
 	}
 
@@ -409,21 +411,22 @@ public class BookingServiceimpl implements BookingService {
 	public List<BookingDTO> getBookingsWithPaymentModeLike(final PaymentMode paymentModeLike) {
 		final List<Booking> findBookingsWithPaymentMode = this.bookingRepository
 				.findByPaymentModeContaining(paymentModeLike);
-		final List<BookingDTO> bookingDTOForBookings = this.getBookingDTOForBookings(findBookingsWithPaymentMode);
+		final List<BookingDTO> bookingDTOForBookings = this.getBookingDTOForBookings(findBookingsWithPaymentMode,
+				false);
 		return bookingDTOForBookings;
 	}
 
 	@Override
 	public List<BookingDTO> getBookingsWithReasonLike(final String reason) {
 		final List<Booking> findBookingsWithReason = this.bookingRepository.findByReasonContaining(reason);
-		final List<BookingDTO> bookingDTOForBookings = this.getBookingDTOForBookings(findBookingsWithReason);
+		final List<BookingDTO> bookingDTOForBookings = this.getBookingDTOForBookings(findBookingsWithReason, false);
 		return bookingDTOForBookings;
 	}
 
 	@Override
 	public List<BookingDTO> getBookingsWithCommentsLike(final String comments) {
 		final List<Booking> findBookingsWithComments = this.bookingRepository.findByCommentsContaining(comments);
-		final List<BookingDTO> bookingDTOForBookings = this.getBookingDTOForBookings(findBookingsWithComments);
+		final List<BookingDTO> bookingDTOForBookings = this.getBookingDTOForBookings(findBookingsWithComments, false);
 		return bookingDTOForBookings;
 	}
 
@@ -452,19 +455,19 @@ public class BookingServiceimpl implements BookingService {
 	private BookingDTO performActualDBOperationForBooking(final BookingDTO currentlyBookedIdol,
 			final Booking bookingTobeSaved) throws InvalidInputException {
 		BookingDTO bookedIdolDTO = null;
-		DailyBooking updatedEntrySaved=null;
+		DailyBooking updatedEntrySaved = null;
 		try {
 			// as idol will be changed current idol quantity from shop will be added and for
 			// the new idol the idol quantity will be reduced.
 			if (null != currentlyBookedIdol) {
 				this.idolService.updateQuantityById(null, Operation.ADD, 1, currentlyBookedIdol.getIdolId());
-				updatedEntrySaved=this.prepareAndSaveDailyBooking(currentlyBookedIdol,bookingTobeSaved);
+				updatedEntrySaved = this.prepareAndSaveDailyBooking(currentlyBookedIdol, bookingTobeSaved);
 			}
 			this.idolService.updateQuantityById(null, Operation.SUBTRACT, 1, bookingTobeSaved.getIdolId());
 			this.bookingRepository.save(bookingTobeSaved);
-			//new entry
-			if(null==updatedEntrySaved) {
-				this.prepareAndSaveDailyBooking(null,bookingTobeSaved);
+			// new entry
+			if (null == updatedEntrySaved) {
+				this.prepareAndSaveDailyBooking(null, bookingTobeSaved);
 			}
 			bookedIdolDTO = this.getBookingDTOForBooking(bookingTobeSaved);
 		} catch (final ResourceNotFoundException e) {
@@ -479,28 +482,37 @@ public class BookingServiceimpl implements BookingService {
 		return bookedIdolDTO;
 	}
 
-
 	/**
-	 * This method saves daily booking details this is needed for all the daily totals.
-	 * @param oldBookedEntry- existing entry in bookings in case of update, for new this will be null
+	 * This method saves daily booking details this is needed for all the daily
+	 * totals.
+	 *
+	 * @param oldBookedEntry-                           existing entry in bookings
+	 *                                                  in case of update, for new
+	 *                                                  this will be null
 	 * @param newOrUpdatedBookingEntryTobeSaved-changed entry
 	 * @return
 	 * @throws InvalidInputException
 	 */
-	private DailyBooking prepareAndSaveDailyBooking(BookingDTO oldBookedEntry, Booking newOrUpdatedBookingEntryTobeSaved) throws InvalidInputException {
-		DailyBooking dailyBookingTobeSaved=null;
-		//first create instance of Daily booking with new entry assuming old entry already saved.
-		dailyBookingTobeSaved=new DailyBooking(newOrUpdatedBookingEntryTobeSaved);
-		//check if old entry is present, if yes set the booking amount
-		if(null!=oldBookedEntry) {
-			if(null==oldBookedEntry.getBookingAmount()||null==newOrUpdatedBookingEntryTobeSaved.getBookingAmount()) {
-				throw new InvalidInputException("Booking amount not present either for old or new entry. old booking:"+oldBookedEntry+", new entry:"+newOrUpdatedBookingEntryTobeSaved+". If booking amount is not specified at least 0 should be updated");
+	private DailyBooking prepareAndSaveDailyBooking(final BookingDTO oldBookedEntry,
+			final Booking newOrUpdatedBookingEntryTobeSaved) throws InvalidInputException {
+		DailyBooking dailyBookingTobeSaved = null;
+		// first create instance of Daily booking with new entry assuming old entry
+		// already saved.
+		dailyBookingTobeSaved = new DailyBooking(newOrUpdatedBookingEntryTobeSaved);
+		// check if old entry is present, if yes set the booking amount
+		if (null != oldBookedEntry) {
+			if ((null == oldBookedEntry.getBookingAmount())
+					|| (null == newOrUpdatedBookingEntryTobeSaved.getBookingAmount())) {
+				throw new InvalidInputException("Booking amount not present either for old or new entry. old booking:"
+						+ oldBookedEntry + ", new entry:" + newOrUpdatedBookingEntryTobeSaved
+						+ ". If booking amount is not specified at least 0 should be updated");
 			}
-			//we are just updating difference to get daily collection.
-			dailyBookingTobeSaved.setBookingAmount(newOrUpdatedBookingEntryTobeSaved.getBookingAmount().subtract(oldBookedEntry.getBookingAmount()));
+			// we are just updating difference to get daily collection.
+			dailyBookingTobeSaved.setBookingAmount(
+					newOrUpdatedBookingEntryTobeSaved.getBookingAmount().subtract(oldBookedEntry.getBookingAmount()));
 		}
 		this.dailyBookingRepository.save(dailyBookingTobeSaved);
-		return dailyBookingTobeSaved;//test
+		return dailyBookingTobeSaved;// test
 	}
 
 	private BookingDTO performActualDBOperationForBookingCancellation(final Booking currentlyBookedIdolToBeCancelled)
@@ -523,8 +535,8 @@ public class BookingServiceimpl implements BookingService {
 
 	@Override
 	public BookingDTO cancelTheBookedIdol(Booking bookingToCancel) throws InvalidInputException {
-		if (bookingToCancel.getCustomerId() <= 0 || bookingToCancel.getIdolId() <= 0
-				|| bookingToCancel.getBookingAmount() == null) {
+		if ((bookingToCancel.getCustomerId() <= 0) || (bookingToCancel.getIdolId() <= 0)
+				|| (bookingToCancel.getBookingAmount() == null)) {
 			throw new InvalidInputException(
 					"Not able to cancel booking. Need to provide mandatory values of customer id, booking amount (negative in case of refund or 0 in case of no refund)."
 							+ bookingToCancel);
