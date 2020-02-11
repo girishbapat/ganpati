@@ -24,7 +24,14 @@ import com.snehee.ganpati.exception.InvalidInputException;
 import com.snehee.ganpati.repository.DailyBookingRepository;
 import com.snehee.ganpati.service.BookingService;
 import com.snehee.ganpati.service.ReportService;
+import com.snehee.ganpati.util.CommonUtils;
 
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 //test
 /**
  * @author Girish
@@ -40,13 +47,13 @@ public class ReportServiceImpl implements ReportService {
 	@Autowired
 	private DailyBookingRepository dailyBookingRepository;
 
-	@Value("${app.title}")
+	@Value("${report.output.path}")
 	private String reportPath;
 
 	@Override
 	public List<TotalsDTO> getTotalsForBookingDatesAndShiftsBetween(final String strFromBookingDate,
 			WorkShift fromWorkShift, final String strToBookingDate, WorkShift toWorkShift)
-			throws InvalidInputException {
+					throws InvalidInputException {
 		// If from date is null throw exception
 		if (StringUtils.isBlank(strFromBookingDate)) {
 			throw new InvalidInputException("From Date cannot be null.");
@@ -55,17 +62,17 @@ public class ReportServiceImpl implements ReportService {
 		BookingDates bookingDates = null;
 
 		// if from date is not null and other 3 parameters are null
-		if ((null == fromWorkShift) && StringUtils.isBlank(strToBookingDate) && (null == toWorkShift)) {
+		if (null == fromWorkShift && StringUtils.isBlank(strToBookingDate) && null == toWorkShift) {
 			fromWorkShift = WorkShift.MORNING;
 			bookingDates = this.bookingService.getBookingDates(strFromBookingDate, fromWorkShift, 24);
 		}
 		// if from date and fromWorkShift are not null and other 2 parameters are null
-		else if ((fromWorkShift != null) && StringUtils.isBlank(strToBookingDate) && (null == toWorkShift)) {
+		else if (fromWorkShift != null && StringUtils.isBlank(strToBookingDate) && null == toWorkShift) {
 			bookingDates = this.bookingService.getBookingDates(strFromBookingDate, fromWorkShift, 8);
 		}
 		// if from date and fromWorkShift and to date is not and only to workshift is
 		// null then just set to workshift
-		else if ((fromWorkShift != null) && StringUtils.isNotBlank(strToBookingDate) && (null == toWorkShift)) {
+		else if (fromWorkShift != null && StringUtils.isNotBlank(strToBookingDate) && null == toWorkShift) {
 			toWorkShift = WorkShift.MORNING;
 			final LocalDateTime fromBookingDate = this.bookingService
 					.getLocalDateTimeForStrBookingDateAndWorkshift(strFromBookingDate, fromWorkShift);
@@ -73,7 +80,7 @@ public class ReportServiceImpl implements ReportService {
 					.getLocalDateTimeForStrBookingDateAndWorkshift(strToBookingDate, toWorkShift);
 			bookingDates = new BookingDates(fromBookingDate, toBookingDate);
 
-		} else if ((null == fromWorkShift) && StringUtils.isNotBlank(strToBookingDate) && (null == toWorkShift)) {
+		} else if (null == fromWorkShift && StringUtils.isNotBlank(strToBookingDate) && null == toWorkShift) {
 			fromWorkShift = WorkShift.MORNING;
 			toWorkShift = WorkShift.NIGHT;// used for special purpose
 			final LocalDateTime fromBookingDate = this.bookingService
@@ -81,7 +88,7 @@ public class ReportServiceImpl implements ReportService {
 			final LocalDateTime toBookingDate = this.bookingService
 					.getLocalDateTimeForStrBookingDateAndWorkshift(strToBookingDate, toWorkShift);
 			bookingDates = new BookingDates(fromBookingDate, toBookingDate);
-		} else if ((fromWorkShift != null) && StringUtils.isNotBlank(strToBookingDate) && (toWorkShift != null)) {
+		} else if (fromWorkShift != null && StringUtils.isNotBlank(strToBookingDate) && toWorkShift != null) {
 			final LocalDateTime fromBookingDate = this.bookingService
 					.getLocalDateTimeForStrBookingDateAndWorkshift(strFromBookingDate, fromWorkShift);
 			final LocalDateTime toBookingDate = this.bookingService
@@ -123,12 +130,27 @@ public class ReportServiceImpl implements ReportService {
 	}
 
 	@Override
-	public void exportBookingReport(final List<BookingDTO> bookings, final String reportFormat) {
+	public String generateAndExportBookingReport(final String reportFormat) throws Exception {
 
+		final List<BookingDTO> bookings = this.bookingService.getAllBookings();
 		final File file = ResourceUtils.getFile("classpath:ganpatiBookingRecords.jrxml");
-		final JasperReport jasperReport = JasperCompileManager.compileReport(file.getAbsoluteFile());
-		final JRBeanCollectionDataSource datasource = JRBeanCollectionDataSource(bookings);
+
+		final JasperReport jasperReport = JasperCompileManager.compileReport(file.getAbsolutePath());
+		final JRBeanCollectionDataSource datasource = new JRBeanCollectionDataSource(bookings);
 		final Map<String, Object> parameters = new HashMap<>();
+		parameters.put("createdBy", "Girish Bapat");
+		final JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, datasource);
+		String ganpatiBookingReportFilePath = null;
+		if (reportFormat.equalsIgnoreCase("html")) {
+			ganpatiBookingReportFilePath = this.reportPath+"/Ganpati_Booking_" + CommonUtils.getCurrentDateAndTime() + ".html";
+			JasperExportManager.exportReportToHtmlFile(jasperPrint, ganpatiBookingReportFilePath);
+		} else { // default is pdf
+			ganpatiBookingReportFilePath = this.reportPath+"/Ganpati_Booking_" + CommonUtils.getCurrentDateAndTime() + ".pdf";
+			JasperExportManager.exportReportToPdfFile(jasperPrint, ganpatiBookingReportFilePath);
+		}
+
+		return "report exported at:" + ganpatiBookingReportFilePath;
+
 	}
 
 }

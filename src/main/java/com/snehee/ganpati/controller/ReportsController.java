@@ -20,6 +20,14 @@ public class ReportsController {
 	@Autowired
 	private ReportService reportService;
 
+	@GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE,
+			MediaType.APPLICATION_XML_VALUE }, value = "/generateAndExportBookingReport")
+	public ResponseEntity<String> generateAndExportBookingReport() throws Exception {
+
+		final String ganpatiBookingReportFilePath = this.reportService.generateAndExportBookingReport("pdf");
+		return ResponseEntity.ok().body(ganpatiBookingReportFilePath);
+	}
+
 	/**
 	 * get totals
 	 * @return

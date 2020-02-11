@@ -2,7 +2,6 @@ package com.snehee.ganpati.service;
 
 import java.util.List;
 
-import com.snehee.ganpati.dto.BookingDTO;
 import com.snehee.ganpati.dto.TotalsDTO;
 import com.snehee.ganpati.enums.WorkShift;
 import com.snehee.ganpati.exception.InvalidInputException;
@@ -28,5 +27,5 @@ public interface ReportService {
 
 	List<TotalsDTO> getTotals();
 
-	void exportBookingReport(List<BookingDTO> bookings, String reportFormat);
+	String generateAndExportBookingReport(String reportFormat) throws Exception;
 }
