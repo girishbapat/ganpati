@@ -4,6 +4,7 @@
 package com.snehee.ganpati.serviceimpl;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -20,12 +21,14 @@ import com.snehee.ganpati.dto.BookingDTO;
 import com.snehee.ganpati.dto.BookingDates;
 import com.snehee.ganpati.dto.TotalsDTO;
 import com.snehee.ganpati.enums.WorkShift;
+import com.snehee.ganpati.exception.BusinessException;
 import com.snehee.ganpati.exception.InvalidInputException;
 import com.snehee.ganpati.repository.DailyBookingRepository;
 import com.snehee.ganpati.service.BookingService;
 import com.snehee.ganpati.service.ReportService;
 import com.snehee.ganpati.util.CommonUtils;
 
+import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -130,26 +133,33 @@ public class ReportServiceImpl implements ReportService {
 	}
 
 	@Override
-	public String generateAndExportBookingReport(final String reportFormat) throws Exception {
+	public String generateAndExportBookingReport(final String reportFormat)  {
 
-		final List<BookingDTO> bookings = this.bookingService.getAllBookings();
-		final File file = ResourceUtils.getFile("classpath:ganpatiBookingRecords.jrxml");
+		String returnString="";
+		try {
+			final List<BookingDTO> bookings = this.bookingService.getAllBookings();
+			final File file = ResourceUtils.getFile("classpath:ganpatiBookingRecords.jrxml");
 
-		final JasperReport jasperReport = JasperCompileManager.compileReport(file.getAbsolutePath());
-		final JRBeanCollectionDataSource datasource = new JRBeanCollectionDataSource(bookings);
-		final Map<String, Object> parameters = new HashMap<>();
-		parameters.put("createdBy", "Girish Bapat");
-		final JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, datasource);
-		String ganpatiBookingReportFilePath = null;
-		if (reportFormat.equalsIgnoreCase("html")) {
-			ganpatiBookingReportFilePath = this.reportPath+"/Ganpati_Booking_" + CommonUtils.getCurrentDateAndTime() + ".html";
-			JasperExportManager.exportReportToHtmlFile(jasperPrint, ganpatiBookingReportFilePath);
-		} else { // default is pdf
-			ganpatiBookingReportFilePath = this.reportPath+"/Ganpati_Booking_" + CommonUtils.getCurrentDateAndTime() + ".pdf";
-			JasperExportManager.exportReportToPdfFile(jasperPrint, ganpatiBookingReportFilePath);
+			final JasperReport jasperReport = JasperCompileManager.compileReport(file.getAbsolutePath());
+			final JRBeanCollectionDataSource datasource = new JRBeanCollectionDataSource(bookings);
+			final Map<String, Object> parameters = new HashMap<>();
+			parameters.put("createdBy", "Girish Bapat");
+			final JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, datasource);
+			String  ganpatiBookingReportFilePath = "";
+			if (reportFormat.equalsIgnoreCase("html")) {
+				ganpatiBookingReportFilePath = this.reportPath+"/Ganpati_Booking_" + CommonUtils.getCurrentDateAndTime() + ".html";
+				JasperExportManager.exportReportToHtmlFile(jasperPrint, ganpatiBookingReportFilePath);
+			} else { // default is pdf
+				ganpatiBookingReportFilePath = this.reportPath+"/Ganpati_Booking_" + CommonUtils.getCurrentDateAndTime() + ".pdf";
+				JasperExportManager.exportReportToPdfFile(jasperPrint, ganpatiBookingReportFilePath);
+			}
+			returnString="report exported at:" + ganpatiBookingReportFilePath;
+		} catch (FileNotFoundException | JRException e) {
+			returnString="Problem generating report."+e.getMessage();
+			throw new BusinessException(e.getMessage());
 		}
 
-		return "report exported at:" + ganpatiBookingReportFilePath;
+		return returnString;
 
 	}
 

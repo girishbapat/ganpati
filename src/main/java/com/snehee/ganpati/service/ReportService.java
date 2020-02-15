@@ -27,5 +27,5 @@ public interface ReportService {
 
 	List<TotalsDTO> getTotals();
 
-	String generateAndExportBookingReport(String reportFormat) throws Exception;
+	String generateAndExportBookingReport(String reportFormat);
 }

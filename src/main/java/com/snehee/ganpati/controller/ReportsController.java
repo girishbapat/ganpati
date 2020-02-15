@@ -20,16 +20,15 @@ public class ReportsController {
 	@Autowired
 	private ReportService reportService;
 
-	@GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE,
-			MediaType.APPLICATION_XML_VALUE }, value = "/generateAndExportBookingReport")
-	public ResponseEntity<String> generateAndExportBookingReport() throws Exception {
+	@GetMapping(value = "/generateAndExportBookingReport")
+	public String generateAndExportBookingReport() throws Exception {
 
-		final String ganpatiBookingReportFilePath = this.reportService.generateAndExportBookingReport("pdf");
-		return ResponseEntity.ok().body(ganpatiBookingReportFilePath);
+		return this.reportService.generateAndExportBookingReport("pdf");
 	}
 
 	/**
 	 * get totals
+	 *
 	 * @return
 	 * @throws InvalidInputException
 	 */
@@ -40,8 +39,10 @@ public class ReportsController {
 		final List<TotalsDTO> listOfTotalsDTO = this.reportService.getTotals();
 		return ResponseEntity.ok().body(listOfTotalsDTO);
 	}
+
 	/**
 	 * Get totals for particular booking date.
+	 *
 	 * @param particularBookingDate- d-MMM-yyyy- 04-Feb-2020
 	 * @return
 	 * @throws InvalidInputException
@@ -59,8 +60,9 @@ public class ReportsController {
 
 	/**
 	 * Get totals for particular date for particular shift
+	 *
 	 * @param particularBookingDate- d-MMM-yyyy- 04-Feb-2020
-	 * @param workShift- MORNING/EVENING
+	 * @param workShift-             MORNING/EVENING
 	 * @return
 	 * @throws InvalidInputException
 	 */
@@ -78,6 +80,7 @@ public class ReportsController {
 
 	/**
 	 * Get totals between from and to booking dates
+	 *
 	 * @param strFromBookingDate-01-FEB-2020
 	 * @param strToBookingDate-04-FEB-2020
 	 * @return
@@ -96,6 +99,7 @@ public class ReportsController {
 
 	/**
 	 * Get totals by booking dates
+	 *
 	 * @param strFromBookingDate-01-FEB-2020
 	 * @param fromWorkShift-MORNING
 	 * @param strToBookingDate-04-FEB-2020

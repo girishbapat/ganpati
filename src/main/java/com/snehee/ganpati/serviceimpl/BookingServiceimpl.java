@@ -37,6 +37,7 @@ import com.snehee.ganpati.repository.DailyBookingRepository;
 import com.snehee.ganpati.service.BookingService;
 import com.snehee.ganpati.service.CustomerService;
 import com.snehee.ganpati.service.IdolService;
+import com.snehee.ganpati.service.ReportService;
 import com.snehee.ganpati.util.Constants;
 
 /**
@@ -58,6 +59,9 @@ public class BookingServiceimpl implements BookingService {
 	@Autowired
 	IdolService idolService;
 
+	@Autowired
+	private ReportService reportService;
+
 	/**
 	 * @param strFromBookingDate
 	 * @param fromWorkShift      TODO
@@ -74,23 +78,23 @@ public class BookingServiceimpl implements BookingService {
 		}
 		List<Booking> listBookings = null;
 		// if from date is not null and other 3 parameters are null
-		if ((null == fromWorkShift) && StringUtils.isBlank(strToBookingDate) && (null == toWorkShift)) {
+		if (null == fromWorkShift && StringUtils.isBlank(strToBookingDate) && null == toWorkShift) {
 			fromWorkShift = WorkShift.MORNING;
 			listBookings = this.getBookingsWithBookingDateWorkShiftAndDiffrence(strFromBookingDate, fromWorkShift, 24);
 		}
 		// if from date and fromWorkShift is not null and other 2 parameters are null
-		else if ((fromWorkShift != null) && StringUtils.isBlank(strToBookingDate) && (null == toWorkShift)) {
+		else if (fromWorkShift != null && StringUtils.isBlank(strToBookingDate) && null == toWorkShift) {
 			listBookings = this.getBookingsWithBookingDateWorkShiftAndDiffrence(strFromBookingDate, fromWorkShift, 8);
 		}
 		// if todate is present but fromWorkShift and toWorkshift is null then just
 		// bothworkshifts to MORNING and proceed
-		else if ((null == fromWorkShift) && StringUtils.isNotBlank(strToBookingDate) && (null == toWorkShift)) {
+		else if (null == fromWorkShift && StringUtils.isNotBlank(strToBookingDate) && null == toWorkShift) {
 			fromWorkShift = WorkShift.MORNING;
 			toWorkShift = WorkShift.MORNING;
 		}
 		// if from date and fromWorkShift and todate is not and only to workshift is
 		// null then just set to workshift
-		else if ((fromWorkShift != null) && StringUtils.isNotBlank(strToBookingDate) && (null == toWorkShift)) {
+		else if (fromWorkShift != null && StringUtils.isNotBlank(strToBookingDate) && null == toWorkShift) {
 			toWorkShift = WorkShift.MORNING;
 		}
 		// if listBookings is null means above atleaset 2 conditions are false
@@ -127,19 +131,19 @@ public class BookingServiceimpl implements BookingService {
 	 * @throws InvalidInputException
 	 */
 	private void performValidationsForBooking(final Booking bookingTobeSaved) throws InvalidInputException {
-		if ((bookingTobeSaved.getCustomerId() <= 0) || (bookingTobeSaved.getIdolId() <= 0)
-				|| (null == bookingTobeSaved.getBookingAmount())) {
+		if (bookingTobeSaved.getCustomerId() <= 0 || bookingTobeSaved.getIdolId() <= 0
+				|| null == bookingTobeSaved.getBookingAmount()) {
 			throw new InvalidInputException(
 					"Not able to create/update booking due to invalid data. Values submitted are customerId:"
 							+ bookingTobeSaved.getCustomerId() + ", Idol id:" + bookingTobeSaved.getIdolId()
 							+ ",  invalid booking amount:" + bookingTobeSaved.getBookingAmount());
 		}
-		if ((null == bookingTobeSaved.getTotalAmount()) || (bookingTobeSaved.getTotalAmount().floatValue() <= 0)) {
+		if (null == bookingTobeSaved.getTotalAmount() || bookingTobeSaved.getTotalAmount().floatValue() <= 0) {
 			try {
 				final Idol idolsById = this.idolService.getIdolsById(bookingTobeSaved.getIdolId());
 				bookingTobeSaved.setTotalAmount(idolsById.getPrice());
-				if ((null == bookingTobeSaved.getDiscountAmount())
-						|| (bookingTobeSaved.getDiscountAmount().floatValue() <= 0)) {
+				if (null == bookingTobeSaved.getDiscountAmount()
+						|| bookingTobeSaved.getDiscountAmount().floatValue() <= 0) {
 					bookingTobeSaved.setDiscountAmount(new BigDecimal(0));
 				}
 				bookingTobeSaved.setBalanceAmount(bookingTobeSaved.getTotalAmount()
@@ -215,6 +219,9 @@ public class BookingServiceimpl implements BookingService {
 					bookingDTO.setIdolSpecs(idolSpecs);
 					return bookingDTO;
 				}).collect(Collectors.toList());
+		if(generateReportAsWell) {
+			this.reportService.generateAndExportBookingReport("pdf");
+		}
 		return bookingListofAllCustomers;
 	}
 
@@ -379,7 +386,7 @@ public class BookingServiceimpl implements BookingService {
 	@Override
 	public List<BookingDTO> getBookingsByBookingDateBetween(final String strFromBookingDate,
 			final WorkShift fromWorkShift, final String strToBookingDate, final WorkShift toWorkShift)
-			throws InvalidInputException {
+					throws InvalidInputException {
 		if (StringUtils.isBlank(strFromBookingDate)) {
 			throw new InvalidInputException("from Booking date is not provided");
 		}
@@ -501,8 +508,8 @@ public class BookingServiceimpl implements BookingService {
 		dailyBookingTobeSaved = new DailyBooking(newOrUpdatedBookingEntryTobeSaved);
 		// check if old entry is present, if yes set the booking amount
 		if (null != oldBookedEntry) {
-			if ((null == oldBookedEntry.getBookingAmount())
-					|| (null == newOrUpdatedBookingEntryTobeSaved.getBookingAmount())) {
+			if (null == oldBookedEntry.getBookingAmount()
+					|| null == newOrUpdatedBookingEntryTobeSaved.getBookingAmount()) {
 				throw new InvalidInputException("Booking amount not present either for old or new entry. old booking:"
 						+ oldBookedEntry + ", new entry:" + newOrUpdatedBookingEntryTobeSaved
 						+ ". If booking amount is not specified at least 0 should be updated");
@@ -535,8 +542,8 @@ public class BookingServiceimpl implements BookingService {
 
 	@Override
 	public BookingDTO cancelTheBookedIdol(Booking bookingToCancel) throws InvalidInputException {
-		if ((bookingToCancel.getCustomerId() <= 0) || (bookingToCancel.getIdolId() <= 0)
-				|| (bookingToCancel.getBookingAmount() == null)) {
+		if (bookingToCancel.getCustomerId() <= 0 || bookingToCancel.getIdolId() <= 0
+				|| bookingToCancel.getBookingAmount() == null) {
 			throw new InvalidInputException(
 					"Not able to cancel booking. Need to provide mandatory values of customer id, booking amount (negative in case of refund or 0 in case of no refund)."
 							+ bookingToCancel);
