@@ -6,8 +6,8 @@ package com.snehee.ganpati.serviceimpl;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -150,7 +150,7 @@ public class ReportServiceImpl implements ReportService {
 		final String nameOfReport = "Ganpati_Booking_Invoice";
 		final Map<String, Object> parameters = new HashMap<>();
 		parameters.put("createdBy", "Girish Bapat");
-		final List<BookingDTO> reportCollectionDatasource = Collections.emptyList();
+		final List<BookingDTO> reportCollectionDatasource = new ArrayList<>();
 		reportCollectionDatasource.add(invoiceForCurrentBookedIdol);
 		return this.generateActualReportAndExport(reportCollectionDatasource, invoiceFormat, nameOfReport, parameters);
 

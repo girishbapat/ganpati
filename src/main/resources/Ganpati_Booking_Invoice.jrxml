@@ -2,9 +2,38 @@
 <!-- Created with Jaspersoft Studio version 6.11.0.final using JasperReports Library version 6.11.0-0c4056ccaa4d25a5a8c45672d2f764ea3498bebb  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Blank_A4" pageWidth="321" pageHeight="755" columnWidth="209" leftMargin="75" rightMargin="37" topMargin="38" bottomMargin="38" uuid="de4537c3-09b6-4ed8-849d-377b1d6fe77a">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
-	<queryString>
-		<![CDATA[]]>
-	</queryString>
+	<field name="bookingDate" class="java.time.LocalDateTime">
+		<property name="com.jaspersoft.studio.field.label" value="Date"/>
+	</field>
+	<field name="id" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.label" value="Id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="booking"/>
+	</field>
+	<field name="location" class="com.snehee.ganpati.enums.Location">
+		<property name="com.jaspersoft.studio.field.label" value="Loc"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="booking"/>
+	</field>
+	<field name="customerName" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="Name and Contact no"/>
+	</field>
+	<field name="primaryMobile" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="primaryMobile"/>
+	</field>
+	<field name="bookingAmount" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="Booking"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="booking"/>
+	</field>
+	<field name="balanceAmount" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="Balance"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="booking"/>
+	</field>
+	<field name="totalAmount" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="Total"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="booking"/>
+	</field>
+	<field name="idolSpecs" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="idolSpecs"/>
+	</field>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -38,7 +67,7 @@
 				<textElement textAlignment="Center">
 					<font size="14"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Text Field"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{customerName}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="8" y="43" width="82" height="33" uuid="360462ea-a0d4-4077-9548-fff5c5938ceb"/>
@@ -60,7 +89,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center"/>
-				<textFieldExpression><![CDATA["Text Field"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{bookingAmount}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="8" y="79" width="82" height="31" uuid="8dd68d73-c318-4cf2-8b23-91b696b6217a"/>
@@ -82,7 +111,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center"/>
-				<textFieldExpression><![CDATA["Text Field"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{balanceAmount}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="8" y="113" width="82" height="32" uuid="ac14c984-a644-473d-95f1-d32dcfc03723"/>
@@ -104,7 +133,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center"/>
-				<textFieldExpression><![CDATA["Text Field"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{idolSpecs}]]></textFieldExpression>
 			</textField>
 			<rectangle>
 				<reportElement x="0" y="163" width="226" height="151" uuid="e901aca9-5cb5-44cc-ba23-56f37a0853d7">
@@ -116,17 +145,17 @@
 				<reportElement x="19" y="180" width="190" height="110" uuid="aeec905a-ac0e-41e5-875a-0b4381998272"/>
 			</ellipse>
 			<textField>
-				<reportElement x="40" y="212" width="150" height="50" uuid="6e849861-add9-4859-a0d6-357873cc51ca"/>
+				<reportElement x="24" y="182" width="179" height="70" uuid="6e849861-add9-4859-a0d6-357873cc51ca"/>
 				<box>
-					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Bottom" rotation="UpsideDown">
-					<font size="21" isBold="true"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None">
+					<font fontName="Arial Black" size="49" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Text Field"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{id}]]></textFieldExpression>
 			</textField>
 			<rectangle>
 				<reportElement x="0" y="324" width="226" height="225" uuid="212d0ce9-0f27-4954-b809-94e54b471872">
@@ -156,7 +185,7 @@
 				<textElement textAlignment="Center">
 					<font size="14"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Text Field"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{customerName}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="7" y="423" width="82" height="18" uuid="e61f93ea-44c3-452a-8a5c-5c29faa0a33f"/>
@@ -178,7 +207,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center"/>
-				<textFieldExpression><![CDATA["Text Field"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{bookingAmount}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="7" y="443" width="82" height="17" uuid="f81cde95-69a9-440f-accf-27d153b28c9f"/>
@@ -200,7 +229,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center"/>
-				<textFieldExpression><![CDATA["Text Field"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{balanceAmount}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="7" y="462" width="102" height="22" uuid="57280311-ebb7-4d52-a324-48c291247f6a"/>
@@ -224,7 +253,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center"/>
-				<textFieldExpression><![CDATA["Text Field"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{idolSpecs}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="8" y="348" width="72" height="30" uuid="ca5a26df-277e-44a8-a1e3-63ca3f1c486c"/>
@@ -250,7 +279,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Bottom">
 					<font size="20" isUnderline="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Text Field"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{id}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="7" y="487" width="210" height="22" uuid="66e9860e-4de6-4636-a97d-703d51af7013"/>
@@ -302,7 +331,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center"/>
-				<textFieldExpression><![CDATA["Text Field"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[java.time.format.DateTimeFormatter.ofPattern("dd/MMM/yyyy hh:mm a").format($F{bookingDate})]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

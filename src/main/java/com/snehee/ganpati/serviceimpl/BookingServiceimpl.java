@@ -477,6 +477,7 @@ public class BookingServiceimpl implements BookingService {
 				this.prepareAndSaveDailyBooking(null, bookingTobeSaved);
 			}
 			bookedIdolDTO = this.getBookingDTOForBooking(bookingTobeSaved);
+			this.reportService.generateInvoice(bookedIdolDTO, "pdf", true);
 		} catch (final ResourceNotFoundException e) {
 			throw new InvalidInputException(
 					"Not able to create or update booking due to invalid data. Values submitted are :"
