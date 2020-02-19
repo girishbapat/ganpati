@@ -129,7 +129,7 @@
 				<textFieldExpression><![CDATA["Text Field"]]></textFieldExpression>
 			</textField>
 			<rectangle>
-				<reportElement x="0" y="324" width="226" height="205" uuid="212d0ce9-0f27-4954-b809-94e54b471872">
+				<reportElement x="0" y="324" width="226" height="225" uuid="212d0ce9-0f27-4954-b809-94e54b471872">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
@@ -159,7 +159,7 @@
 				<textFieldExpression><![CDATA["Text Field"]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="7" y="403" width="82" height="18" uuid="e61f93ea-44c3-452a-8a5c-5c29faa0a33f"/>
+				<reportElement x="7" y="423" width="82" height="18" uuid="e61f93ea-44c3-452a-8a5c-5c29faa0a33f"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -170,7 +170,7 @@
 				<text><![CDATA[Booking Amount]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="90" y="403" width="129" height="18" uuid="9bcd697b-af2e-4602-960a-f67d6f15c167"/>
+				<reportElement x="90" y="423" width="129" height="18" uuid="9bcd697b-af2e-4602-960a-f67d6f15c167"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -181,7 +181,7 @@
 				<textFieldExpression><![CDATA["Text Field"]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="7" y="423" width="82" height="17" uuid="f81cde95-69a9-440f-accf-27d153b28c9f"/>
+				<reportElement x="7" y="443" width="82" height="17" uuid="f81cde95-69a9-440f-accf-27d153b28c9f"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -192,7 +192,7 @@
 				<text><![CDATA[Balance Amount]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="90" y="423" width="129" height="17" uuid="11775faf-5d95-4755-8226-6a492b9ebe5d"/>
+				<reportElement x="90" y="443" width="129" height="17" uuid="11775faf-5d95-4755-8226-6a492b9ebe5d"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -203,7 +203,7 @@
 				<textFieldExpression><![CDATA["Text Field"]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="7" y="442" width="102" height="22" uuid="57280311-ebb7-4d52-a324-48c291247f6a"/>
+				<reportElement x="7" y="462" width="102" height="22" uuid="57280311-ebb7-4d52-a324-48c291247f6a"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -216,7 +216,7 @@
 				<text><![CDATA[Dimensions in inches]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="110" y="443" width="109" height="20" uuid="0750bf52-bd06-4c18-9cc3-b4c781792758"/>
+				<reportElement x="110" y="463" width="109" height="20" uuid="0750bf52-bd06-4c18-9cc3-b4c781792758"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -240,7 +240,7 @@
 				<text><![CDATA[Ganapati Booking Number]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="80" y="348" width="138" height="28" uuid="e4f110db-80f0-4097-b7e1-acc46e5a250c"/>
+				<reportElement x="80" y="348" width="138" height="30" uuid="e4f110db-80f0-4097-b7e1-acc46e5a250c"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -253,7 +253,7 @@
 				<textFieldExpression><![CDATA["Text Field"]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="7" y="467" width="210" height="22" uuid="66e9860e-4de6-4636-a97d-703d51af7013"/>
+				<reportElement x="7" y="487" width="210" height="22" uuid="66e9860e-4de6-4636-a97d-703d51af7013"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -279,9 +279,31 @@
 				<text><![CDATA[Snehee Ganpati Booking Details]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="7" y="492" width="210" height="30" uuid="f47793d7-cca2-4a5d-ba4f-c711d39c39ef"/>
+				<reportElement x="7" y="512" width="210" height="30" uuid="f47793d7-cca2-4a5d-ba4f-c711d39c39ef"/>
 				<text><![CDATA[ Note: On Ganesh Chaturthi, shop will remain closed in the afternoon & evening.]]></text>
 			</staticText>
+			<staticText>
+				<reportElement x="7" y="403" width="82" height="18" uuid="f75ab1cd-93f1-47b1-9e15-aabd85bdf4e1"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Booking Date]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="90" y="403" width="129" height="18" uuid="671a0e0e-c524-42a0-bc87-f251c26800a1"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA["Text Field"]]></textFieldExpression>
+			</textField>
 		</band>
 	</detail>
 </jasperReport>

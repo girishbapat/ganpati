@@ -6,6 +6,8 @@ package com.snehee.ganpati.serviceimpl;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +37,7 @@ import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+
 //test
 /**
  * @author Girish
@@ -133,34 +136,64 @@ public class ReportServiceImpl implements ReportService {
 	}
 
 	@Override
-	public String generateAndExportBookingReport(final String reportFormat)  {
+	public String generateBookingRecordsReport(final String reportFormat) {
+		final String nameOfReport = "Ganpati_Booking_Records";
+		final Map<String, Object> parameters = new HashMap<>();
+		parameters.put("createdBy", "Girish Bapat");
+		final List<BookingDTO> bookings = this.bookingService.getAllBookings();
+		return this.generateActualReportAndExport(bookings, reportFormat, nameOfReport, parameters);
 
-		String returnString="";
+	}
+
+	@Override
+	public String generateInvoice(BookingDTO invoiceForCurrentBookedIdol, String invoiceFormat, boolean printAsWell) {
+		final String nameOfReport = "Ganpati_Booking_Invoice";
+		final Map<String, Object> parameters = new HashMap<>();
+		parameters.put("createdBy", "Girish Bapat");
+		final List<BookingDTO> reportCollectionDatasource = Collections.emptyList();
+		reportCollectionDatasource.add(invoiceForCurrentBookedIdol);
+		return this.generateActualReportAndExport(reportCollectionDatasource, invoiceFormat, nameOfReport, parameters);
+
+	}
+
+	/**
+	 * @param reportCollectionDatasource
+	 * @param invoiceFormat
+	 * @param nameOfReport
+	 * @param parameters
+	 * @return
+	 * @throws BusinessException
+	 */
+	private String generateActualReportAndExport(Collection<?> reportCollectionDatasource, String invoiceFormat,
+			final String nameOfReport, final Map<String, Object> parameters) throws BusinessException {
+		String returnString;
+		String ganpatiBookingReportFilePath = this.reportPath + File.separator+nameOfReport+File.separator+ CommonUtils.getCurrentDate();
 		try {
-			final List<BookingDTO> bookings = this.bookingService.getAllBookings();
-			final File file = ResourceUtils.getFile("classpath:ganpatiBookingRecords.jrxml");
+			final File file = ResourceUtils.getFile("classpath:" + nameOfReport + ".jrxml");
 
 			final JasperReport jasperReport = JasperCompileManager.compileReport(file.getAbsolutePath());
-			final JRBeanCollectionDataSource datasource = new JRBeanCollectionDataSource(bookings);
-			final Map<String, Object> parameters = new HashMap<>();
-			parameters.put("createdBy", "Girish Bapat");
+			final JRBeanCollectionDataSource datasource = new JRBeanCollectionDataSource(reportCollectionDatasource);
 			final JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, datasource);
-			String  ganpatiBookingReportFilePath = "";
-			if (reportFormat.equalsIgnoreCase("html")) {
-				ganpatiBookingReportFilePath = this.reportPath+"/Ganpati_Booking_" + CommonUtils.getCurrentDateAndTime() + ".html";
+			final File directory = new File(ganpatiBookingReportFilePath);
+			if (!directory.exists()) {
+				directory.mkdirs();
+			}
+			ganpatiBookingReportFilePath = ganpatiBookingReportFilePath + File.separator + nameOfReport + "_"
+					+ CommonUtils.getCurrentDateAndTime();
+			if (invoiceFormat.equalsIgnoreCase("html")) {
+				ganpatiBookingReportFilePath = ganpatiBookingReportFilePath + ".html";
 				JasperExportManager.exportReportToHtmlFile(jasperPrint, ganpatiBookingReportFilePath);
 			} else { // default is pdf
-				ganpatiBookingReportFilePath = this.reportPath+"/Ganpati_Booking_" + CommonUtils.getCurrentDateAndTime() + ".pdf";
+				ganpatiBookingReportFilePath = ganpatiBookingReportFilePath + ".pdf";
 				JasperExportManager.exportReportToPdfFile(jasperPrint, ganpatiBookingReportFilePath);
 			}
-			returnString="report exported at:" + ganpatiBookingReportFilePath;
+			returnString = "report exported at:" + ganpatiBookingReportFilePath;
 		} catch (FileNotFoundException | JRException e) {
-			returnString="Problem generating report."+e.getMessage();
+			returnString = "Problem generating report:" + ganpatiBookingReportFilePath + ". Exception is:"
+					+ e.getMessage();
 			throw new BusinessException(e.getMessage());
 		}
-
 		return returnString;
-
 	}
 
 }

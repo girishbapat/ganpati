@@ -220,7 +220,7 @@ public class BookingServiceimpl implements BookingService {
 					return bookingDTO;
 				}).collect(Collectors.toList());
 		if(generateReportAsWell) {
-			this.reportService.generateAndExportBookingReport("pdf");
+			this.reportService.generateBookingRecordsReport("pdf");
 		}
 		return bookingListofAllCustomers;
 	}

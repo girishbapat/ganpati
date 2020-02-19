@@ -23,7 +23,7 @@ public class ReportsController {
 	@GetMapping(value = "/generateAndExportBookingReport")
 	public String generateAndExportBookingReport() throws Exception {
 
-		return this.reportService.generateAndExportBookingReport("pdf");
+		return this.reportService.generateBookingRecordsReport("pdf");
 	}
 
 	/**
