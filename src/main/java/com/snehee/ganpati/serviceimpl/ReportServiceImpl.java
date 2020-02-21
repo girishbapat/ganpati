@@ -25,6 +25,7 @@ import com.snehee.ganpati.dto.TotalsDTO;
 import com.snehee.ganpati.enums.WorkShift;
 import com.snehee.ganpati.exception.BusinessException;
 import com.snehee.ganpati.exception.InvalidInputException;
+import com.snehee.ganpati.exception.ResourceNotFoundException;
 import com.snehee.ganpati.repository.DailyBookingRepository;
 import com.snehee.ganpati.service.BookingService;
 import com.snehee.ganpati.service.ReportService;
@@ -56,10 +57,13 @@ public class ReportServiceImpl implements ReportService {
 	@Value("${report.output.path}")
 	private String reportPath;
 
+	@Value("${ganesh.chaturthi.date}")
+	private String ganeshChaturthiDate;
+
 	@Override
 	public List<TotalsDTO> getTotalsForBookingDatesAndShiftsBetween(final String strFromBookingDate,
 			WorkShift fromWorkShift, final String strToBookingDate, WorkShift toWorkShift)
-					throws InvalidInputException {
+			throws InvalidInputException {
 		// If from date is null throw exception
 		if (StringUtils.isBlank(strFromBookingDate)) {
 			throw new InvalidInputException("From Date cannot be null.");
@@ -68,17 +72,17 @@ public class ReportServiceImpl implements ReportService {
 		BookingDates bookingDates = null;
 
 		// if from date is not null and other 3 parameters are null
-		if (null == fromWorkShift && StringUtils.isBlank(strToBookingDate) && null == toWorkShift) {
+		if ((null == fromWorkShift) && StringUtils.isBlank(strToBookingDate) && (null == toWorkShift)) {
 			fromWorkShift = WorkShift.MORNING;
 			bookingDates = this.bookingService.getBookingDates(strFromBookingDate, fromWorkShift, 24);
 		}
 		// if from date and fromWorkShift are not null and other 2 parameters are null
-		else if (fromWorkShift != null && StringUtils.isBlank(strToBookingDate) && null == toWorkShift) {
+		else if ((fromWorkShift != null) && StringUtils.isBlank(strToBookingDate) && (null == toWorkShift)) {
 			bookingDates = this.bookingService.getBookingDates(strFromBookingDate, fromWorkShift, 8);
 		}
 		// if from date and fromWorkShift and to date is not and only to workshift is
 		// null then just set to workshift
-		else if (fromWorkShift != null && StringUtils.isNotBlank(strToBookingDate) && null == toWorkShift) {
+		else if ((fromWorkShift != null) && StringUtils.isNotBlank(strToBookingDate) && (null == toWorkShift)) {
 			toWorkShift = WorkShift.MORNING;
 			final LocalDateTime fromBookingDate = this.bookingService
 					.getLocalDateTimeForStrBookingDateAndWorkshift(strFromBookingDate, fromWorkShift);
@@ -86,7 +90,7 @@ public class ReportServiceImpl implements ReportService {
 					.getLocalDateTimeForStrBookingDateAndWorkshift(strToBookingDate, toWorkShift);
 			bookingDates = new BookingDates(fromBookingDate, toBookingDate);
 
-		} else if (null == fromWorkShift && StringUtils.isNotBlank(strToBookingDate) && null == toWorkShift) {
+		} else if ((null == fromWorkShift) && StringUtils.isNotBlank(strToBookingDate) && (null == toWorkShift)) {
 			fromWorkShift = WorkShift.MORNING;
 			toWorkShift = WorkShift.NIGHT;// used for special purpose
 			final LocalDateTime fromBookingDate = this.bookingService
@@ -94,7 +98,7 @@ public class ReportServiceImpl implements ReportService {
 			final LocalDateTime toBookingDate = this.bookingService
 					.getLocalDateTimeForStrBookingDateAndWorkshift(strToBookingDate, toWorkShift);
 			bookingDates = new BookingDates(fromBookingDate, toBookingDate);
-		} else if (fromWorkShift != null && StringUtils.isNotBlank(strToBookingDate) && toWorkShift != null) {
+		} else if ((fromWorkShift != null) && StringUtils.isNotBlank(strToBookingDate) && (toWorkShift != null)) {
 			final LocalDateTime fromBookingDate = this.bookingService
 					.getLocalDateTimeForStrBookingDateAndWorkshift(strFromBookingDate, fromWorkShift);
 			final LocalDateTime toBookingDate = this.bookingService
@@ -146,10 +150,13 @@ public class ReportServiceImpl implements ReportService {
 	}
 
 	@Override
-	public String generateInvoice(BookingDTO invoiceForCurrentBookedIdol, String invoiceFormat, boolean printAsWell) {
+	public String generateInvoice(final BookingDTO invoiceForCurrentBookedIdol, final String invoiceFormat,
+			final boolean printAsWell) {
 		final String nameOfReport = "Ganpati_Booking_Invoice";
 		final Map<String, Object> parameters = new HashMap<>();
 		parameters.put("createdBy", "Girish Bapat");
+		parameters.put("HARTALIKA_TRITIYA", CommonUtils.getDayAndDate(this.ganeshChaturthiDate, -1));
+		parameters.put("GANESH_CHTURTHI", CommonUtils.getDayAndDate(this.ganeshChaturthiDate, 0));
 		final List<BookingDTO> reportCollectionDatasource = new ArrayList<>();
 		reportCollectionDatasource.add(invoiceForCurrentBookedIdol);
 		return this.generateActualReportAndExport(reportCollectionDatasource, invoiceFormat, nameOfReport, parameters);
@@ -164,10 +171,12 @@ public class ReportServiceImpl implements ReportService {
 	 * @return
 	 * @throws BusinessException
 	 */
-	private String generateActualReportAndExport(Collection<?> reportCollectionDatasource, String invoiceFormat,
-			final String nameOfReport, final Map<String, Object> parameters) throws BusinessException {
+	private String generateActualReportAndExport(final Collection<?> reportCollectionDatasource,
+			final String invoiceFormat, final String nameOfReport, final Map<String, Object> parameters)
+			throws BusinessException {
 		String returnString;
-		String ganpatiBookingReportFilePath = this.reportPath + File.separator+nameOfReport+File.separator+ CommonUtils.getCurrentDate();
+		String ganpatiBookingReportFilePath = this.reportPath + File.separator + nameOfReport + File.separator
+				+ CommonUtils.getCurrentDate();
 		try {
 			final File file = ResourceUtils.getFile("classpath:" + nameOfReport + ".jrxml");
 
@@ -194,6 +203,13 @@ public class ReportServiceImpl implements ReportService {
 			throw new BusinessException(e.getMessage());
 		}
 		return returnString;
+	}
+
+	@Override
+	public String generateInvoice(final int bookingId, final String invoiceFormat, final boolean printAsWell)
+			throws ResourceNotFoundException {
+		final BookingDTO bookingById = this.bookingService.getBookingById(bookingId);
+		return this.generateInvoice(bookingById, invoiceFormat, printAsWell);
 	}
 
 }

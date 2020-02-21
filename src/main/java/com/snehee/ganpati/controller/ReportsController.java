@@ -26,6 +26,12 @@ public class ReportsController {
 		return this.reportService.generateBookingRecordsReport("pdf");
 	}
 
+	@GetMapping(value = "/generateInvoice/{bookingId}/{printAsWell}")
+	public String generateInvoice(@PathVariable(value = "bookingId") final Integer bookingId,
+			@PathVariable(value = "printAsWell") final Boolean printAsWell) throws Exception {
+		return this.reportService.generateInvoice(bookingId, "pdf", printAsWell);
+	}
+
 	/**
 	 * get totals
 	 *
@@ -51,7 +57,7 @@ public class ReportsController {
 			MediaType.APPLICATION_XML_VALUE }, value = "/totalsForParticularBookingDate/{particularBookingDate}")
 	public ResponseEntity<List<TotalsDTO>> getTotalsForParticularBookingDate(
 			@PathVariable(value = "particularBookingDate") final String particularBookingDate)
-					throws InvalidInputException {
+			throws InvalidInputException {
 
 		final List<TotalsDTO> listOfTotalsDTO = this.reportService
 				.getTotalsForParticularBookingDate(particularBookingDate);
@@ -115,7 +121,7 @@ public class ReportsController {
 			@PathVariable(value = "fromWorkShift") final WorkShift fromWorkShift,
 			@PathVariable(value = "strToBookingDate") final String strToBookingDate,
 			@PathVariable(value = "toWorkShift") final WorkShift toWorkShift)
-					throws ResourceNotFoundException, InvalidInputException {
+			throws ResourceNotFoundException, InvalidInputException {
 		final List<TotalsDTO> listOfTotalsDTO = this.reportService.getTotalsForBookingDatesAndShiftsBetween(
 				strFromBookingDate, fromWorkShift, strToBookingDate, toWorkShift);
 		return ResponseEntity.ok().body(listOfTotalsDTO);
