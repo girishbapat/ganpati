@@ -1,3 +1,32 @@
-/target/
-/.idea
-*.iml
+# Ignore everything in .idea except certain files
+.idea/*
+!.idea/misc.xml
+!.idea/modules.xml
+!.idea/*.iml
+!.idea/vcs.xml
+!.idea/runConfigurations/
+
+# Maven
+# Exclude the .mvn directory but keep wrapper files
+.mvn/*
+!.mvn/wrapper/
+target/
+*.log
+
+# Gradle (if used)
+.gradle/
+build/
+
+# Eclipse IDE
+.project
+.classpath
+.settings/
+
+# User-specific files
+*.swp
+*~
+.idea/.idea*
+
+# Local configuration files
+*.h2.db
+database/*
