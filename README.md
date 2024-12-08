@@ -34,12 +34,12 @@ if yes delete those
 
 cd /d d:\temp
 java -version
-It should return any version more than 1.8 like below:
-java version "1.8.0_181"
-Java(TM) SE Runtime Environment (build 1.8.0_181-b13)
-Java HotSpot(TM) 64-Bit Server VM (build 25.181-b13, mixed mode)
+It should return any version more than 17 like below:
+openjdk version "17.0.10" 2024-01-16
+OpenJDK Runtime Environment Temurin-17.0.10+7 (build 17.0.10+7)
+OpenJDK 64-Bit Server VM Temurin-17.0.10+7 (build 17.0.10+7, mixed mode, sharing)
 
-If it does not then you need to install JRE 1.8+
+If it does not then you need to install JRE 17+
 
 4. Now execute actual application with below command from same command prompt
 cd /d d:\temp
