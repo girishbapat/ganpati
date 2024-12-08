@@ -3,7 +3,7 @@ package com.snehee.ganpati.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.snehee.ganpati.entity.User;
+import com.snehee.ganpati.entity.AppUser;
 
 /**
  * The interface User repository.
@@ -11,5 +11,5 @@ import com.snehee.ganpati.entity.User;
  * @author Girish
  */
 @Repository
-public interface UserRepository extends JpaRepository<User, Integer> {
+public interface AppUserRepository extends JpaRepository<AppUser, Integer> {
 }
