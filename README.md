@@ -51,8 +51,10 @@ Wait for couple of minutes till it logs some messages and if everything goes wel
 3. Started GanpatiApplication in xx.yyy seconds
 
 Sample output
-2020-01-26 23:14:39.440  INFO 2440 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8090 (http) with context path '/ganpati-application'
-2020-01-26 23:14:39.456  INFO 2440 --- [           main] com.snehee.ganpati.GanpatiApplication    : Started GanpatiApplication in 11.992 seconds (JVM running for 12.56)
+2024-12-08T19:10:59.684+05:30 INFO 36924 --- [ganpati-application] [  restartedMain]
+o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8090 (http) with context path '/ganpati-application'
+2024-12-08T19:10:59.699+05:30 INFO 36924 --- [ganpati-application] [  restartedMain]
+com.snehee.ganpati.GanpatiApplication    : Started GanpatiApplication in 7.162 seconds (process running for 7.941)
 
 If you get above messages your application started successfully
 Now check on d:\temp you will find database file crated as:

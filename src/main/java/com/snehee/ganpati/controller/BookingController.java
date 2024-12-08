@@ -9,13 +9,13 @@ import com.snehee.ganpati.exception.ResourceNotFoundException;
 import com.snehee.ganpati.repository.BookingRepository;
 import com.snehee.ganpati.service.BookingService;
 import com.snehee.ganpati.util.Constants;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
