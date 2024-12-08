@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -72,8 +72,8 @@ class CustomerController {
 	@GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE,
 			MediaType.APPLICATION_XML_VALUE }, value = "/getCustomersWithAttributeLike/{attributeName}/{attributeValue}")
 	public ResponseEntity<List<Customer>> getCustomersWithAttributeLike(
-			@PathVariable(value = "attributeName") @NotBlank final String attributeName,
-			@PathVariable(value = "attributeValue", required = true) @NotBlank final String attributeValue)
+			@PathVariable(value = "attributeName") @NotNull final String attributeName,
+			@PathVariable(value = "attributeValue", required = true) @NotNull final String attributeValue)
 			throws Exception {
 		List<Customer> customerListByType = new ArrayList<>();
 		try {
@@ -107,8 +107,8 @@ class CustomerController {
 	@GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE,
 			MediaType.APPLICATION_XML_VALUE }, value = "/getCustomersStartingWithAttribute/{attributeName}/{attributeValue}")
 	public ResponseEntity<List<Customer>> getCustomersStartingWithAttribute(
-			@PathVariable(value = "attributeName") @NotBlank final String attributeName,
-			@PathVariable(value = "attributeValue", required = true) @NotBlank final String attributeValue)
+			@PathVariable(value = "attributeName") @NotNull final String attributeName,
+			@PathVariable(value = "attributeValue", required = true) @NotNull final String attributeValue)
 			throws Exception {
 		List<Customer> customerList = new ArrayList<>();
 		try {

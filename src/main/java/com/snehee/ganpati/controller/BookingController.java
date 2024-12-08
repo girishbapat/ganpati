@@ -1,21 +1,5 @@
 package com.snehee.ganpati.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.snehee.ganpati.dto.BookingDTO;
 import com.snehee.ganpati.entity.Booking;
 import com.snehee.ganpati.enums.Status;
@@ -25,6 +9,15 @@ import com.snehee.ganpati.exception.ResourceNotFoundException;
 import com.snehee.ganpati.repository.BookingRepository;
 import com.snehee.ganpati.service.BookingService;
 import com.snehee.ganpati.util.Constants;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 class BookingController {
@@ -179,8 +172,8 @@ class BookingController {
 	@GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE,
 			MediaType.APPLICATION_XML_VALUE }, value = "/bookingsWithCustomerAttributeLike/{attributeName}/{attributeValue}")
 	public ResponseEntity<List<BookingDTO>> getBookingsWithAttributeLike(
-			@PathVariable(value = "attributeName") @NotBlank final String attributeName,
-			@PathVariable(value = "attributeValue", required = true) @NotBlank final String attributeValue)
+			@PathVariable(value = "attributeName") @NotNull final String attributeName,
+			@PathVariable(value = "attributeValue", required = true) @NotNull final String attributeValue)
 			throws Exception {
 		List<BookingDTO> bookingsListByType = new ArrayList<>();
 		try {
